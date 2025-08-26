@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .category-card:hover {
+            transform: scale(1.02);
+            transition: 0.3s ease-in-out;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Sunglasses - Khalid Optics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav id="same" class="navbar navbar-expand-lg navbar-light" style=" background-color: #e3f2fd;">
+
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+                Khalid Optics & Watches
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+
+                    <!-- Home (no dropdown) -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+
+                    <!-- Eyeglasses Dropdown -->
+                    <!-- <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="eyeglasses.html" id="eyeglassesDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            Eyeglasses
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="eyeglassesDropdown">
+                            <li><a class="dropdown-item" href="#">Metal Frames</a></li>
+                            <li><a class="dropdown-item" href="#">Regular Glasses</a></li>
+                            <li><a class="dropdown-item" href="#">Branded Frames</a></li>
+                            <li><a class="dropdown-item" href="#">Kids Section</a></li>
+                        </ul>
+                    </li> -->
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <!-- Main Link -->
+                            <a href="eyeglasses.html" class="nav-link">Eyeglasses</a>
+
+                            <!-- Dropdown toggle -->
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 0.75rem;">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+
+                            <!-- Dropdown menu -->
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="metal-frames.html">Metal Frames</a></li>
+                                <li><a class="dropdown-item" href="regular-glasses.html">Regular Glasses</a></li>
+                                <li><a class="dropdown-item" href="branded-frames.html">Branded Frames</a></li>
+                                <li><a class="dropdown-item" href="kids-eyeglasses.html">Kids Section</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+
+                    <!-- Sunglasses Dropdown -->
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <!-- Main Link -->
+                            <a href="sunglasses.html" class="nav-link">Sunglasses</a>
+
+                            <!-- Dropdown toggle -->
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 0.75rem;">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sunglassesDropdown">
+                                <li><a class="dropdown-item" href="#">Metal Frames</a></li>
+                                <li><a class="dropdown-item" href="#">Regular Glasses</a></li>
+                                <li><a class="dropdown-item" href="#">Branded Frames</a></li>
+                                <li><a class="dropdown-item" href="#">Kids Section</a></li>
+                            </ul>
+                    </li>
+
+                    <!-- Watches Dropdown -->
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <!-- Main Link -->
+                            <a href="watches.html" class="nav-link">Watches</a>
+
+                            <!-- Dropdown toggle -->
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 0.75rem;">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="watchesDropdown">
+                                <li><a class="dropdown-item" href="#">Gents</a></li>
+                                <li><a class="dropdown-item" href="#">Ladies</a></li>
+                                <li><a class="dropdown-item" href="#">Branded Watches</a></li>
+                                <li><a class="dropdown-item" href="#">Kids Section</a></li>
+                            </ul>
+                    </li>
+
+                    <!-- Contact Us (no dropdown) -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact Us</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-light  text-center py-2">
+        <h2>Sunglasses Collection</h2>
+        <p>High-quality frames for all ages</p>
+    </header>
+
+    <!-- Sunglasses Categories -->
+    <section class="py-2 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Explore Our Eyeglasses Categories</h2>
+
+            <div class="row g-4">
+
+                <!-- Metal Sunglasses -->
+                <div class="col-md-3">
+                    <div class="card border-5 shadow-sm h-100 category-card">
+                        <div class="position-relative">
+                            <img src="metalsun1.png" class="card-img-top" alt="Metal Sunglasses">
+                            <span class="badge bg-primary position-absolute top-0 start-0 m-2">Metal Sunglasses</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="text-muted mb-3">Slim, stylish, and durable — our metal frame sunglasses offer a
+                                sleek look with UV protection. Perfect for a clean, modern vibe.</p>
+                            <div class="mt-auto text-center">
+                                <a href="#eyeglasses-section" class="btn btn-outline-primary">Explore Metal Sunglasses
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regular Glasses -->
+                <div class="col-md-3">
+                    <div class="card border-5 shadow-sm h-100 category-card">
+                        <div class="position-relative">
+                            <img src="sunglasses2.png" class="card-img-top" alt="Sunglasses">
+                            <span class="badge   bg-success position-absolute top-0 start-0 m-2">Regular
+                                Sunglasses</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="text-muted mb-3">Affordable, trendy, and protective — our regular sunglasses are
+                                ideal for daily wear. Great looks without breaking the bank.
+
+                            </p>
+                            <div class="mt-auto text-center">
+                                <a href="#sunglasses-section" class="btn btn-outline-success">Explore Regular
+                                    Sunglasses</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branded Frames -->
+                <div class="col-md-3">
+                    <div class="card border-5 shadow-sm h-100 category-card">
+                        <div class="position-relative">
+                            <img src="brandedsunglasses.jpg" class="card-img-top" alt="Watches">
+                            <span class="badge bg-dark position-absolute top-0 start-0 m-2">Branded Sunglasses</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="text-muted mb-3">Shield your eyes in style with top-brand sunglasses from Ray-Ban,
+                                Gucci, and more. Premium quality with fashion-forward designs.
+
+
+                            </p>
+                            <div class="mt-auto text-center">
+                                <a href="#watches-section" class="btn btn-outline-dark">Explore Branded Sunglasses</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kids Section -->
+                <div class="col-md-3">
+                    <div class="card border-5 shadow-sm h-100 category-card">
+                        <div class="position-relative">
+                            <img src="kidssunglasses.png" class="card-img-top" alt="Watches">
+                            <span class="badge bg-dark position-absolute top-0 start-0 m-2">Kids Sunglasses</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="text-muted mb-3">Fun, colorful, and safe — our kids sunglasses protect young eyes
+                                with 100% UV-blocking lenses. Made for sunny days and active play! </p>
+                            <div class="mt-auto text-center">
+                                <a href="#watches-section" class="btn btn-outline-primary">Explore Kids Sunglasses</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 Khalid Optics & Watches</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
