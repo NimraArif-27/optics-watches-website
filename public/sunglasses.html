@@ -12,11 +12,80 @@
             transform: scale(1.02);
             transition: 0.3s ease-in-out;
         }
+        .product-card {
+          position: relative;
+          overflow: hidden;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+          transform: translateY(-5px);
+        }
+
+        .product-overlay {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 60px; /* strip width on right side */
+          opacity: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          transition: opacity 0.3s ease;
+        }
+
+
+        .product-card:hover .product-overlay {
+          opacity: 1;
+        }
+
+        .product-overlay .icon {
+          font-size: 1.2rem;
+          color: #fff;
+          background: rgba(0,0,0,0.5);
+          margin-bottom: 10px;
+          padding: 10px;
+          border-radius: 50%;
+          transition: background 0.3s ease;
+        }
+
+        .product-overlay .icon:hover {
+          background: #007bff;
+          cursor: pointer;
+        }
+        .product-card .card-body {
+          padding: 10px 10px;  
+        }
+
+        .product-card .card-title {
+          font-size: 18px;     /* smaller title */
+          margin-bottom: 4px;  /* tighter spacing */
+        }
+
+        .product-card p {
+          font-size: 14px;     /* smaller price text */
+          margin-bottom: 0;    /* remove extra space */
+        }
+
+        /* Show overlay icons always on small screens */
+        @media (max-width: 768px) {
+        .product-overlay {
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+}
+
+
+
     </style>
     <meta charset="UTF-8">
     <title>Sunglasses - Khalid Optics</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -88,10 +157,10 @@
                                 <span class="visually-hidden">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="sunglassesDropdown">
-                                <li><a class="dropdown-item" href="#">Metal Frames</a></li>
-                                <li><a class="dropdown-item" href="#">Regular Glasses</a></li>
-                                <li><a class="dropdown-item" href="#">Branded Frames</a></li>
-                                <li><a class="dropdown-item" href="#">Kids Section</a></li>
+                                <li><a class="dropdown-item" href="metal-frames.html">Metal Frames</a></li>
+                                <li><a class="dropdown-item" href="regular-glasses.html">Regular Glasses</a></li>
+                                <li><a class="dropdown-item" href="branded-frames.html">Branded Frames</a></li>
+                                <li><a class="dropdown-item" href="kids-eyeglasses.html">Kids Section</a></li>
                             </ul>
                     </li>
 
@@ -189,7 +258,7 @@
 
                             </p>
                             <div class="mt-auto text-center">
-                                <a href="#watches-section" class="btn btn-outline-dark">Explore Branded Sunglasses</a>
+                                <a href="#branded-section" class="btn btn-outline-dark">Explore Branded Sunglasses</a>
                             </div>
                         </div>
                     </div>
@@ -206,7 +275,7 @@
                             <p class="text-muted mb-3">Fun, colorful, and safe — our kids sunglasses protect young eyes
                                 with 100% UV-blocking lenses. Made for sunny days and active play! </p>
                             <div class="mt-auto text-center">
-                                <a href="#watches-section" class="btn btn-outline-primary">Explore Kids Sunglasses</a>
+                                <a href="#kids-section" class="btn btn-outline-primary">Explore Kids Sunglasses</a>
                             </div>
                         </div>
                     </div>
@@ -215,6 +284,125 @@
             </div>
         </div>
     </section>
+
+    
+     <!-- ========== Eyeglasses Categories Products ========== -->
+
+<!-- ================== Metal Frames Section ================== -->
+<section id="eyeglasses-section" class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center mb-5">Metal Frames Collection</h2>
+      <div class="row g-4">
+  
+        <!-- Product 1 -->
+        <div class="col-6 col-md-3">
+          <a href="product-metal1.html" class="text-decoration-none">
+            <div class="card product-card shadow-sm h-100">
+              <div class="position-relative">
+                <img src="metal1.png" class="card-img-top" alt="Metal Frame 1">
+                <div class="product-overlay d-flex flex-column justify-content-center align-items-center">
+                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
+                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
+                </div>
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title text-dark">Classic Metal Frame</h5>
+                <p class="text-muted">Rs. 2500</p>
+              </div>
+            </div>
+          </a>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+  <!-- ================== Regular Glasses Section ================== -->
+  <section id="sunglasses-section" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-5">Regular Glasses Collection</h2>
+      <div class="row g-4">
+  
+        <!-- Product 1 -->
+        <div class="col-6 col-md-3">
+          <a href="product-regular1.html" class="text-decoration-none">
+            <div class="card product-card shadow-sm h-100">
+              <div class="position-relative">
+                <img src="regular.png" class="card-img-top" alt="Regular Glass 1">
+                <div class="product-overlay d-flex justify-content-center align-items-center">
+                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
+                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
+                </div>
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title text-dark">Everyday Clear Frame</h5>
+                <p class="text-muted">Rs. 2000</p>
+              </div>
+            </div>
+          </a>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+  <!-- ================== Branded Frames Section ================== -->
+  <section id="branded-section" class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center mb-5">Branded Frames Collection</h2>
+      <div class="row g-4">
+  
+        <!-- Product 1 -->
+        <div class="col-6 col-md-3">
+          <a href="product-branded1.html" class="text-decoration-none">
+            <div class="card product-card shadow-sm h-100">
+              <div class="position-relative">
+                <img src="branded1.png" class="card-img-top" alt="Branded Frame 1">
+                <div class="product-overlay d-flex justify-content-center align-items-center">
+                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
+                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
+                </div>
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title text-dark">Ray-Ban Classic</h5>
+                <p class="text-muted">Rs. 3500</p>
+              </div>
+            </div>
+          </a>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+  <!-- ================== Kids Section ================== -->
+  <section id="kids-section" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-5">Kids Eyeglasses Collection</h2>
+      <div class="row g-4">
+  
+        <!-- Product 1 -->
+        <div class="col-6 col-md-3">
+          <a href="product-kids1.html" class="text-decoration-none">
+            <div class="card product-card shadow-sm h-100">
+              <div class="position-relative">
+                <img src="kids.png" class="card-img-top" alt="Kids Glass 1">
+                <div class="product-overlay d-flex justify-content-center align-items-center">
+                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
+                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
+                </div>
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title text-dark">Colorful Round Frame</h5>
+                <p class="text-muted">Rs. 2500</p>
+              </div>
+            </div>
+          </a>
+        </div>
+  
+      </div>
+    </div>
+  </section>
 
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2025 Khalid Optics & Watches</p>
