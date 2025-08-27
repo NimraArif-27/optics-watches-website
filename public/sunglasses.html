@@ -81,7 +81,26 @@
         }
 }
 
-
+.reviews-btn {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            background: #000;
+            color: #fff;
+            padding: 20px 10px;
+            border-radius: 30px 0 0 30px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1050;
+            writing-mode: vertical-rl; /* vertical text */
+            text-orientation: mixed;
+        }
+        .reviews-btn:hover {
+            background: #3b3bb3; /* green hover */
+        }
 
     </style>
     <meta charset="UTF-8">
@@ -212,6 +231,8 @@
             </div>
         </div>
     </nav>
+     <!-- Sticky Reviews Button -->
+   <a href="review.html" class="reviews-btn">★ Reviews</a>
 
     <header class="bg-light  text-center py-2">
         <h2>Sunglasses Collection</h2>

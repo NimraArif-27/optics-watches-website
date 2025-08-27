@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Reviews</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    main {
+      flex: 1; /* footer ko neeche push karega */
+    }
+    body {
+      background-color:#fff;
+      padding-top: 90px;
+    }
+    .review-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+      height: 100%;
+    }
+    .review-stars {
+      color: #ffc107; /* gold stars */
+    }
+    /* form width control */
+    .review-form {
+      max-width: 600px; /* form ki max width */
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+    <nav id="same" class="navbar navbar-expand-lg navbar-light fixed-top" style=" background-color: #e3f2fd;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+                Khalid Optics & Watches
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <a href="eyeglasses.html" class="nav-link">Eyeglasses</a>
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown"></button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="eyeglasses.html#eyeglasses-section">Metal Frames</a></li>
+                                <li><a class="dropdown-item" href="eyeglasses.html#regularglasses-section">Regular Glasses</a></li>
+                                <li><a class="dropdown-item" href="eyeglasses.html#branded-section">Branded Frames</a></li>
+                                <li><a class="dropdown-item" href="eyeglasses.html#kids-section">Kids Section</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <a href="sunglasses.html" class="nav-link">Sunglasses</a>
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown"></button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="sunglasses.html#sunglasses-section">Metal Sunglasses</a></li>
+                                <li><a class="dropdown-item" href="sunglasses.html#Regularsunglasses-section">Regular Sunglasses</a></li>
+                                <li><a class="dropdown-item" href="sunglasses.html#brandedsunglasses-section">Branded Sunglasses</a></li>
+                                <li><a class="dropdown-item" href="sunglasses.html#kidsunglasses-section">Kids Section</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <a href="watches.html" class="nav-link">Watches</a>
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown"></button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="watches.html#gentswatches-section">Gents</a></li>
+                                <li><a class="dropdown-item" href="watches.html#ladieswatches-section">Ladies</a></li>
+                                <li><a class="dropdown-item" href="watches.html#premiumwatches-section">Branded Watches</a></li>
+                                <li><a class="dropdown-item" href="watches.html#kidswatches-section">Kids Section</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <div class="btn-group">
+                            <a href="lenses.html" class="nav-link">Lenses</a>
+                            <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown"></button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="watches.html#gentswatches-section">Power Eye Lens</a></li>
+                                <li><a class="dropdown-item" href="watches.html#ladieswatches-section">Color Lens</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+  <!-- Main Content -->
+  <main class="container my-5">
+    <h1 class="text-center mb-4">Customer Reviews</h1>
+ <!-- Reviews Display Section -->
+    <div class="row g-4 mb-5" id="reviewsContainer">
+    </div>
+
+    <!-- Review Form Centered -->
+    <div class="d-flex justify-content-center mb-5">
+      <div class="card p-4 review-form">
+        <h4 class="mb-3 text-center">Add Your Review</h4>
+        <form id="reviewForm">
+          <div class="mb-3">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Your Email</label>
+            <input type="email" id="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="rating" class="form-label">Your Rating</label>
+            <select id="rating" class="form-select" required>
+              <option value="">Select rating</option>
+              <option value="5">Excellent</option>
+              <option value="4">Very Good</option>
+              <option value="3">Good</option>
+              <option value="2">Fair</option>
+              <option value="1">Poor</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="feedback" class="form-label">Your Feedback</label>
+            <textarea id="feedback" class="form-control" rows="3" required></textarea>
+          </div>
+          <div class="text-start">
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  
+  </main>
+
+  <!-- ✅ Sticky Footer -->
+  <footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 2025 Khalid Optics & Watches</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const form = document.getElementById("reviewForm");
+    const container = document.getElementById("reviewsContainer");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const rating = document.getElementById("rating").value;
+      const feedback = document.getElementById("feedback").value;
+
+      const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+
+      const col = document.createElement("div");
+      col.classList.add("col-md-4", "col-sm-6", "col-12"); // responsive grid
+      col.innerHTML = `
+        <div class="review-card">
+          <div class="d-flex justify-content-between">
+            <h6>${name}</h6>
+            <span class="review-stars">${stars}</span>
+          </div>
+          <p class="mb-1"><small class="text-muted">${email}</small></p>
+          <p>${feedback}</p>
+        </div>
+      `;
+
+      container.prepend(col);
+
+      form.reset();
+    });
+  </script>
+</body>
+</html>
