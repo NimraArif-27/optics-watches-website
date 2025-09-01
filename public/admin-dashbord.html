@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Khalid Optics & Watches</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8f9fa;
+    }
+    #sidebar {
+      width: 250px;
+      background-color: #343a40;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    #sidebar .nav-link {
+      color: #ddd;
+    }
+    #sidebar .nav-link.active, #sidebar .nav-link:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+    #content { flex-grow: 1; display: flex; flex-direction: column; }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .card { border-radius: .75rem; }
+    .footer { background:#343a40;color:#ddd;padding:10px;text-align:center; }
+    /* Style for chart containers */
+    .chart-container {
+      position: relative;
+      height: 300px; /* Adjust height as needed */
+      width: 100%;
+    }
+
+    /* --- New Summary Card Styles --- */
+    .summary-card {
+      border-radius: 1rem; /* More rounded corners */
+      color: #fff; /* White text for better contrast on gradients */
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+      overflow: hidden; /* Ensures gradient stays within bounds */
+      position: relative;
+      padding: 20px; /* Increased padding */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%; /* Ensure cards take full height in row */
+    }
+
+    .summary-card.bg-primary {
+      background: linear-gradient(45deg, #007bff, #0056b3); /* Blue gradient */
+    }
+    .summary-card.bg-success {
+      background: linear-gradient(45deg, #28a745, #1e7e34); /* Green gradient */
+    }
+    .summary-card.bg-warning {
+      background: linear-gradient(45deg, #ffc107, #e0a800); /* Yellow/Orange gradient */
+    }
+
+    .summary-card .card-title {
+      font-size: 1.1rem; /* Slightly smaller title */
+      margin-bottom: 0.5rem;
+      opacity: 0.8; /* Make title slightly transparent */
+    }
+
+    .summary-card .card-text {
+      font-size: 2.8rem; /* Larger number */
+      font-weight: bold;
+      line-height: 1; /* Tighter line height */
+    }
+
+    .summary-card .icon-background {
+      position: absolute;
+      bottom: -10px;
+      right: -10px;
+      font-size: 5rem; /* Large icon */
+      color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+      z-index: 0;
+    }
+
+    .summary-card .card-body {
+      position: relative; /* To keep content above icon */
+      z-index: 1;
+      padding: 0; /* Remove default card-body padding */
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav id="sidebar" class="d-flex flex-column p-3">
+  <h4 class="text-center">Khalid Optics</h4>
+  <ul class="nav flex-column mt-3">
+    <li class="nav-item"><a class="nav-link active" href="#" data-section="dashboard-overview"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    
+    <!-- Products Section with Submenu -->
+    <li class="nav-item">
+      <a class="nav-link" href="#productsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="productsSubmenu">
+        <i class="fas fa-box"></i> Products <i class="fas fa-chevron-down float-end"></i>
+      </a>
+      <div class="collapse" id="productsSubmenu">
+        <ul class="nav flex-column ms-3">
+          <li class="nav-item"><a class="nav-link" href="#" data-section="eyeglasses-products">Eyeglasses</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" data-section="sunglasses-products">Sunglasses</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" data-section="watches-products">Watches</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" data-section="lenses-products">Lenses</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <li class="nav-item"><a class="nav-link" href="#" data-section="orders-management"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+    <li class="nav-item"><a class="nav-link" href="#" data-section="reviews-management"><i class="fas fa-star"></i> Reviews</a></li>
+    <li class="nav-item"><a class="nav-link" href="#" data-section="contact-us-management"><i class="fas fa-address-book"></i> Contact Us</a></li>
+  </ul>
+</nav>
+
+<!-- Content -->
+<div id="content">
+  <nav class="navbar bg-light border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand">Admin Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="flex-grow-1 p-4">
+
+    <!-- Dashboard Overview -->
+    <section id="dashboard-overview" class="content-section active">
+      <h2>Dashboard Overview</h2>
+      <p>Summary cards and key metrics will be displayed here.</p>
+      <!-- Example Cards -->
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="summary-card bg-primary">
+            <div class="card-body">
+              <h5 class="card-title">Total Orders</h5>
+              <p class="card-text">1,234</p>
+            </div>
+            <div class="icon-background"><i class="fas fa-shopping-cart"></i></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="summary-card bg-success">
+            <div class="card-body">
+              <h5 class="card-title">New Customers</h5>
+              <p class="card-text">56</p>
+            </div>
+            <div class="icon-background"><i class="fas fa-user-plus"></i></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="summary-card bg-warning">
+            <div class="card-body">
+              <h5 class="card-title">Pending Messages</h5>
+              <p class="card-text">12</p>
+            </div>
+            <div class="icon-background"><i class="fas fa-envelope"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="mt-4">Sales & Customer Trends</h3>
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header">Monthly Orders</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="monthlyOrdersChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header">Customer Acquisition</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="customerAcquisitionChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Management - Eyeglasses -->
+    <section id="eyeglasses-products" class="content-section">
+      <h2>Eyeglasses Products</h2>
+      <ul class="nav nav-tabs mb-3" id="eyeglassesTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#metalFrames">Metal Frames</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#regularGlasses">Regular Glasses</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#brandedFrames">Branded Frames</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#kidsEyeglasses">Kids Section</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="metalFrames">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Metal Frames Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>EG001</td>
+                    <td>Classic Aviator Metal Frame</td>
+                    <td>$120.00</td>
+                    <td>50</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>EG002</td>
+                    <td>Round Metal Frame</td>
+                    <td>$95.00</td>
+                    <td>30</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="regularGlasses">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Regular Glasses Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>RG001</td>
+                    <td>Everyday Clear Frame</td>
+                    <td>$75.00</td>
+                    <td>100</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>RG002</td>
+                    <td>Basic Black Frame</td>
+                    <td>$60.00</td>
+                    <td>80</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="brandedFrames">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Branded Frames Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>BF001</td>
+                    <td>Ray-Ban Wayfarer</td>
+                    <td>Ray-Ban</td>
+                    <td>$180.00</td>
+                    <td>25</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BF002</td>
+                    <td>Gucci GG001</td>
+                    <td>Gucci</td>
+                    <td>$350.00</td>
+                    <td>15</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="kidsEyeglasses">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Kids Eyeglasses Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age Group</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>KEG001</td>
+                    <td>Colorful Round Frame</td>
+                    <td>3-8</td>
+                    <td>$50.00</td>
+                    <td>40</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>KEG002</td>
+                    <td>Durable Sport Frame</td>
+                    <td>6-12</td>
+                    <td>$65.00</td>
+                    <td>20</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Management - Sunglasses -->
+    <section id="sunglasses-products" class="content-section">
+      <h2>Sunglasses Products</h2>
+      <ul class="nav nav-tabs mb-3" id="sunglassesTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#metalSunglasses">Metal Sunglasses</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#regularSunglasses">Regular Sunglasses</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#brandedSunglasses">Branded Sunglasses</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#kidsSunglasses">Kids Section</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="metalSunglasses">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Metal Sunglasses Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>SM001</td>
+                    <td>Classic Aviator Sunglasses</td>
+                    <td>$150.00</td>
+                    <td>45</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>SM002</td>
+                    <td>Pilot Style Metal Sunglasses</td>
+                    <td>$130.00</td>
+                    <td>28</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="regularSunglasses">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Regular Sunglasses Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>RS001</td>
+                    <td>Sporty Wrap-around Sunglasses</td>
+                    <td>$85.00</td>
+                    <td>60</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>RS002</td>
+                    <td>Oversized Fashion Sunglasses</td>
+                    <td>$70.00</td>
+                    <td>40</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="brandedSunglasses">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Branded Sunglasses Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>BS001</td>
+                    <td>Oakley Holbrook</td>
+                    <td>Oakley</td>
+                    <td>$200.00</td>
+                    <td>20</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BS002</td>
+                    <td>Prada PR 01VS</td>
+                    <td>Prada</td>
+                    <td>$400.00</td>
+                    <td>10</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="kidsSunglasses">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Kids Sunglasses Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age Group</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>KS001</td>
+                    <td>Fun Animal Print Sunglasses</td>
+                    <td>3-8</td>
+                    <td>$40.00</td>
+                    <td>35</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>KS002</td>
+                    <td>UV Protect Sport Sunglasses</td>
+                    <td>6-12</td>
+                    <td>$55.00</td>
+                    <td>25</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Management - Watches -->
+    <section id="watches-products" class="content-section">
+      <h2>Watches Products</h2>
+      <ul class="nav nav-tabs mb-3" id="watchesTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#gentsWatches">Gents Watches</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ladiesWatches">Ladies Watches</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#brandedWatches">Branded Watches</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#kidsWatches">Kids Section</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="gentsWatches">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Gents Watches Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>GW001</td>
+                    <td>Casio Edifice Classic</td>
+                    <td>Casio</td>
+                    <td>$250.00</td>
+                    <td>18</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>GW002</td>
+                    <td>Seiko Prospex Diver</td>
+                    <td>Seiko</td>
+                    <td>$450.00</td>
+                    <td>12</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="ladiesWatches">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Ladies Watches Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>LW001</td>
+                    <td>Coach Park Stainless Steel</td>
+                    <td>Coach</td>
+                    <td>$180.00</td>
+                    <td>22</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>LW002</td>
+                    <td>Michael Kors Bradshaw</td>
+                    <td>Michael Kors</td>
+                    <td>$220.00</td>
+                    <td>15</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="brandedWatches">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Branded Watches Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>BW001</td>
+                    <td>Rado Integral Ceramic Black</td>
+                    <td>Rado</td>
+                    <td>$1200.00</td>
+                    <td>5</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BW002</td>
+                    <td>Rolex Submariner</td>
+                    <td>Rolex</td>
+                    <td>$10000.00</td>
+                    <td>2</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="kidsWatches">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Kids Watches Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age Group</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>KW001</td>
+                    <td>Fun Cartoon Watch</td>
+                    <td>3-8</td>
+                    <td>$30.00</td>
+                    <td>50</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>KW002</td>
+                    <td>Digital Sport Watch</td>
+                    <td>6-12</td>
+                    <td>$45.00</td>
+                    <td>30</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Management - Lenses -->
+    <section id="lenses-products" class="content-section">
+      <h2>Lenses Products</h2>
+      <ul class="nav nav-tabs mb-3" id="lensesTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#powerLens">Power Eye Lens</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#colorLens">Color Lens</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="powerLens">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Power Eye Lens Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Power Range</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>PL001</td>
+                    <td>SharpSight Daily Disposables</td>
+                    <td>-1.00 to -6.00</td>
+                    <td>$30.00</td>
+                    <td>150</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>PL002</td>
+                    <td>Extended Wear Toric Lens</td>
+                    <td>-0.75 to -4.00 (Astigmatism)</td>
+                    <td>$50.00</td>
+                    <td>80</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="colorLens">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              Color Lens Products
+              <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>CL001</td>
+                    <td>Hazel Glow</td>
+                    <td>Hazel</td>
+                    <td>$25.00</td>
+                    <td>120</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CL002</td>
+                    <td>Mystic Blue</td>
+                    <td>Blue</td>
+                    <td>$28.00</td>
+                    <td>90</td>
+                    <td>
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Orders Management -->
+    <section id="orders-management" class="content-section">
+      <h2>Orders Management</h2>
+      <p>Table or list of customer orders will be displayed here.</p>
+      <div class="card">
+        <div class="card-header">Recent Orders</div>
+        <div class="card-body">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#001</td>
+                <td>John Doe</td>
+                <td>2024-07-20</td>
+                <td>$150.00</td>
+                <td><span class="badge bg-warning">Pending</span></td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
+                  <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> Complete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>#002</td>
+                <td>Jane Smith</td>
+                <td>2024-07-19</td>
+                <td>$220.50</td>
+                <td><span class="badge bg-success">Completed</span></td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
+                  <button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check"></i> Complete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>#003</td>
+                <td>Alice Johnson</td>
+                <td>2024-07-18</td>
+                <td>$85.00</td>
+                <td><span class="badge bg-danger">Cancelled</span></td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
+                  <button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check"></i> Complete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews Management -->
+    <section id="reviews-management" class="content-section">
+      <h2>Reviews Management</h2>
+      <p>Customer reviews will be displayed and managed here.</p>
+      <div class="card">
+        <div class="card-header">Customer Reviews</div>
+        <div class="card-body">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>R001</td>
+                <td>John D.</td>
+                <td>Classic Metal Frame</td>
+                <td><span class="text-warning">★★★★★</span></td>
+                <td>Great eyeglasses, very comfortable!</td>
+                <td>2024-07-21</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>R002</td>
+                <td>Sarah M.</td>
+                <td>Classic Aviator Sunglasses</td>
+                <td><span class="text-warning">★★★★☆</span></td>
+                <td>Love my new sunglasses, stylish and good quality.</td>
+                <td>2024-07-20</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>R003</td>
+                <td>David L.</td>
+                <td>Casio Edifice Classic</td>
+                <td><span class="text-warning">★★★☆☆</span></td>
+                <td>Watch is good, but delivery was a bit slow.</td>
+                <td>2024-07-19</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Us Management -->
+    <section id="contact-us-management" class="content-section">
+      <h2>Contact Us Management</h2>
+      <p>Manage contact information and messages received through the contact form.</p>
+      <div class="card mb-4">
+        <div class="card-header">Store Contact Information</div>
+        <div class="card-body">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Detail</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Address</td>
+                <td>123 Optics St, City, Country</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Phone</td>
+                <td>+92-300-1234567</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>khalidoptics@example.com</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Working Hours</td>
+                <td>Mon-Sat: 9 AM - 7 PM</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Contact Form Messages</div>
+        <div class="card-body">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MSG001</td>
+                <td>Customer A</td>
+                <td>customerA@example.com</td>
+                <td>Inquiry about product availability.</td>
+                <td>2024-07-22</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
+                  <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> Mark Read</button>
+                </td>
+              </tr>
+              <tr>
+                <td>MSG002</td>
+                <td>Customer B</td>
+                <td>customerB@example.com</td>
+                <td>Question about return policy.</td>
+                <td>2024-07-21</td>
+                <td>
+                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
+                  <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> Mark Read</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">&copy; 2025 Khalid Optics & Watches</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
+    const sections = document.querySelectorAll('.content-section');
+
+    function showSection(id) {
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      // Initialize charts only when the dashboard-overview section is active
+      if (id === 'dashboard-overview') {
+        initializeCharts();
+      }
+    }
+
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        // Only prevent default and show section if it's not a collapse toggle
+        if (!link.dataset.bsToggle) {
+          e.preventDefault();
+          // Remove active class from all sidebar links
+          sidebarLinks.forEach(l => l.classList.remove('active'));
+          // Add active class to the clicked link
+          link.classList.add('active');
+          showSection(link.dataset.section);
+        }
+      });
+    });
+
+    // Function to initialize Chart.js charts
+    function initializeCharts() {
+      // Monthly Orders Bar Chart
+      const monthlyOrdersCtx = document.getElementById('monthlyOrdersChart');
+      if (monthlyOrdersCtx) { // Check if canvas exists before initializing
+        new Chart(monthlyOrdersCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+              label: 'Orders',
+              data: [65, 59, 80, 81, 56, 55, 40],
+              backgroundColor: 'rgba(0, 123, 255, 0.5)',
+              borderColor: 'rgba(0, 123, 255, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+      // Customer Acquisition Pie Chart
+      const customerAcquisitionCtx = document.getElementById('customerAcquisitionChart');
+      if (customerAcquisitionCtx) { // Check if canvas exists before initializing
+        new Chart(customerAcquisitionCtx, {
+          type: 'pie',
+          data: {
+            labels: ['New Customers', 'Returning Customers'],
+            datasets: [{
+              label: 'Customer Types',
+              data: [56, 180], // Example data
+              backgroundColor: [
+                'rgba(40, 167, 69, 0.7)', // Green for New Customers
+                'rgba(255, 193, 7, 0.7)'  // Yellow for Returning Customers
+              ],
+              borderColor: [
+                'rgba(40, 167, 69, 1)',
+                'rgba(255, 193, 7, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          }
+        });
+      }
+    }
+
+    // Handle initial active section and initialize charts for it
+    showSection('dashboard-overview');
+  });
+</script>
+</body>
+</html>
