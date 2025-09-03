@@ -91,6 +91,44 @@
       z-index: 1;
       padding: 0; /* Remove default card-body padding */
     }
+
+    /* New styles for product cards in grid */
+    .product-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      text-align: center; /* Center image and text */
+    }
+
+    .product-card .card-img-top {
+      max-width: 100%;
+      height: 180px; /* Increased height for better visibility */
+      object-fit: cover; /* Changed to cover to fill the space */
+      /* Removed padding to allow image to fill more space */
+      border-bottom: 1px solid #eee; /* Keep border for separation */
+    }
+
+    .product-card .card-body {
+      padding: 15px;
+    }
+
+    .product-card .card-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .product-card .card-text {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .product-card .card-footer {
+      background-color: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      padding: 10px 15px;
+    }
   </style>
 </head>
 <body>
@@ -209,39 +247,56 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>EG001</td>
-                    <td>Classic Aviator Metal Frame</td>
-                    <td>$120.00</td>
-                    <td>50</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>EG002</td>
-                    <td>Round Metal Frame</td>
-                    <td>$95.00</td>
-                    <td>30</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/60/200/180?grayscale&blur=1" class="card-img-top" alt="Classic Aviator Metal Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Classic Aviator Metal Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> EG001</p>
+                      <p class="card-text"><strong>Price:</strong> $120.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 50</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/61/200/180?grayscale" class="card-img-top" alt="Round Metal Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Round Metal Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> EG002</p>
+                      <p class="card-text"><strong>Price:</strong> $95.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 30</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 3 (Example of a third product) -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/62/200/180" class="card-img-top" alt="Geometric Metal Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Geometric Metal Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> EG003</p>
+                      <p class="card-text"><strong>Price:</strong> $110.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 40</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -252,39 +307,40 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>RG001</td>
-                    <td>Everyday Clear Frame</td>
-                    <td>$75.00</td>
-                    <td>100</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>RG002</td>
-                    <td>Basic Black Frame</td>
-                    <td>$60.00</td>
-                    <td>80</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/63/200/180" class="card-img-top" alt="Everyday Clear Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Everyday Clear Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> RG001</p>
+                      <p class="card-text"><strong>Price:</strong> $75.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 100</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/64/200/180" class="card-img-top" alt="Basic Black Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Basic Black Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> RG002</p>
+                      <p class="card-text"><strong>Price:</strong> $60.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 80</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -295,42 +351,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>BF001</td>
-                    <td>Ray-Ban Wayfarer</td>
-                    <td>Ray-Ban</td>
-                    <td>$180.00</td>
-                    <td>25</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>BF002</td>
-                    <td>Gucci GG001</td>
-                    <td>Gucci</td>
-                    <td>$350.00</td>
-                    <td>15</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/65/200/180" class="card-img-top" alt="Ray-Ban Wayfarer">
+                    <div class="card-body">
+                      <h5 class="card-title">Ray-Ban Wayfarer</h5>
+                      <p class="card-text"><strong>ID:</strong> BF001</p>
+                      <p class="card-text"><strong>Brand:</strong> Ray-Ban</p>
+                      <p class="card-text"><strong>Price:</strong> $180.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 25</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/66/200/180" class="card-img-top" alt="Gucci GG001">
+                    <div class="card-body">
+                      <h5 class="card-title">Gucci GG001</h5>
+                      <p class="card-text"><strong>ID:</strong> BF002</p>
+                      <p class="card-text"><strong>Brand:</strong> Gucci</p>
+                      <p class="card-text"><strong>Price:</strong> $350.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 15</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -341,42 +397,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age Group</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>KEG001</td>
-                    <td>Colorful Round Frame</td>
-                    <td>3-8</td>
-                    <td>$50.00</td>
-                    <td>40</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>KEG002</td>
-                    <td>Durable Sport Frame</td>
-                    <td>6-12</td>
-                    <td>$65.00</td>
-                    <td>20</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/67/200/180" class="card-img-top" alt="Colorful Round Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Colorful Round Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> KEG001</p>
+                      <p class="card-text"><strong>Age Group:</strong> 3-8</p>
+                      <p class="card-text"><strong>Price:</strong> $50.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 40</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/68/200/180" class="card-img-top" alt="Durable Sport Frame">
+                    <div class="card-body">
+                      <h5 class="card-title">Durable Sport Frame</h5>
+                      <p class="card-text"><strong>ID:</strong> KEG002</p>
+                      <p class="card-text"><strong>Age Group:</strong> 6-12</p>
+                      <p class="card-text"><strong>Price:</strong> $65.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 20</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -400,39 +456,40 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>SM001</td>
-                    <td>Classic Aviator Sunglasses</td>
-                    <td>$150.00</td>
-                    <td>45</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>SM002</td>
-                    <td>Pilot Style Metal Sunglasses</td>
-                    <td>$130.00</td>
-                    <td>28</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/69/200/180" class="card-img-top" alt="Classic Aviator Sunglasses">
+                    <div class="card-body">
+                      <h5 class="card-title">Classic Aviator Sunglasses</h5>
+                      <p class="card-text"><strong>ID:</strong> SM001</p>
+                      <p class="card-text"><strong>Price:</strong> $150.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 45</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/70/200/180" class="card-img-top" alt="Pilot Style Metal Sunglasses">
+                    <div class="card-body">
+                      <h5 class="card-title">Pilot Style Metal Sunglasses</h5>
+                      <p class="card-text"><strong>ID:</strong> SM002</p>
+                      <p class="card-text"><strong>Price:</strong> $130.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 28</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -443,39 +500,40 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>RS001</td>
-                    <td>Sporty Wrap-around Sunglasses</td>
-                    <td>$85.00</td>
-                    <td>60</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>RS002</td>
-                    <td>Oversized Fashion Sunglasses</td>
-                    <td>$70.00</td>
-                    <td>40</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/71/200/180" class="card-img-top" alt="Sporty Wrap-around Sunglasses">
+                    <div class="card-body">
+                      <h5 class="card-title">Sporty Wrap-around Sunglasses</h5>
+                      <p class="card-text"><strong>ID:</strong> RS001</p>
+                      <p class="card-text"><strong>Price:</strong> $85.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 60</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/72/200/180" class="card-img-top" alt="Oversized Fashion Sunglasses">
+                    <div class="card-body">
+                      <h5 class="card-title">Oversized Fashion Sunglasses</h5>
+                      <p class="card-text"><strong>ID:</strong> RS002</p>
+                      <p class="card-text"><strong>Price:</strong> $70.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 40</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -486,42 +544,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>BS001</td>
-                    <td>Oakley Holbrook</td>
-                    <td>Oakley</td>
-                    <td>$200.00</td>
-                    <td>20</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>BS002</td>
-                    <td>Prada PR 01VS</td>
-                    <td>Prada</td>
-                    <td>$400.00</td>
-                    <td>10</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/73/200/180" class="card-img-top" alt="Oakley Holbrook">
+                    <div class="card-body">
+                      <h5 class="card-title">Oakley Holbrook</h5>
+                      <p class="card-text"><strong>ID:</strong> BS001</p>
+                      <p class="card-text"><strong>Brand:</strong> Oakley</p>
+                      <p class="card-text"><strong>Price:</strong> $200.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 20</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/74/200/180" class="card-img-top" alt="Prada PR 01VS">
+                    <div class="card-body">
+                      <h5 class="card-title">Prada PR 01VS</h5>
+                      <p class="card-text"><strong>ID:</strong> BS002</p>
+                      <p class="card-text"><strong>Brand:</strong> Prada</p>
+                      <p class="card-text"><strong>Price:</strong> $400.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 10</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -532,42 +590,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age Group</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>KS001</td>
-                    <td>Fun Animal Print Sunglasses</td>
-                    <td>3-8</td>
-                    <td>$40.00</td>
-                    <td>35</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>KS002</td>
-                    <td>UV Protect Sport Sunglasses</td>
-                    <td>6-12</td>
-                    <td>$55.00</td>
-                    <td>25</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/75/200/180" class="card-img-top" alt="Fun Animal Print Sunglasses">
+                    <div class="card-body">
+                      <h5 class="card-title">Fun Animal Print Sunglasses</h5>
+                      <p class="card-text"><strong>ID:</strong> KS001</p>
+                      <p class="card-text"><strong>Age Group:</strong> 3-8</p>
+                      <p class="card-text"><strong>Price:</strong> $40.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 35</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/76/200/180" class="card-img-top" alt="UV Protect Sport Sunglasses">
+                    <div class="card-body">
+                      <h5 class="card-title">UV Protect Sport Sunglasses</h5>
+                      <p class="card-text"><strong>ID:</strong> KS002</p>
+                      <p class="card-text"><strong>Age Group:</strong> 6-12</p>
+                      <p class="card-text"><strong>Price:</strong> $55.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 25</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -591,42 +649,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>GW001</td>
-                    <td>Casio Edifice Classic</td>
-                    <td>Casio</td>
-                    <td>$250.00</td>
-                    <td>18</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>GW002</td>
-                    <td>Seiko Prospex Diver</td>
-                    <td>Seiko</td>
-                    <td>$450.00</td>
-                    <td>12</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/77/200/180" class="card-img-top" alt="Casio Edifice Classic">
+                    <div class="card-body">
+                      <h5 class="card-title">Casio Edifice Classic</h5>
+                      <p class="card-text"><strong>ID:</strong> GW001</p>
+                      <p class="card-text"><strong>Brand:</strong> Casio</p>
+                      <p class="card-text"><strong>Price:</strong> $250.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 18</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/78/200/180" class="card-img-top" alt="Seiko Prospex Diver">
+                    <div class="card-body">
+                      <h5 class="card-title">Seiko Prospex Diver</h5>
+                      <p class="card-text"><strong>ID:</strong> GW002</p>
+                      <p class="card-text"><strong>Brand:</strong> Seiko</p>
+                      <p class="card-text"><strong>Price:</strong> $450.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 12</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -637,42 +695,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>LW001</td>
-                    <td>Coach Park Stainless Steel</td>
-                    <td>Coach</td>
-                    <td>$180.00</td>
-                    <td>22</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>LW002</td>
-                    <td>Michael Kors Bradshaw</td>
-                    <td>Michael Kors</td>
-                    <td>$220.00</td>
-                    <td>15</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/79/200/180" class="card-img-top" alt="Coach Park Stainless Steel">
+                    <div class="card-body">
+                      <h5 class="card-title">Coach Park Stainless Steel</h5>
+                      <p class="card-text"><strong>ID:</strong> LW001</p>
+                      <p class="card-text"><strong>Brand:</strong> Coach</p>
+                      <p class="card-text"><strong>Price:</strong> $180.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 22</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/80/200/180" class="card-img-top" alt="Michael Kors Bradshaw">
+                    <div class="card-body">
+                      <h5 class="card-title">Michael Kors Bradshaw</h5>
+                      <p class="card-text"><strong>ID:</strong> LW002</p>
+                      <p class="card-text"><strong>Brand:</strong> Michael Kors</p>
+                      <p class="card-text"><strong>Price:</strong> $220.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 15</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -683,42 +741,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>BW001</td>
-                    <td>Rado Integral Ceramic Black</td>
-                    <td>Rado</td>
-                    <td>$1200.00</td>
-                    <td>5</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>BW002</td>
-                    <td>Rolex Submariner</td>
-                    <td>Rolex</td>
-                    <td>$10000.00</td>
-                    <td>2</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/81/200/180" class="card-img-top" alt="Rado Integral Ceramic Black">
+                    <div class="card-body">
+                      <h5 class="card-title">Rado Integral Ceramic Black</h5>
+                      <p class="card-text"><strong>ID:</strong> BW001</p>
+                      <p class="card-text"><strong>Brand:</strong> Rado</p>
+                      <p class="card-text"><strong>Price:</strong> $1200.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 5</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/82/200/180" class="card-img-top" alt="Rolex Submariner">
+                    <div class="card-body">
+                      <h5 class="card-title">Rolex Submariner</h5>
+                      <p class="card-text"><strong>ID:</strong> BW002</p>
+                      <p class="card-text"><strong>Brand:</strong> Rolex</p>
+                      <p class="card-text"><strong>Price:</strong> $10000.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 2</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -729,42 +787,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age Group</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>KW001</td>
-                    <td>Fun Cartoon Watch</td>
-                    <td>3-8</td>
-                    <td>$30.00</td>
-                    <td>50</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>KW002</td>
-                    <td>Digital Sport Watch</td>
-                    <td>6-12</td>
-                    <td>$45.00</td>
-                    <td>30</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/83/200/180" class="card-img-top" alt="Fun Cartoon Watch">
+                    <div class="card-body">
+                      <h5 class="card-title">Fun Cartoon Watch</h5>
+                      <p class="card-text"><strong>ID:</strong> KW001</p>
+                      <p class="card-text"><strong>Age Group:</strong> 3-8</p>
+                      <p class="card-text"><strong>Price:</strong> $30.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 50</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://picsum.photos/id/84/200/180" class="card-img-top" alt="Digital Sport Watch">
+                    <div class="card-body">
+                      <h5 class="card-title">Digital Sport Watch</h5>
+                      <p class="card-text"><strong>ID:</strong> KW002</p>
+                      <p class="card-text"><strong>Age Group:</strong> 6-12</p>
+                      <p class="card-text"><strong>Price:</strong> $45.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 30</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -786,42 +844,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Power Range</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>PL001</td>
-                    <td>SharpSight Daily Disposables</td>
-                    <td>-1.00 to -6.00</td>
-                    <td>$30.00</td>
-                    <td>150</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>PL002</td>
-                    <td>Extended Wear Toric Lens</td>
-                    <td>-0.75 to -4.00 (Astigmatism)</td>
-                    <td>$50.00</td>
-                    <td>80</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://via.placeholder.com/200x180?text=Power+Lens+1" class="card-img-top" alt="SharpSight Daily Disposables">
+                    <div class="card-body">
+                      <h5 class="card-title">SharpSight Daily Disposables</h5>
+                      <p class="card-text"><strong>ID:</strong> PL001</p>
+                      <p class="card-text"><strong>Power Range:</strong> -1.00 to -6.00</p>
+                      <p class="card-text"><strong>Price:</strong> $30.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 150</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://via.placeholder.com/200x180?text=Power+Lens+2" class="card-img-top" alt="Extended Wear Toric Lens">
+                    <div class="card-body">
+                      <h5 class="card-title">Extended Wear Toric Lens</h5>
+                      <p class="card-text"><strong>ID:</strong> PL002</p>
+                      <p class="card-text"><strong>Power Range:</strong> -0.75 to -4.00 (Astigmatism)</p>
+                      <p class="card-text"><strong>Price:</strong> $50.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 80</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -832,42 +890,42 @@
               <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Product</button>
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Color</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>CL001</td>
-                    <td>Hazel Glow</td>
-                    <td>Hazel</td>
-                    <td>$25.00</td>
-                    <td>120</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>CL002</td>
-                    <td>Mystic Blue</td>
-                    <td>Blue</td>
-                    <td>$28.00</td>
-                    <td>90</td>
-                    <td>
-                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="row">
+                <!-- Product 1 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://via.placeholder.com/200x180?text=Hazel+Lens" class="card-img-top" alt="Hazel Glow">
+                    <div class="card-body">
+                      <h5 class="card-title">Hazel Glow</h5>
+                      <p class="card-text"><strong>ID:</strong> CL001</p>
+                      <p class="card-text"><strong>Color:</strong> Hazel</p>
+                      <p class="card-text"><strong>Price:</strong> $25.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 120</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div class="col-md-4 mb-4">
+                  <div class="card product-card h-100">
+                    <img src="https://via.placeholder.com/200x180?text=Blue+Lens" class="card-img-top" alt="Mystic Blue">
+                    <div class="card-body">
+                      <h5 class="card-title">Mystic Blue</h5>
+                      <p class="card-text"><strong>ID:</strong> CL002</p>
+                      <p class="card-text"><strong>Color:</strong> Blue</p>
+                      <p class="card-text"><strong>Price:</strong> $28.00</p>
+                      <p class="card-text"><strong>Stock:</strong> 90</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
