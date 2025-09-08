@@ -497,6 +497,46 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Cart Sidebar JS -->
+    <script>
+        let qty = 1;
+        const pricePerItem = 2500;
+
+        const qtyEl = document.getElementById("item-qty");
+        const totalEl = document.getElementById("cart-total");
+        const increaseBtn = document.getElementById("increase-btn");
+        const decreaseBtn = document.getElementById("decrease-btn");
+        const deleteBtn = document.getElementById("delete-btn");
+        const cartItem = document.getElementById("cart-item");
+
+        // Increase Quantity
+        increaseBtn.addEventListener("click", () => {
+            qty++;
+            qtyEl.textContent = qty;
+            updateTotal();
+        });
+
+        // Decrease Quantity (not below 1)
+        decreaseBtn.addEventListener("click", () => {
+            if (qty > 1) {
+                qty--;
+                qtyEl.textContent = qty;
+                updateTotal();
+            }
+        });
+
+        // Delete Product
+        deleteBtn.addEventListener("click", () => {
+            cartItem.remove();
+            totalEl.textContent = "Rs 0";
+        });
+
+        // Update Total
+        function updateTotal() {
+            totalEl.textContent = "Rs " + (qty * pricePerItem);
+        }
+    </script>
+
 </body>
 
 </html>
