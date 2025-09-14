@@ -16,4 +16,16 @@ router.post("/", async (req, res) => {
   }
 });
 
+// GET - fetch all contact form messages
+router.get("/", async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: 1 });
+    res.json({ success: true, data: contacts });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
+
 module.exports = router;

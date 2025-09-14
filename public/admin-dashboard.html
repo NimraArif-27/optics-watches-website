@@ -1558,29 +1558,8 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>MSG001</td>
-                <td>Customer A</td>
-                <td>customerA@example.com</td>
-                <td>Inquiry about product availability.</td>
-                <td>2024-07-22</td>
-                <td>
-                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
-                  <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> Mark Read</button>
-                </td>
-              </tr>
-              <tr>
-                <td>MSG002</td>
-                <td>Customer B</td>
-                <td>customerB@example.com</td>
-                <td>Question about return policy.</td>
-                <td>2024-07-21</td>
-                <td>
-                  <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i> View</button>
-                  <button class="btn btn-success btn-sm"><i class="fas fa-check"></i> Mark Read</button>
-                </td>
-              </tr>
+            <tbody id="contactsTableBody">
+              <tr><td colspan="5">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1689,5 +1668,72 @@
     showSection('dashboard-overview');
   });
 </script>
+<!--contact messages-->
+<script>
+async function loadContacts() {
+  try {
+    const res = await fetch("/api/contact");
+    const data = await res.json();
+
+    const tableBody = document.getElementById("contactsTableBody");
+    tableBody.innerHTML = "";
+
+    if (data.success && data.data.length > 0) {
+      data.data.forEach((c, i) => {
+        const preview =
+          c.message.length > 30 ? c.message.substring(0, 30) + "..." : c.message;
+
+        tableBody.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${c.name}</td>
+            <td>${c.email}</td>
+            <td>
+              <span class="message-preview" 
+                    style="cursor:pointer; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;" 
+                    data-full="${c.message.replace(/"/g, "&quot;")}" 
+                    onclick="toggleMessage(this)">
+                ${preview}
+              </span>
+            </td>
+            <td>${new Date(c.createdAt).toLocaleString()}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="deleteContact('${c._id}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    } else {
+      tableBody.innerHTML = "<tr><td colspan='6'>No messages yet</td></tr>";
+    }
+  } catch (err) {
+    console.error("Error loading contacts:", err);
+  }
+}
+
+function toggleMessage(el) {
+  const full = el.getAttribute("data-full");
+  const preview =
+    full.length > 30 ? full.substring(0, 30) + "..." : full;
+
+  if (el.textContent === preview) {
+    el.textContent = full; // expand
+    el.style.whiteSpace = "normal"; // allow wrapping inside the same cell
+  } else {
+    el.textContent = preview; // collapse
+    el.style.whiteSpace = "nowrap"; // keep single line with ellipsis
+  }
+}
+
+window.addEventListener("DOMContentLoaded", loadContacts);
+</script>
+
+
+
+
+
+
 </body>
 </html>
