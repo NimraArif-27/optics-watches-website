@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 
-const shopInfoRoutes = require("./routes/shopInfo");
 
 const app = express();
 app.use(cors());
@@ -15,8 +14,6 @@ mongoose.connect("mongodb://localhost:27017/shop", {
   useUnifiedTopology: true,
 });
 
-// API routes
-app.use("/api/shopInfo", shopInfoRoutes);
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "..", "public")));
