@@ -300,122 +300,121 @@
 
 
     <script>
-    const form = document.getElementById("contactForm");
-    const nameInput = document.getElementById("name");
-    const emailInput = document.getElementById("email");
-    const messageInput = document.getElementById("message");
+        const form = document.getElementById("contactForm");
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const messageInput = document.getElementById("message");
 
-    const nameError = document.getElementById("nameError");
-    const emailError = document.getElementById("emailError");
-    const messageError = document.getElementById("messageError");
+        const nameError = document.getElementById("nameError");
+        const emailError = document.getElementById("emailError");
+        const messageError = document.getElementById("messageError");
 
-    const touched = { name: false, email: false, message: false };
+        const touched = { name: false, email: false, message: false };
 
-    // Validation functions
-    function validateName(showError = true) {
-        const nameRegex = /^[A-Za-z\s]+$/;
-        if (!nameInput.value.trim()) {
-            if (showError) nameError.textContent = "Full name is required.";
-            return false;
-        } else if (!nameRegex.test(nameInput.value.trim())) {
-            if (showError) nameError.textContent = "Name must contain only alphabets.";
-            return false;
-        }
-        nameError.textContent = "";
-        return true;
-    }
-
-    function validateEmail(showError = true) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailInput.value.trim()) {
-            if (showError) emailError.textContent = "Email is required.";
-            return false;
-        } else if (!emailRegex.test(emailInput.value.trim())) {
-            if (showError) emailError.textContent = "Enter a valid email address.";
-            return false;
-        }
-        emailError.textContent = "";
-        return true;
-    }
-
-    function validateMessage(showError = true) {
-        if (!messageInput.value.trim()) {
-            if (showError) messageError.textContent = "Message is required.";
-            return false;
-        }
-        messageError.textContent = "";
-        return true;
-    }
-
-    // Blur validation
-    nameInput.addEventListener("blur", () => {
-        touched.name = true;
-        validateName();
-    });
-    emailInput.addEventListener("blur", () => {
-        touched.email = true;
-        validateEmail();
-    });
-    messageInput.addEventListener("blur", () => {
-        touched.message = true;
-        validateMessage();
-    });
-
-    // Clear error on focus
-    [nameInput, emailInput, messageInput].forEach((input, index) => {
-        input.addEventListener("focus", () => {
-            if (index === 0) nameError.textContent = "";
-            if (index === 1) emailError.textContent = "";
-            if (index === 2) messageError.textContent = "";
-        });
-    });
-
-    // Submit validation + DB store
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const isNameValid = validateName(true);
-        const isEmailValid = validateEmail(true);
-        const isMessageValid = validateMessage(true);
-
-        if (isNameValid && isEmailValid && isMessageValid) {
-            try {
-                // Send data to backend API
-                const response = await fetch("http://localhost:3000/api/contact", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        name: nameInput.value.trim(),
-                        email: emailInput.value.trim(),
-                        message: messageInput.value.trim()
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // Show success
-                    const successDiv = document.getElementById("successMessage");
-                    successDiv.style.display = "block";
-                    successDiv.textContent = "✅ Message sent successfully!";
-
-                    // Hide after 3 seconds
-                    setTimeout(() => {
-                        successDiv.style.display = "none";
-                    }, 3000);
-
-                    form.reset();
-                    touched.name = touched.email = touched.message = false;
-                } else {
-                    alert("❌ Error: " + result.error);
-                }
-            } catch (err) {
-                alert("⚠️ Failed to connect to server.");
+        // Validation functions
+        function validateName(showError = true) {
+            const nameRegex = /^[A-Za-z\s]+$/;
+            if (!nameInput.value.trim()) {
+                if (showError) nameError.textContent = "Full name is required.";
+                return false;
+            } else if (!nameRegex.test(nameInput.value.trim())) {
+                if (showError) nameError.textContent = "Name must contain only alphabets.";
+                return false;
             }
+            nameError.textContent = "";
+            return true;
         }
-    });
-</script>
 
+        function validateEmail(showError = true) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailInput.value.trim()) {
+                if (showError) emailError.textContent = "Email is required.";
+                return false;
+            } else if (!emailRegex.test(emailInput.value.trim())) {
+                if (showError) emailError.textContent = "Enter a valid email address.";
+                return false;
+            }
+            emailError.textContent = "";
+            return true;
+        }   
+
+        function validateMessage(showError = true) {
+            if (!messageInput.value.trim()) {
+                if (showError) messageError.textContent = "Message is required.";
+                return false;
+            }
+            messageError.textContent = "";
+            return true;
+        }
+
+        // Blur validation
+        nameInput.addEventListener("blur", () => {
+            touched.name = true;
+            validateName();
+        });
+        emailInput.addEventListener("blur", () => {
+            touched.email = true;
+            validateEmail();
+        });
+        messageInput.addEventListener("blur", () => {
+            touched.message = true;
+            validateMessage();
+        });
+
+        // Clear error on focus
+        [nameInput, emailInput, messageInput].forEach((input, index) => {
+            input.addEventListener("focus", () => {
+                if (index === 0) nameError.textContent = "";
+                if (index === 1) emailError.textContent = "";
+                if (index === 2) messageError.textContent = "";
+            });
+        });
+
+        // Submit validation + DB store
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const isNameValid = validateName(true);
+            const isEmailValid = validateEmail(true);
+            const isMessageValid = validateMessage(true);
+
+            if (isNameValid && isEmailValid && isMessageValid) {
+                try {
+                    // Send data to backend API
+                    const response = await fetch("http://localhost:3000/api/contact", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            name: nameInput.value.trim(),
+                            email: emailInput.value.trim(),
+                            message: messageInput.value.trim()
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Show success
+                        const successDiv = document.getElementById("successMessage");
+                        successDiv.style.display = "block";
+                        successDiv.textContent = "✅ Message sent successfully!";
+
+                        // Hide after 3 seconds
+                        setTimeout(() => {
+                            successDiv.style.display = "none";
+                        }, 3000);
+
+                        form.reset();
+                        touched.name = touched.email = touched.message = false;
+                    } else {
+                        alert("❌ Error: " + result.error);
+                    }
+                } catch (err) {
+                    alert("⚠️ Failed to connect to server.");
+                }
+            }
+        });
+    </script>
 
     <!-- Cart Sidebar JS -->
     <script>
