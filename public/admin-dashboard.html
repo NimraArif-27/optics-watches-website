@@ -21,6 +21,11 @@
       background-color: #343a40;
       color: #fff;
       flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;       /* Full screen height */
+      overflow-y: auto;    /* Scroll only inside sidebar if content is long */
     }
     #sidebar .nav-link {
       color: #ddd;
@@ -29,7 +34,7 @@
       background-color: #007bff;
       color: #fff;
     }
-    #content { flex-grow: 1; display: flex; flex-direction: column; }
+    #content { flex-grow: 1; display: flex; flex-direction: column; margin-left: 250px;}
     .content-section { display: none; }
     .content-section.active { display: block; }
     .card { border-radius: .75rem; }
@@ -1564,8 +1569,26 @@
           </table>
         </div>
       </div>
-    </section>
 
+      <!-- Delete Confirmation Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+              <h5 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Confirm Delete</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this message?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
   </main>
 
@@ -1670,70 +1693,99 @@
 </script>
 <!--contact messages-->
 <script>
-async function loadContacts() {
-  try {
-    const res = await fetch("/api/contact");
-    const data = await res.json();
+  async function loadContacts() {
+    try {
+      const res = await fetch("/api/contact");
+      const data = await res.json();
 
-    const tableBody = document.getElementById("contactsTableBody");
-    tableBody.innerHTML = "";
+      const tableBody = document.getElementById("contactsTableBody");
+      tableBody.innerHTML = "";
 
-    if (data.success && data.data.length > 0) {
-      data.data.forEach((c, i) => {
-        const preview =
-          c.message.length > 30 ? c.message.substring(0, 30) + "..." : c.message;
+      if (data.success && data.data.length > 0) {
+        data.data.forEach((c, i) => {
+          const preview =
+            c.message.length > 30 ? c.message.substring(0, 30) + "..." : c.message;
 
-        tableBody.innerHTML += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${c.name}</td>
-            <td>${c.email}</td>
-            <td>
-              <span class="message-preview" 
-                    style="cursor:pointer; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;" 
-                    data-full="${c.message.replace(/"/g, "&quot;")}" 
-                    onclick="toggleMessage(this)">
-                ${preview}
-              </span>
-            </td>
-            <td>${new Date(c.createdAt).toLocaleString()}</td>
-            <td>
-              <button class="btn btn-danger btn-sm" onclick="deleteContact('${c._id}')">
-                <i class="fas fa-trash"></i> Delete
-              </button>
-            </td>
-          </tr>
-        `;
-      });
-    } else {
-      tableBody.innerHTML = "<tr><td colspan='6'>No messages yet</td></tr>";
+          tableBody.innerHTML += `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${c.name}</td>
+              <td>${c.email}</td>
+              <td>
+                <span class="message-preview" 
+                      style="cursor:pointer; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;" 
+                      data-full="${c.message.replace(/"/g, "&quot;")}" 
+                      onclick="toggleMessage(this)">
+                  ${preview}
+                </span>
+              </td>
+              <td>${new Date(c.createdAt).toLocaleString()}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${c._id}')">
+                   <i class="fas fa-trash"></i> Delete
+                </button>
+
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tableBody.innerHTML = "<tr><td colspan='6'>No messages yet</td></tr>";
+      }
+    } catch (err) {
+      console.error("Error loading contacts:", err);
     }
-  } catch (err) {
-    console.error("Error loading contacts:", err);
   }
-}
 
-function toggleMessage(el) {
-  const full = el.getAttribute("data-full");
-  const preview =
-    full.length > 30 ? full.substring(0, 30) + "..." : full;
+  function toggleMessage(el) {
+    const full = el.getAttribute("data-full");
+    const preview =
+      full.length > 30 ? full.substring(0, 30) + "..." : full;
 
-  if (el.textContent === preview) {
-    el.textContent = full; // expand
-    el.style.whiteSpace = "normal"; // allow wrapping inside the same cell
-  } else {
-    el.textContent = preview; // collapse
-    el.style.whiteSpace = "nowrap"; // keep single line with ellipsis
+    if (el.textContent === preview) {
+      el.textContent = full; // expand
+      el.style.whiteSpace = "normal"; // allow wrapping inside the same cell
+    } else {
+      el.textContent = preview; // collapse
+      el.style.whiteSpace = "nowrap"; // keep single line with ellipsis
+    }
   }
-}
 
-window.addEventListener("DOMContentLoaded", loadContacts);
+  window.addEventListener("DOMContentLoaded", loadContacts);
+
+
+  //delete record
+  let contactToDelete = null; // store which record should be deleted
+
+  // Open modal when delete button clicked
+  function openDeleteModal(id) {
+    contactToDelete = id;
+    const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
+    modal.show();
+  }
+
+  // Confirm delete
+  document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+    if (!contactToDelete) return;
+
+    try {
+      const res = await fetch(`/api/contact/${contactToDelete}`, { method: "DELETE" });
+      const data = await res.json();
+
+      if (data.success) {
+        // Refresh table
+        loadContacts();
+      }
+    } catch (err) {
+      console.error("Error deleting:", err);
+    }
+
+    // Close modal
+    const modalEl = document.getElementById("deleteModal");
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+  });
 </script>
-
-
-
-
-
 
 </body>
 </html>
