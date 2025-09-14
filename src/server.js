@@ -3,10 +3,13 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 
+const contactRoutes = require("./routes/contact");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/contact", contactRoutes);
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/shop", {
