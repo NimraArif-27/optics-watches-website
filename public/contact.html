@@ -242,34 +242,30 @@
     <section class="container my-5">
         <form id="contactForm" class="mx-auto" style="max-width: 600px;" autocomplete="off" novalidate>
     
-  <!-- Dummy hidden fields to trap autofill -->
-  <input type="text" name="fake_username" style="display:none">
-  <input type="password" name="fake_password" style="display:none">
+            <!-- Dummy hidden fields to trap autofill -->
+            <input type="text" name="fake_username" style="display:none">
+            <input type="password" name="fake_password" style="display:none">
 
-  <div class="mb-3">
-    <label class="form-label">Full Name</label>
-    <input type="text" class="form-control" id="name" 
-           name="contact_name" required autocomplete="off" spellcheck="false">
-    <div class="text-danger mt-1 error-message" id="nameError"></div>
-  </div>
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" name="contact_name" required autocomplete="off" spellcheck="false">
+                <div class="text-danger mt-1 error-message" id="nameError"></div>
+            </div>
 
-  <div class="mb-3">
-    <label class="form-label">Email address</label>
-    <input type="email" class="form-control" id="email" 
-           name="contact_email" required autocomplete="off" spellcheck="false">
-    <div class="text-danger mt-1 error-message" id="emailError"></div>
-  </div>
+            <div class="mb-3">
+                <label class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" name="contact_email" required autocomplete="off" spellcheck="false">
+                <div class="text-danger mt-1 error-message" id="emailError"></div>
+            </div>
 
-  <div class="mb-3">
-    <label class="form-label">Your Message</label>
-    <textarea class="form-control" id="message" 
-              name="contact_message" rows="4" required autocomplete="off"></textarea>
-    <div class="text-danger mt-1 error-message" id="messageError"></div>
-  </div>
+            <div class="mb-3">
+                <label class="form-label">Your Message</label>
+                <textarea class="form-control" id="message" name="contact_message" rows="4" required autocomplete="off"></textarea>
+                <div class="text-danger mt-1 error-message" id="messageError"></div>
+            </div>
 
-  <button type="submit" class="btn btn-primary">Send Message</button>
-</form>
-
+            <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
     </section>
 
     <!-- Store Info - Vertical -->
