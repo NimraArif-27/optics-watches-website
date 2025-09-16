@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 
 const contactRoutes = require("./routes/contact");
+const contactInfoRoutes = require("./routes/contactInfo");
 
 const app = express();
 app.use(cors());
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // API routes
 app.use("/api/contact", contactRoutes);
+app.use("/api/contact-info", contactInfoRoutes);
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/shop", {
