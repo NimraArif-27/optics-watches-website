@@ -1551,71 +1551,6 @@
         </div>
       </div>
 
-      <!-- JS for Contact Info-->
-      <script>
-        async function loadContactInfo() {
-        const response = await fetch("http://localhost:3000/api/contact-info");
-        const data = await response.json();
-
-        const tbody = document.getElementById("contactTableBody");
-        tbody.innerHTML = `
-          <tr>
-            <td>Address</td>
-            <td>${data.address}</td>
-            <td>
-              <button class="btn btn-info btn-sm" onclick="openEdit('address', '${data.address}')">
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>Phone</td>
-            <td>${data.phone}</td>
-            <td>
-              <button class="btn btn-info btn-sm" onclick="openEdit('phone', '${data.phone}')">
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>Email</td>
-            <td>${data.email}</td>
-            <td>
-              <button class="btn btn-info btn-sm" onclick="openEdit('email', '${data.email}')">
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </td>
-          </tr>
-        `;
-      }
-
-      function openEdit(type, value) {
-        document.getElementById("fieldType").value = type;
-        document.getElementById("fieldLabel").textContent = `Edit ${type}`;
-        document.getElementById("fieldValue").value = value;
-
-        const modal = new bootstrap.Modal(document.getElementById("editModal"));
-        modal.show();
-      }
-
-      document.getElementById("editForm").addEventListener("submit", async function(e) {
-        e.preventDefault();
-        const type = document.getElementById("fieldType").value;
-        const value = document.getElementById("fieldValue").value;
-
-        await fetch("http://localhost:3000/api/contact-info", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ [type]: value })
-        });
-
-        bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
-        loadContactInfo();
-      });
-
-      loadContactInfo();
-      </script>
-
       <!-- Messages -->
       <div class="card">
         <div class="card-header">Contact Form Messages</div>
@@ -1759,6 +1694,72 @@
     showSection('dashboard-overview');
   });
 </script>
+
+<!-- JS for Contact Info-->
+<script>
+  async function loadContactInfo() {
+    const response = await fetch("http://localhost:3000/api/contact-info");
+    const data = await response.json();
+
+    const tbody = document.getElementById("contactTableBody");
+    tbody.innerHTML = `
+      <tr>
+        <td>Address</td>
+        <td>${data.address}</td>
+        <td>
+          <button class="btn btn-info btn-sm" onclick="openEdit('address', '${data.address}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>Phone</td>
+        <td>${data.phone}</td>
+        <td>
+          <button class="btn btn-info btn-sm" onclick="openEdit('phone', '${data.phone}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>${data.email}</td>
+        <td>
+          <button class="btn btn-info btn-sm" onclick="openEdit('email', '${data.email}')">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+
+  function openEdit(type, value) {
+    document.getElementById("fieldType").value = type;
+    document.getElementById("fieldLabel").textContent = `Edit ${type}`;
+    document.getElementById("fieldValue").value = value;
+
+    const modal = new bootstrap.Modal(document.getElementById("editModal"));
+    modal.show();
+  }
+
+  document.getElementById("editForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const type = document.getElementById("fieldType").value;
+    const value = document.getElementById("fieldValue").value;
+
+    await fetch("http://localhost:3000/api/contact-info", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [type]: value })
+    });
+
+    bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+    loadContactInfo();
+  });
+
+  loadContactInfo();
+</script>
+
 <!--contact messages-->
 <script>
   async function loadContacts() {
