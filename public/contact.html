@@ -270,46 +270,46 @@
 
     <!-- Store Info - Vertical -->
     <div class="py-5 px-4 bg-light ps-5">
-  <div class="p-4 rounded">
-    <h3 class="fw-bold ps-3 py-4">Store Contact Information</h3>
+        <div class="p-4 rounded">
+            <h3 class="fw-bold ps-3 py-4">Store Contact Information</h3>
 
-    <div class="contact-info position-relative ps-2">
-      <div class="border-start border-2 border-primary ps-5 ms-2" id="userContactInfo">
-        <!-- Filled dynamically -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-async function loadUserContactInfo() {
-  const response = await fetch("http://localhost:3000/api/contact-info");
-  const data = await response.json();
-
-  const container = document.getElementById("userContactInfo");
-  container.innerHTML = `
-    <div class="mb-5">
-      <i class="fas fa-map-marker-alt fa-2x text-primary mb-2"></i>
-      <h6 class="fw-bold">Our Address</h6>
-      <p class="text-muted">${data.address}</p>
+            <div class="contact-info position-relative ps-2">
+                <div class="border-start border-2 border-primary ps-5 ms-2" id="userContactInfo">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="mb-5">
-      <i class="fas fa-phone fa-2x text-primary mb-2"></i>
-      <h6 class="fw-bold">Call Us</h6>
-      <p class="text-muted">${data.phone}</p>
-    </div>
+    <script>
+        async function loadUserContactInfo() {
+            const response = await fetch("http://localhost:3000/api/contact-info");
+            const data = await response.json();
 
-    <div>
-      <i class="fas fa-envelope fa-2x text-primary mb-2"></i>
-      <h6 class="fw-bold">Email Us</h6>
-      <p class="text-muted">${data.email}</p>
-    </div>
-  `;
-}
+            const container = document.getElementById("userContactInfo");
+            container.innerHTML = `
+                <div class="mb-5">
+                    <i class="fas fa-map-marker-alt fa-2x text-primary mb-2"></i>
+                    <h6 class="fw-bold">Our Address</h6>
+                    <p class="text-muted">${data.address}</p>
+                </div>
 
-loadUserContactInfo();
-</script>
+                <div class="mb-5">
+                    <i class="fas fa-phone fa-2x text-primary mb-2"></i>
+                    <h6 class="fw-bold">Call Us</h6>
+                    <p class="text-muted">${data.phone}</p>
+                </div>
+
+                <div>
+                    <i class="fas fa-envelope fa-2x text-primary mb-2"></i>
+                    <h6 class="fw-bold">Email Us</h6>
+                    <p class="text-muted">${data.email}</p>
+                </div>
+            `;
+        }
+
+        loadUserContactInfo();
+    </script>
 
 
 
