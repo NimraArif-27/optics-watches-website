@@ -24,4 +24,15 @@ router.post("/", async (req, res) => {
   }
 });
 
+// DELETE review by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    await Review.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete review" });
+  }
+});
+
+
 module.exports = router;

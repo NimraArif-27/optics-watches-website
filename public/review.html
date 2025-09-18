@@ -340,11 +340,15 @@
   }
 
   document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select")
-    .forEach(input => {
-      input.addEventListener("blur", () => validateField(input));
-      input.addEventListener("input", () => removeError(input));
-      input.addEventListener("focus", () => removeError(input));
+  .forEach(input => {
+    input.dataset.touched = "false"; // <-- add this line
+    input.addEventListener("blur", () => {
+      input.dataset.touched = "true"; // <-- mark as touched on blur
+      validateField(input);
     });
+    input.addEventListener("input", () => removeError(input));
+    input.addEventListener("focus", () => removeError(input));
+  });
 
   // ===============================
   // Stars Renderer
