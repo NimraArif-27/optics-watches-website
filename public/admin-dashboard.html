@@ -1488,6 +1488,26 @@
         </div>
       </div>
 
+      <!-- Modal (add this somewhere in your HTML, e.g., at the end of body) -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this review?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     </section>
 
     <!-- Contact Us Management -->
@@ -1745,6 +1765,8 @@
 <!-- Customer Review -->
 <script>
 const reviewsTableBody = document.getElementById("reviewsTableBody");
+const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+let reviewIdToDelete = null;
 
 function renderStars(rating) {
   return "★".repeat(rating) + "☆".repeat(5 - rating);
@@ -1755,8 +1777,7 @@ async function loadReviews() {
     const response = await fetch("/api/reviews"); 
     const reviews = await response.json();
 
-    const tbody = document.getElementById("reviewsTableBody");
-    tbody.innerHTML = "";
+    reviewsTableBody.innerHTML = "";
 
     reviews.forEach((review, index) => {
       const tr = document.createElement("tr");
@@ -1782,17 +1803,14 @@ async function loadReviews() {
         commentCell.classList.toggle("expanded");
       });
 
-      tbody.prepend(tr);
+      reviewsTableBody.prepend(tr);
     });
 
-    // attach delete event
+    // attach delete event using modal
     document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", async (e) => {
-        const id = e.currentTarget.dataset.id;
-        if (confirm("Are you sure you want to delete this review?")) {
-          await fetch(`/api/reviews/${id}`, { method: "DELETE" });
-          loadReviews(); // refresh table
-        }
+      btn.addEventListener("click", (e) => {
+        reviewIdToDelete = e.currentTarget.dataset.id;
+        deleteModal.show();
       });
     });
 
@@ -1801,9 +1819,20 @@ async function loadReviews() {
   }
 }
 
+// Confirm delete inside modal
+document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+  if (reviewIdToDelete) {
+    await fetch(`/api/reviews/${reviewIdToDelete}`, { method: "DELETE" });
+    reviewIdToDelete = null;
+    deleteModal.hide();
+    loadReviews(); // refresh table
+  }
+});
+
 // Call on page load
 loadReviews();
 </script>
+
 
 <!--contact messages-->
 <script>
