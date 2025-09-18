@@ -38,6 +38,14 @@
       max-width: 600px; /* form ki max width */
       width: 100%;
     }
+    /* Keep background white even on autofill */
+    input:-webkit-autofill,
+    textarea:-webkit-autofill,
+    select:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+      -webkit-text-fill-color: #000 !important;
+      transition: background-color 9999s ease-in-out 0s;
+    }
   </style>
 </head>
 <body>
@@ -173,22 +181,22 @@
       <div class="card p-4 review-form">
         <h4 class="mb-3 text-center">Add Your Review</h4>
 
-        <form id="reviewForm" novalidate>
+        <form id="reviewForm" novalidate autocomplete="off">
           <div class="mb-3">
             <label for="name" class="form-label">Your Name</label>
-            <input type="text" id="name" class="form-control" required>
+            <input type="text" id="name" class="form-control" required autocomplete="off">
             <small class="text-danger d-none" id="nameError">Name must contain alphabets only.</small>
           </div>
 
           <div class="mb-3">
             <label for="email" class="form-label">Your Email</label>
-            <input type="email" id="email" class="form-control" required>
+            <input type="email" id="email" class="form-control" required autocomplete="off">
             <small class="text-danger d-none" id="emailError">Please enter a valid email address.</small>
           </div>
 
           <div class="mb-3">
             <label for="rating" class="form-label">Your Rating</label>
-            <select id="rating" class="form-select" required>
+            <select id="rating" class="form-select" required autocomplete="off">
               <option value="">Select rating</option>
               <option value="5">Excellent</option>
               <option value="4">Very Good</option>
@@ -201,7 +209,7 @@
 
           <div class="mb-3">
             <label for="feedback" class="form-label">Your Feedback</label>
-            <textarea id="feedback" class="form-control" rows="3" required></textarea>
+            <textarea id="feedback" class="form-control" rows="3" required autocomplete="off"></textarea>
             <small class="text-danger d-none" id="feedbackError">Feedback cannot be empty.</small>
           </div>
 
