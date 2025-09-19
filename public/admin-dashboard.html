@@ -149,6 +149,22 @@
   overflow: visible;
   text-overflow: clip;
 }
+.message-cell {
+  max-width: 200px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message-cell.expanded {
+  white-space: normal;    /* allow wrapping */
+  overflow: visible;
+  text-overflow: unset;
+  max-height: 150px;      /* fixed block height */
+  overflow-y: auto;       /* scrollbar if too long */
+}
+
 
   </style>
 </head>
@@ -1851,14 +1867,7 @@ loadReviews();
               <td>${i + 1}</td>
               <td>${c.name}</td>
               <td>${c.email}</td>
-              <td>
-                <span class="message-preview" 
-                      style="cursor:pointer; display:inline-block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;" 
-                      data-full="${c.message.replace(/"/g, "&quot;")}" 
-                      onclick="toggleMessage(this)">
-                  ${preview}
-                </span>
-              </td>
+              <td class="message-cell">${c.message}</td>
               <td>${new Date(c.createdAt).toLocaleString()}</td>
               <td>
                 <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${c._id}')">
@@ -1869,25 +1878,18 @@ loadReviews();
             </tr>
           `;
         });
+
+        // ✅ attach toggle after rendering
+        document.querySelectorAll(".message-cell").forEach(cell => {
+          cell.addEventListener("click", () => {
+            cell.classList.toggle("expanded");
+          });
+        });
       } else {
         tableBody.innerHTML = "<tr><td colspan='6'>No messages yet</td></tr>";
       }
     } catch (err) {
       console.error("Error loading contacts:", err);
-    }
-  }
-
-  function toggleMessage(el) {
-    const full = el.getAttribute("data-full");
-    const preview =
-      full.length > 30 ? full.substring(0, 30) + "..." : full;
-
-    if (el.textContent === preview) {
-      el.textContent = full; // expand
-      el.style.whiteSpace = "normal"; // allow wrapping inside the same cell
-    } else {
-      el.textContent = preview; // collapse
-      el.style.whiteSpace = "nowrap"; // keep single line with ellipsis
     }
   }
 
