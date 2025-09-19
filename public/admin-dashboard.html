@@ -136,36 +136,34 @@
     }
 
     .comment-cell {
-  max-width: 200px;       /* restrict width */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  vertical-align: top;
-}
+      max-width: 200px;       /* restrict width */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      vertical-align: top;
+    }
 
-.comment-cell.expanded {
-  white-space: normal;   /* allow wrapping */
-  overflow: visible;
-  text-overflow: clip;
-}
-.message-cell {
-  max-width: 200px;
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    .comment-cell.expanded {
+      white-space: normal;   /* allow wrapping */
+      overflow: visible;
+      text-overflow: clip;
+    }
+    .message-cell {
+      max-width: 200px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-.message-cell.expanded {
-  white-space: normal;    /* allow wrapping */
-  overflow: visible;
-  text-overflow: unset;
-  max-height: 150px;      /* fixed block height */
-  overflow-y: auto;       /* scrollbar if too long */
-}
-
-
+    .message-cell.expanded {
+      white-space: normal;    /* allow wrapping */
+      overflow: visible;
+      text-overflow: unset;
+      max-height: 150px;      /* fixed block height */
+      overflow-y: auto;       /* scrollbar if too long */
+    }
   </style>
 </head>
 <body>
