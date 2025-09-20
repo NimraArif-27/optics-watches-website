@@ -6,6 +6,8 @@ const path = require("path");
 const contactRoutes = require("./routes/contact");
 const contactInfoRoutes = require("./routes/contactInfo");
 const reviewRoutes = require("./routes/review");
+const eyeglassesRoutes = require("./routes/eyeglasses");
+
 
 const app = express();
 app.use(cors());
@@ -15,6 +17,7 @@ app.use(express.json());
 app.use("/api/contact", contactRoutes);
 app.use("/api/contact-info", contactInfoRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/eyeglasses", eyeglassesRoutes);
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/shop", {
