@@ -455,106 +455,106 @@
         </form>
       </div>
     </div>
-<script>
-  //add eyeglasses product js
-document.addEventListener("DOMContentLoaded", () => {
-  const addButtons = document.querySelectorAll(
-    "#eyeglasses-products .btn-primary"
-  );
+    <!-- Add Eyeglasses Product JS -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const addButtons = document.querySelectorAll(
+          "#eyeglasses-products .btn-primary"
+        );
 
-  const categoryInput = document.getElementById("eyeglassesCategory");
-  const addProductForm = document.getElementById("addEyeglassesForm");
-  const ageGroupWrapper = document.getElementById("ageGroupWrapper");
+        const categoryInput = document.getElementById("eyeglassesCategory");
+        const addProductForm = document.getElementById("addEyeglassesForm");
+        const ageGroupWrapper = document.getElementById("ageGroupWrapper");
 
-  // Map which button belongs to which category
-  const categories = {
-    metalFrames: "metalFrames",
-    regularGlasses: "regularGlasses",
-    brandedFrames: "brandedFrames",
-    kidsEyeglasses: "kidsEyeglasses",
-  };
+        // Map which button belongs to which category
+        const categories = {
+          metalFrames: "metalFrames",
+          regularGlasses: "regularGlasses",
+          brandedFrames: "brandedFrames",
+          kidsEyeglasses: "kidsEyeglasses",
+        };
 
-  addButtons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const tabId = e.target.closest(".tab-pane").getAttribute("id");
-      const category = categories[tabId];
+        addButtons.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const tabId = e.target.closest(".tab-pane").getAttribute("id");
+            const category = categories[tabId];
 
-      categoryInput.value = category;
+            categoryInput.value = category;
 
-      // Show/hide Age Group for Kids section
-      if (category === "kidsEyeglasses") {
-        ageGroupWrapper.classList.remove("d-none");
-      } else {
-        ageGroupWrapper.classList.add("d-none");
-      }
+            // Show/hide Age Group for Kids section
+            if (category === "kidsEyeglasses") {
+              ageGroupWrapper.classList.remove("d-none");
+            } else {
+              ageGroupWrapper.classList.add("d-none");
+            }
 
-      new bootstrap.Modal(document.getElementById("addEyeglassesModal")).show();
-    });
-  });
-
-  // Form submit
-  addProductForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(addProductForm);
-
-    const res = await fetch("/api/eyeglasses/add", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert("✅ Product added successfully!");
-      location.reload();
-    } else {
-      alert("❌ Error adding product.");
-    }
-  });
-});
-
-//get the product in dashboard
-document.addEventListener("DOMContentLoaded", () => {
-  const categories = ["metalFrames", "regularGlasses", "brandedFrames", "kidsEyeglasses"];
-
-  categories.forEach(category => {
-    fetch(`/api/eyeglasses/${category}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          const container = document.querySelector(`#${category} .row`);
-          container.innerHTML = ""; // clear demo product
-
-          data.products.forEach(product => {
-            const card = document.createElement("div");
-            card.className = "col-md-3 mb-4";
-            card.innerHTML = `
-              <div class="card product-card h-100">
-                <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
-                <div class="card-body">
-                  <h5 class="card-title">${product.name}</h5>
-                  ${
-                    product.category === "kidsEyeglasses" 
-                      ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
-                      : ""
-                  }
-                  <p class="card-text"><strong>Price:</strong> Rs.${product.price}</p>
-                  <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                  <button class="btn btn-warning btn-sm"><i class="fas fa-eye"></i> View</button>
-                  <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
-                  <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
-                </div>
-              </div>
-            `;
-            container.appendChild(card);
+            new bootstrap.Modal(document.getElementById("addEyeglassesModal")).show();
           });
-        }
+        });
+
+        // Form submit
+        addProductForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(addProductForm);
+
+          const res = await fetch("/api/eyeglasses/add", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            alert("✅ Product added successfully!");
+            location.reload();
+          } else {
+            alert("❌ Error adding product.");
+          }
+        });
       });
-  });
-});
-</script>
+
+      //get the product in dashboard
+      document.addEventListener("DOMContentLoaded", () => {
+        const categories = ["metalFrames", "regularGlasses", "brandedFrames", "kidsEyeglasses"];
+
+        categories.forEach(category => {
+          fetch(`/api/eyeglasses/${category}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                const container = document.querySelector(`#${category} .row`);
+                container.innerHTML = ""; // clear demo product
+
+                data.products.forEach(product => {
+                  const card = document.createElement("div");
+                  card.className = "col-md-3 mb-4";
+                  card.innerHTML = `
+                    <div class="card product-card h-100">
+                      <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                      <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        ${
+                          product.category === "kidsEyeglasses" 
+                            ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
+                            : ""
+                        }
+                        <p class="card-text"><strong>Price:</strong> Rs.${product.price}</p>
+                        <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                      </div>
+                      <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-warning btn-sm"><i class="fas fa-eye"></i> View</button>
+                        <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                      </div>
+                    </div>
+                  `;
+                  container.appendChild(card);
+                });
+              }
+            });
+        });
+      });
+    </script>
 
 
 
