@@ -399,7 +399,7 @@
       <div class="modal-dialog modal-lg">   
         <form id="addEyeglassesForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
           <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header text-white bg-primary">
               <h5 class="modal-title">Add Eyeglasses Product</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -438,10 +438,10 @@
               <div class="mb-3 d-none" id="ageGroupWrapper">
                 <label class="form-label">Age Group</label>
                   <select name="ageGroup" class="form-control" required>
-                    <option value="3-5 years">3–5 years</option>
-                    <option value="6-8 years">6–8 years</option>
-                    <option value="9-12 years">9–12 years</option>
-                    <option value="13-15 years">13–15 years</option>
+                    <option value="3-5 years">3–5 Years</option>
+                    <option value="6-8 years">6–8 Years</option>
+                    <option value="9-12 years">9–12 Years</option>
+                    <option value="13-15 years">13–15 Years</option>
                   </select>
               </div>
 
@@ -481,7 +481,7 @@
     <div class="modal fade" id="viewEyeglassModal" tabindex="-1">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header bg-warning">
             <h5 class="modal-title">Product Details</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
@@ -491,6 +491,52 @@
         </div>
       </div>
     </div>
+    <!-- Edit Eyeglass Product Modal -->
+<div class="modal fade" id="editEyeglassProductModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title">Edit Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editEyeglassForm" autocomplete="off" novalidate>
+          <input type="hidden" id="editProductId" name="productId">
+
+          <div class="mb-3">
+            <label for="editName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="editName" name="name" autocomplete="off" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editPrice" class="form-label">Price</label>
+            <input type="number" class="form-control" id="editPrice" name="price" min="1" autocomplete="off" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editStock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="editStock" name="stock" min="1" autocomplete="off"  required>
+          </div>
+
+          <div class="mb-3 d-none" id="editAgeGroupWrapper">
+            <label for="editAgeGroup" class="form-label">Age Group</label>
+            <select class="form-select" id="editAgeGroup" name="ageGroup">
+              <option value="3-5 years">3-5 Years</option>
+              <option value="6-8 years">6-8 Years</option>
+              <option value="9-12 years">9-12 Years</option>
+              <option value="13-15 years">13-15 Years</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="editEyeglassForm" class="btn btn-info">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Delete Eyeglass Modal -->
     <div class="modal fade" id="deleteEyeglassProductModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
@@ -678,14 +724,16 @@
                             ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
                             : ""
                         }
-                        <p class="card-text"><strong>Price:</strong> Rs.${product.price}</p>
+                        <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
                         <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
                       </div>
                       <div class="card-footer d-flex justify-content-between">
                         <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
                           <i class="fas fa-eye"></i> View
                         </button>
-                        <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                          <i class="fas fa-edit"></i> Edit
+                        </button>
                         <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
                           <i class="fas fa-trash"></i> Delete
                         </button>
@@ -744,6 +792,205 @@
             });
         });
 
+        // ==================== EDIT PRODUCT ====================
+const editModalEl = document.getElementById("editEyeglassProductModal");
+const editModal = new bootstrap.Modal(editModalEl);
+const editForm = document.getElementById("editEyeglassForm");
+const editProductId = document.getElementById("editProductId");
+const editName = document.getElementById("editName");
+const editPrice = document.getElementById("editPrice");
+const editStock = document.getElementById("editStock");
+const editAgeGroupWrapper = document.getElementById("editAgeGroupWrapper");
+const editAgeGroup = document.getElementById("editAgeGroup");
+
+// Helper functions for error messages
+function showError(inputEl, message) {
+  let errorEl = inputEl.parentElement.querySelector(".error-text");
+  if (!errorEl) {
+    errorEl = document.createElement("div");
+    errorEl.className = "error-text text-danger mt-1";
+    inputEl.parentElement.appendChild(errorEl);
+  }
+  errorEl.textContent = message;
+}
+
+function clearError(inputEl) {
+  const errorEl = inputEl.parentElement.querySelector(".error-text");
+  if (errorEl) errorEl.textContent = "";
+}
+
+// Clear form + errors
+function resetEditForm() {
+  editForm.reset();
+  [editName, editPrice, editStock, editAgeGroup].forEach(clearError);
+  editProductId.value = "";
+  editAgeGroupWrapper.classList.add("d-none");
+}
+
+// Remove error when user focuses or types
+[editName, editPrice, editStock, editAgeGroup].forEach(input => {
+  input.addEventListener("focus", () => clearError(input));
+  input.addEventListener("input", () => clearError(input));
+});
+
+// Reset form whenever modal closes (Cancel or after Save)
+editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
+
+// Open modal and load product data
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".edit-product-btn"); // edit button
+  if (!btn) return;
+
+  const productId = btn.dataset.id;
+
+  try {
+    const res = await fetch(`/api/eyeglasses/product/${productId}`);
+    const data = await res.json();
+
+    if (data.success) {
+      const p = data.product;
+
+      editProductId.value = p._id;
+      editName.value = p.name;
+      editPrice.value = p.price;
+      editStock.value = p.stock;
+
+      if (p.category === "kidsEyeglasses") {
+        editAgeGroupWrapper.classList.remove("d-none");
+        editAgeGroup.value = p.ageGroup || "";
+      } else {
+        editAgeGroupWrapper.classList.add("d-none");
+        editAgeGroup.value = "";
+      }
+
+      editModal.show();
+    }
+  } catch (err) {
+    console.error("Error fetching product for edit:", err);
+  }
+});
+
+// Handle save changes
+editForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  let isValid = true;
+
+  // Validate Name
+  if (!editName.value.trim()) {
+    showError(editName, "Name is required");
+    isValid = false;
+  } else {
+    clearError(editName);
+  }
+
+  // Validate Price
+  if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
+    showError(editPrice, "Price must be a valid non-negative number");
+    isValid = false;
+  } else {
+    clearError(editPrice);
+  }
+
+  // Validate Stock
+  if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
+    showError(editStock, "Stock must be a valid non-negative number");
+    isValid = false;
+  } else {
+    clearError(editStock);
+  }
+
+  // Validate Age Group (if visible)
+  if (!editAgeGroupWrapper.classList.contains("d-none")) {
+    if (!editAgeGroup.value.trim()) {
+      showError(editAgeGroup, "Age group is required");
+      isValid = false;
+    } else {
+      clearError(editAgeGroup);
+    }
+  }
+
+  if (!isValid) return; // stop if validation fails
+
+  const updatedProduct = {
+    name: editName.value.trim(),
+    price: Number(editPrice.value),
+    stock: Number(editStock.value),
+  };
+
+  // only send ageGroup if the field is visible
+  if (!editAgeGroupWrapper.classList.contains("d-none")) {
+    updatedProduct.ageGroup = editAgeGroup.value;
+  }
+
+  try {
+    const res = await fetch(`/api/eyeglasses/update/${editProductId.value}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedProduct),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      editModal.hide(); // modal close will trigger resetEditForm()
+
+      // Refresh only products inside categories (same as delete logic)
+      const updatedCategory = data.product.category; // backend must return category
+      const container = document.querySelector(`#${updatedCategory} .row`);
+
+      if (container) {
+        fetch(`/api/eyeglasses/${updatedCategory}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              container.innerHTML = "";
+              data.products.forEach(product => {
+                const card = document.createElement("div");
+                card.className = "col-md-3 mb-4";
+                card.innerHTML = `
+                  <div class="card product-card h-100">
+                    <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                    <div class="card-body">
+                      <h5 class="card-title">${product.name}</h5>
+                      ${
+                        product.category === "kidsEyeglasses"
+                          ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>`
+                          : ""
+                      }
+                      <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                      <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                      <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </div>
+                `;
+                container.appendChild(card);
+              });
+            }
+          })
+          .catch(err => console.error("Error refreshing products:", err));
+      }
+    } else {
+      alert("❌ Failed to update product.");
+    }
+  } catch (err) {
+    console.error("Error updating product:", err);
+  }
+});
+
+
+
+
         //  DELETE functionality
         let deleteProductId = null;
         const deleteModalEl = document.getElementById("deleteEyeglassProductModal");
@@ -796,14 +1043,16 @@
                               ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
                               : ""
                           }
-                          <p class="card-text"><strong>Price:</strong> Rs.${product.price}</p>
+                          <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
                           <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
                           <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
                             <i class="fas fa-eye"></i> View
                           </button>
-                          <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
+                          <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                            <i class="fas fa-edit"></i> Edit
+                          </button>
                           <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
                             <i class="fas fa-trash"></i> Delete
                           </button>

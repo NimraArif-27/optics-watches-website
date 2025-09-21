@@ -85,6 +85,31 @@ router.get("/product/:id", async (req, res) => {
   }
 });
 
+// Update product
+router.patch("/update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    const product = await Eyeglasses.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!product) {
+      return res.json({ success: false, message: "Product not found" });
+    }
+
+    res.json({ success: true, product });
+  } catch (err) {
+    console.error("Error updating eyeglass:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
+
+
 router.delete("/delete/:id", async (req, res) => {
   try {
     const id = req.params.id;
