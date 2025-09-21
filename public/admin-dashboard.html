@@ -448,13 +448,24 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-success">Save Product</button>
+              <button type="submit" class="btn btn-primary">Save Product</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
           </div>
         </form>
       </div>
     </div>
+    <!-- Eyeglasses Confirmation Modal -->
+    <div class="modal fade" id="eyeglassesConfirmationModal" tabindex="-1">
+      <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content rounded-2" style="width: 350px; height: 200px; margin: auto;">
+          <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
+            <p id="eyeglassesConfirmationMessage" class="fs-4"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Add Eyeglasses Product JS -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -465,6 +476,7 @@
         const categoryInput = document.getElementById("eyeglassesCategory");
         const addProductForm = document.getElementById("addEyeglassesForm");
         const ageGroupWrapper = document.getElementById("ageGroupWrapper");
+        const addProductModalEl = document.getElementById("addEyeglassesModal");
 
         // Map which button belongs to which category
         const categories = {
@@ -476,6 +488,9 @@
 
         addButtons.forEach((btn) => {
           btn.addEventListener("click", (e) => {
+            // Reset form *before opening modal*
+            addProductForm.reset();
+
             const tabId = e.target.closest(".tab-pane").getAttribute("id");
             const category = categories[tabId];
 
@@ -492,6 +507,13 @@
           });
         });
 
+        // Reset form when modal is CLOSED (cancel, click outside, etc.)
+        addProductModalEl.addEventListener("hidden.bs.modal", () => {
+          addProductForm.reset();
+          categoryInput.value = "";
+          ageGroupWrapper.classList.add("d-none");
+        });
+
         // Form submit
         addProductForm.addEventListener("submit", async (e) => {
           e.preventDefault();
@@ -504,11 +526,25 @@
           });
 
           const data = await res.json();
+
+          // Close add product modal if open
+          const addModal = bootstrap.Modal.getInstance(document.getElementById("addEyeglassesModal"));
+          if (addModal) addModal.hide();
+
+          // Show confirmation modal
+          const confirmationMessage = document.getElementById("eyeglassesConfirmationMessage");
+          const confirmationModalEl = document.getElementById("eyeglassesConfirmationModal");
+          const confirmationModal = new bootstrap.Modal(confirmationModalEl);
+
           if (data.success) {
-            alert("✅ Product added successfully!");
-            location.reload();
+            confirmationMessage.innerHTML = `<i class="fas fa-check-circle text-primary"></i> Product added successfully!`;
+            confirmationModal.show();
+
+            // Auto reload after short delay
+            setTimeout(() => location.reload(), 3000);
           } else {
-            alert("❌ Error adding product.");
+            confirmationMessage.innerText = "❌ Error adding product.";
+            confirmationModal.show();
           }
         });
       });
