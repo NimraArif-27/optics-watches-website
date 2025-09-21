@@ -85,5 +85,19 @@ router.get("/product/:id", async (req, res) => {
   }
 });
 
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deleted = await Eyeglasses.findByIdAndDelete(id);
+
+    if (!deleted) return res.json({ success: false, message: "Product not found" });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: "Error deleting product" });
+  }
+});
+
 
 module.exports = router;
