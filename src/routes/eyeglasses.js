@@ -72,4 +72,18 @@ router.get("/:category", async (req, res) => {
   }
 });
 
+// GET /api/eyeglasses/product/:id
+router.get("/product/:id", async (req, res) => {
+  try {
+    const product = await Eyeglasses.findById(req.params.id);
+    if (!product) {
+      return res.json({ success: false, message: "Product not found" });
+    }
+    res.json({ success: true, product });
+  } catch (err) {
+    res.json({ success: false, message: "Error fetching product" });
+  }
+});
+
+
 module.exports = router;

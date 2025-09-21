@@ -477,6 +477,20 @@
         </div>
       </div>
     </div>
+    <!-- View Eyeglass Modal -->
+    <div class="modal fade" id="viewEyeglassModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Product Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="viewEyeglassModalBody">
+          <!-- Product details will be dynamically injected here -->
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Add Eyeglasses Product JS -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -649,7 +663,9 @@
                         <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
                       </div>
                       <div class="card-footer d-flex justify-content-between">
-                        <button class="btn btn-warning btn-sm"><i class="fas fa-eye"></i> View</button>
+                        <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                          <i class="fas fa-eye"></i> View
+                        </button>
                         <button class="btn btn-info btn-sm"><i class="fas fa-edit"></i> Edit</button>
                         <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
                       </div>
@@ -658,6 +674,52 @@
                   container.appendChild(card);
                 });
               }
+            });
+        });
+
+        // Handle View button click using event delegation
+        document.addEventListener("click", (e) => {
+          const btn = e.target.closest(".view-product-btn");
+          if (!btn) return;
+
+          const productId = btn.dataset.id;
+
+          // Fetch product details by ID
+          fetch(`/api/eyeglasses/product/${productId}`)
+            .then(res => res.json())
+            .then(product => {
+              if (!product || !product.success) return;
+
+              const p = product.product; // assume API returns { success: true, product: {...} }
+
+              const modalBody = document.getElementById("viewEyeglassModalBody");
+              modalBody.innerHTML = `
+                <div class="row">
+                  <div class="col-md-5 text-center">
+                    <img src="${p.mainImage}" class="img-fluid rounded mb-3" alt="${p.name}">
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                      ${
+                        p.subImages && p.subImages.length
+                          ? p.subImages.map(img => `<img src="${img}" class="img-thumbnail" style="width:80px; height:80px;">`).join("")
+                          : ""
+                      }
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <h4>${p.name}</h4>
+                    <p>${p.description || "No description available."}</p>
+                    <p><strong>Price:</strong> Rs. ${p.price}</p>
+                    <p><strong>Stock:</strong> ${p.stock}</p>
+                    ${
+                      p.category === "kidsEyeglasses"
+                        ? `<p><strong>Age Group:</strong> ${p.ageGroup}</p>`
+                        : ""
+                    }
+                  </div>
+                </div>
+              `;
+
+              new bootstrap.Modal(document.getElementById("viewEyeglassModal")).show();
             });
         });
       });
