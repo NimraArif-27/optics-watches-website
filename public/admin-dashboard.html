@@ -1184,7 +1184,7 @@
           </table>
 
           <!-- ✅ Edit Modal -->
-          <div class="modal fade" id="editModal" tabindex="-1">
+          <div class="modal fade" id="editContactModal" tabindex="-1">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header btn btn-info">
@@ -1466,7 +1466,7 @@ loadReviews();
     document.getElementById("fieldLabel").textContent = `Edit ${type}`;
     document.getElementById("fieldValue").value = value;
 
-    const modal = new bootstrap.Modal(document.getElementById("editModal"));
+    const modal = new bootstrap.Modal(document.getElementById("editContactModal"));
     modal.show();
   }
 
@@ -1481,7 +1481,7 @@ loadReviews();
       body: JSON.stringify({ [type]: value })
     });
 
-    bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+    bootstrap.Modal.getInstance(document.getElementById("editContactModal")).hide();
     loadContactInfo();
   });
 
