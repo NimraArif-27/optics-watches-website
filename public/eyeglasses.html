@@ -383,28 +383,7 @@
 <section id="metalframes-section" class="py-5 bg-white">
   <div class="container">
     <h2 class="text-center mb-5">Metal Frames Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="metal1.png" class="card-img-top" alt="Metal Frame 1">
-              <div class="product-overlay d-flex flex-column justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Classic Metal Frame</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="metalFramesContainer"></div>
   </div>
 </section>
 
@@ -412,28 +391,7 @@
 <section id="regularglasses-section" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-5">Regular Glasses Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="regular.png" class="card-img-top" alt="Regular Glass 1">
-              <div class="product-overlay d-flex justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Everyday Clear Frame</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="regularGlassesContainer"></div>
   </div>
 </section>
 
@@ -441,28 +399,7 @@
 <section id="branded-section" class="py-5 bg-white">
   <div class="container">
     <h2 class="text-center mb-5">Branded Frames Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="branded1.png" class="card-img-top" alt="Branded Frame 1">
-              <div class="product-overlay d-flex justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Ray-Ban Classic</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="brandedFramesContainer"></div>
   </div>
 </section>
 
@@ -470,30 +407,10 @@
 <section id="kids-section" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-5">Kids Eyeglasses Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="kids.png" class="card-img-top" alt="Kids Glass 1">
-              <div class="product-overlay d-flex justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Colorful Round Frame</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="kidsFramesContainer"></div>
   </div>
 </section>
+
 
 
     <footer class="bg-dark text-white text-center py-3">
@@ -540,6 +457,65 @@
             totalEl.textContent = "Rs " + (qty * pricePerItem);
         }
     </script>
+
+    <script>
+      // Utility function to render a product card
+function renderProductCard(product) {
+  return `
+    <div class="col-6 col-md-3">
+      <a href="#" class="text-decoration-none">
+        <div class="card product-card shadow-sm h-100">
+          <div class="position-relative">
+            <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+            <div class="product-overlay d-flex justify-content-center align-items-center">
+              <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
+              <span class="icon mx-2"><i class="fas fa-eye"></i></span>
+            </div>
+          </div>
+          <div class="card-body text-center">
+            <h5 class="card-title text-dark">${product.name}</h5>
+            ${
+              product.category === "kidsEyeglasses"
+                ? `<p class="text-muted">${product.ageGroup}</p>`
+                : ""
+            }
+            <p class="text-muted">Rs. ${product.price}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  `;
+}
+
+// Function to fetch and render products
+async function loadProducts(category, containerId) {
+  try {
+    const res = await fetch(`/api/eyeglasses/${category}`);
+    const data = await res.json();
+
+    if (data.success) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      data.products.forEach(product => {
+        container.innerHTML += renderProductCard(product);
+      });
+    }
+  } catch (err) {
+    console.error(`❌ Error loading ${category} products:`, err);
+  }
+}
+
+// Load all categories on page load
+document.addEventListener("DOMContentLoaded", () => {
+  loadProducts("metalFrames", "metalFramesContainer");
+  loadProducts("regularGlasses", "regularGlassesContainer");
+  loadProducts("brandedFrames", "brandedFramesContainer");
+  loadProducts("kidsEyeglasses", "kidsFramesContainer");
+});
+
+    </script>
+
 
 </body>
 
