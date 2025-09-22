@@ -463,7 +463,7 @@
 function renderProductCard(product) {
   return `
     <div class="col-6 col-md-3">
-      <a href="#" class="text-decoration-none">
+      <a href="products.html?id=${product._id}" class="text-decoration-none">
         <div class="card product-card shadow-sm h-100">
           <div class="position-relative">
             <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
@@ -507,12 +507,24 @@ async function loadProducts(category, containerId) {
 }
 
 // Load all categories on page load
-document.addEventListener("DOMContentLoaded", () => {
-  loadProducts("metalFrames", "metalFramesContainer");
-  loadProducts("regularGlasses", "regularGlassesContainer");
-  loadProducts("brandedFrames", "brandedFramesContainer");
-  loadProducts("kidsEyeglasses", "kidsFramesContainer");
+document.addEventListener("DOMContentLoaded", async () => {
+  // Load all categories
+  await loadProducts("metalFrames", "metalFramesContainer");
+  await loadProducts("regularGlasses", "regularGlassesContainer");
+  await loadProducts("brandedFrames", "brandedFramesContainer");
+  await loadProducts("kidsEyeglasses", "kidsFramesContainer");
+
+  // Scroll to hash section if exists
+  const hash = window.location.hash;
+  if (hash) {
+    const target = document.querySelector(hash);
+    if (target) {
+      // Smooth scroll to the section
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
 });
+
 
     </script>
 

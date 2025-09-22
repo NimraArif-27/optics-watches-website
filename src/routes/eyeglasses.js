@@ -61,6 +61,22 @@ router.post(
   }
 );
 
+// ✅ Related products
+router.get("/related/:category/:excludeId", async (req, res) => {
+  try {
+    const { category, excludeId } = req.params;
+    const products = await Eyeglasses.find({
+      category,
+      _id: { $ne: excludeId }
+    }).limit(4);
+
+    res.json({ success: true, products });
+  } catch (err) {
+    console.error("Error fetching related products:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 // Get products by category
 router.get("/:category", async (req, res) => {
   try {
