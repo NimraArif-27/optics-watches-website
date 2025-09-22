@@ -61,7 +61,7 @@ router.post(
   }
 );
 
-// ✅ Related products
+// Related products for products page
 router.get("/related/:category/:excludeId", async (req, res) => {
   try {
     const { category, excludeId } = req.params;
