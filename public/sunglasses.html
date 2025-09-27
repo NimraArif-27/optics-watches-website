@@ -377,122 +377,104 @@
 
     
      <!-- ========== Sunglasses Categories Products ========== -->
-
 <!-- ================== Metal Sunglasses Section ================== -->
-<section id="sunglasses-section" class="py-5 bg-white">
-    <div class="container">
-      <h2 class="text-center mb-5">Metal Sunglasses Collection</h2>
-      <div class="row g-4">
-  
-        <!-- Product 1 -->
-        <div class="col-6 col-md-3">
-          <a href="products.html" class="text-decoration-none">
-            <div class="card product-card shadow-sm h-100">
-              <div class="position-relative">
-                <img src="metalsun1.png" class="card-img-top" alt="Metal Sunglasses 1">
-                <div class="product-overlay d-flex flex-column justify-content-center align-items-center">
-                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-                </div>
-              </div>
-              <div class="card-body text-center">
-                <h5 class="card-title text-dark">Classic Metal Sunglasses</h5>
-                <p class="text-muted">Rs. 00</p>
-              </div>
-            </div>
-          </a>
-        </div>
-  
-      </div>
-    </div>
-  </section>
-  
-  <!-- ================== Regular Sunglasses Section ================== -->
-  <section id="Regularsunglasses-section" class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center mb-5">Regular Sunglasses Collection</h2>
-      <div class="row g-4">
-  
-        <!-- Product 1 -->
-        <div class="col-6 col-md-3">
-          <a href="#" class="text-decoration-none">
-            <div class="card product-card shadow-sm h-100">
-              <div class="position-relative">
-                <img src="sunglasses2.png" class="card-img-top" alt="Regular Sunglasses 1">
-                <div class="product-overlay d-flex justify-content-center align-items-center">
-                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-                </div>
-              </div>
-              <div class="card-body text-center">
-                <h5 class="card-title text-dark">Classic Aviator Sunglasses</h5>
-                <p class="text-muted">Rs. 00</p>
+<section id="metalsunglasses-section" class="py-5 bg-white">
+  <div class="container">
+    <h2 class="text-center mb-5">Metal Sunglasses Collection</h2>
+    <div class="row g-4" id="metalSunglassesContainer"></div>
+  </div>
+</section>
+
+<!-- ================== Regular Sunglasses Section ================== -->
+<section id="regularsunglasses-section" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5">Regular Sunglasses Collection</h2>
+    <div class="row g-4" id="regularSunglassesContainer"></div>
+  </div>
+</section>
+
+<!-- ================== Branded Sunglasses Section ================== -->
+<section id="brandedsunglasses-section" class="py-5 bg-white">
+  <div class="container">
+    <h2 class="text-center mb-5">Branded Sunglasses Collection</h2>
+    <div class="row g-4" id="brandedSunglassesContainer"></div>
+  </div>
+</section>
+
+<!-- ================== Kids Sunglasses Section ================== -->
+<section id="kidsunglasses-section" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5">Kids Sunglasses Collection</h2>
+    <div class="row g-4" id="kidsSunglassesContainer"></div>
+  </div>
+</section>
+
+<script>
+  // Utility function to render a product card
+  function renderSunglassCard(product) {
+    return `
+      <div class="col-6 col-md-3">
+        <a href="products.html?id=${product._id}" class="text-decoration-none">
+          <div class="card product-card shadow-sm h-100">
+            <div class="position-relative">
+              <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+              <div class="product-overlay d-flex justify-content-center align-items-center">
+                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
+                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
               </div>
             </div>
-          </a>
-        </div>
-  
-      </div>
-    </div>
-  </section>
-  
-  <!-- ================== Branded Sunglasses Section ================== -->
-  <section id="brandedsunglasses-section" class="py-5 bg-white">
-    <div class="container">
-      <h2 class="text-center mb-5">Branded Sunglasses Collection</h2>
-      <div class="row g-4">
-  
-        <!-- Product 1 -->
-        <div class="col-6 col-md-3">
-          <a href="#" class="text-decoration-none">
-            <div class="card product-card shadow-sm h-100">
-              <div class="position-relative">
-                <img src="brandedsunglasses.jpg" class="card-img-top" alt="Branded Sunglasses 1">
-                <div class="product-overlay d-flex justify-content-center align-items-center">
-                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-                </div>
-              </div>
-              <div class="card-body text-center">
-                <h5 class="card-title text-dark">Gold Trim Oversized Sunglasses</h5>
-                <p class="text-muted">Rs. 00</p>
-              </div>
+            <div class="card-body text-center">
+              <h5 class="card-title text-dark">${product.name}</h5>
+              ${
+                product.category === "kidsSunglasses"
+                  ? `<p class="text-muted">${product.ageGroup}</p>`
+                  : ""
+              }
+              <p class="text-muted">Rs. ${product.price}</p>
             </div>
-          </a>
-        </div>
-  
+          </div>
+        </a>
       </div>
-    </div>
-  </section>
-  
-  <!-- ================== Kids Sunglasses  Section ================== -->
-  <section id="kidsunglasses-section" class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center mb-5">Kids Sunglasses Collection</h2>
-      <div class="row g-4">
-  
-        <!-- Product 1 -->
-        <div class="col-6 col-md-3">
-          <a href="#" class="text-decoration-none">
-            <div class="card product-card shadow-sm h-100">
-              <div class="position-relative">
-                <img src="kidssunglasses.png" class="card-img-top" alt="Kids Glasses 1">
-                <div class="product-overlay d-flex justify-content-center align-items-center">
-                  <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                  <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-                </div>
-              </div>
-              <div class="card-body text-center">
-                <h5 class="card-title text-dark">Cool Rider Shades</h5>
-                <p class="text-muted">Rs. 00</p>
-              </div>
-            </div>
-          </a>
-        </div>
-  
-      </div>
-    </div>
-  </section>
+    `;
+  }
+
+  // Function to fetch and render sunglasses
+  async function loadSunglasses(category, containerId) {
+    try {
+      const res = await fetch(`/api/sunglasses/${category}`);
+      const data = await res.json();
+
+      if (data.success) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        data.products.forEach(product => {
+          container.innerHTML += renderSunglassCard(product);
+        });
+      }
+    } catch (err) {
+      console.error(`❌ Error loading ${category} sunglasses:`, err);
+    }
+  }
+
+  // Load all sunglasses categories on page load
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadSunglasses("metalSunglasses", "metalSunglassesContainer");
+    await loadSunglasses("regularSunglasses", "regularSunglassesContainer");
+    await loadSunglasses("brandedSunglasses", "brandedSunglassesContainer");
+    await loadSunglasses("kidsSunglasses", "kidsSunglassesContainer");
+
+    // Scroll to hash section if exists
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  });
+</script>
+
 
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2025 Khalid Optics & Watches</p>
