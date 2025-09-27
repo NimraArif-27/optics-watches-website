@@ -1190,169 +1190,165 @@
       </div>
     </section>
     <!-- Add Sunglasses Product Modal -->
-<div class="modal fade" id="addSunglassesModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <form id="addSunglassesForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
-      <div class="modal-content">
-        <div class="modal-header text-white bg-primary">
-          <h5 class="modal-title">Add Sunglasses Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+    <div class="modal fade" id="addSunglassesModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <form id="addSunglassesForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
+          <div class="modal-content">
+            <div class="modal-header text-white bg-primary">
+              <h5 class="modal-title">Add Sunglasses Product</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-        <div class="modal-body">
-          <input type="hidden" name="category" id="sunglassesCategory">
+            <div class="modal-body">
+              <input type="hidden" name="category" id="sunglassesCategory">
 
-          <!-- Product Name -->
-          <div class="mb-3">
-            <label class="form-label">Product Name</label>
-            <input type="text" name="name" class="form-control" required>
-            <div class="invalid-feedback">Product name is required.</div>
-          </div>
+              <!-- Product Name -->
+              <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <input type="text" name="name" class="form-control" required>
+                <div class="invalid-feedback">Product name is required.</div>
+              </div>
 
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" rows="3"></textarea>
-          </div>
+              <!-- Description -->
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+              </div>
 
-          <!-- Price -->
-          <div class="mb-3">
-            <label class="form-label">Price</label>
-            <input type="number" name="price" class="form-control" min="1" step="any" required>
-            <div class="invalid-feedback">Price is required and must be greater than zero.</div>
-          </div>
+              <!-- Price -->
+              <div class="mb-3">
+                <label class="form-label">Price</label>
+                <input type="number" name="price" class="form-control" min="1" step="any" required>
+                <div class="invalid-feedback">Price is required and must be greater than zero.</div>
+              </div>
 
-          <!-- Stock -->
-          <div class="mb-3">
-            <label class="form-label">Stock</label>
-            <input type="number" name="stock" class="form-control" min="1" step="1" required>
-            <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
-          </div>
+              <!-- Stock -->
+              <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" name="stock" class="form-control" min="1" step="1" required>
+                <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
+              </div>
 
-          <!-- Age Group (Kids only) -->
-          <div class="mb-3 d-none" id="sunglassesAgeGroupWrapper">
-            <label class="form-label">Age Group</label>
-            <select name="ageGroup" class="form-control" required>
-              <option value="3-5 years">3–5 Years</option>
-              <option value="6-8 years">6–8 Years</option>
-              <option value="9-12 years">9–12 Years</option>
-              <option value="13-15 years">13–15 Years</option>
-            </select>
-          </div>
+              <!-- Age Group (Kids only) -->
+              <div class="mb-3 d-none" id="sunglassesAgeGroupWrapper">
+                <label class="form-label">Age Group</label>
+                <select name="ageGroup" class="form-control" required>
+                  <option value="3-5 years">3–5 Years</option>
+                  <option value="6-8 years">6–8 Years</option>
+                  <option value="9-12 years">9–12 Years</option>
+                  <option value="13-15 years">13–15 Years</option>
+                </select>
+              </div>
 
-          <!-- Main Image -->
-          <div class="mb-3">
-            <label class="form-label">Main Image</label>
-            <input type="file" name="mainImage" class="form-control" accept="image/*" required>
-            <div class="invalid-feedback">Main product image is required.</div>
-          </div>
+              <!-- Main Image -->
+              <div class="mb-3">
+                <label class="form-label">Main Image</label>
+                <input type="file" name="mainImage" class="form-control" accept="image/*" required>
+                <div class="invalid-feedback">Main product image is required.</div>
+              </div>
 
-          <!-- Sub Images -->
-          <div class="mb-3">
-            <label class="form-label">Sub Images (up to 3)</label>
-            <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
-          </div>
-        </div>
+              <!-- Sub Images -->
+              <div class="mb-3">
+                <label class="form-label">Sub Images (up to 3)</label>
+                <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
+              </div>
+            </div>
 
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save Product</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Sunglasses Confirmation Modal -->
-<div class="modal fade" id="sunglassesConfirmationModal" tabindex="-1">
-  <div class="modal-dialog modal-md modal-dialog-centered">
-    <div class="modal-content rounded-2" style="width: 350px; height: 200px; margin: auto;">
-      <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
-        <p id="sunglassesConfirmationMessage" class="fs-4"></p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- View Sunglass Modal -->
-<div class="modal fade" id="viewSunglassModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-warning">
-        <h5 class="modal-title">Product Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="viewSunglassModalBody">
-        <!-- Product details will be dynamically injected here -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Sunglass Product Modal -->
-<div class="modal fade" id="editSunglassProductModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-info">
-        <h5 class="modal-title">Edit Product</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form id="editSunglassForm" autocomplete="off" novalidate>
-          <input type="hidden" id="editSunglassProductId" name="productId">
-
-          <div class="mb-3">
-            <label for="editSunglassName" class="form-label">Product Name</label>
-            <input type="text" class="form-control" id="editSunglassName" name="name" autocomplete="off" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="editSunglassPrice" class="form-label">Price</label>
-            <input type="number" class="form-control" id="editSunglassPrice" name="price" min="1" autocomplete="off" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="editSunglassStock" class="form-label">Stock</label>
-            <input type="number" class="form-control" id="editSunglassStock" name="stock" min="1" autocomplete="off" required>
-          </div>
-
-          <div class="mb-3 d-none" id="editSunglassAgeGroupWrapper">
-            <label for="editSunglassAgeGroup" class="form-label">Age Group</label>
-            <select class="form-select" id="editSunglassAgeGroup" name="ageGroup">
-              <option value="3-5 years">3-5 Years</option>
-              <option value="6-8 years">6-8 Years</option>
-              <option value="9-12 years">9-12 Years</option>
-              <option value="13-15 years">13-15 Years</option>
-            </select>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Save Product</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="editSunglassForm" class="btn btn-info">Save Changes</button>
+    </div>
+    <!-- Sunglasses Confirmation Modal -->
+    <div class="modal fade" id="sunglassesConfirmationModal" tabindex="-1">
+      <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content rounded-2" style="width: 350px; height: 200px; margin: auto;">
+          <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
+            <p id="sunglassesConfirmationMessage" class="fs-4"></p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+    <!-- View Sunglass Modal -->
+    <div class="modal fade" id="viewSunglassModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title">Product Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="viewSunglassModalBody">
+            <!-- Product details will be dynamically injected here -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Edit Sunglass Product Modal -->
+    <div class="modal fade" id="editSunglassProductModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-info">
+            <h5 class="modal-title">Edit Product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editSunglassForm" autocomplete="off" novalidate>
+              <input type="hidden" id="editSunglassProductId" name="productId">
 
-<!-- Delete Sunglass Modal -->
-<div class="modal fade" id="deleteSunglassProductModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title">Confirm Delete</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to delete this Product?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" id="confirmDeleteSunglassBtn" class="btn btn-danger">Delete</button>
+              <div class="mb-3">
+                <label for="editSunglassName" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="editSunglassName" name="name" autocomplete="off" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="editSunglassPrice" class="form-label">Price</label>
+                <input type="number" class="form-control" id="editSunglassPrice" name="price" min="1" autocomplete="off" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="editSunglassStock" class="form-label">Stock</label>
+                <input type="number" class="form-control" id="editSunglassStock" name="stock" min="1" autocomplete="off" required>
+              </div>
+
+              <div class="mb-3 d-none" id="editSunglassAgeGroupWrapper">
+                <label for="editSunglassAgeGroup" class="form-label">Age Group</label>
+                <select class="form-select" id="editSunglassAgeGroup" name="ageGroup">
+                  <option value="3-5 years">3-5 Years</option>
+                  <option value="6-8 years">6-8 Years</option>
+                  <option value="9-12 years">9-12 Years</option>
+                  <option value="13-15 years">13-15 Years</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="editSunglassForm" class="btn btn-info">Save Changes</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+    <!-- Delete Sunglass Modal -->
+    <div class="modal fade" id="deleteSunglassProductModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirm Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this Product?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="confirmDeleteSunglassBtn" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 <!-- Sunglasses Product JS -->
 <script>
