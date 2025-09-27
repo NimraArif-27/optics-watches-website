@@ -1349,403 +1349,478 @@
         </div>
       </div>
     </div>
+    <!-- Sunglasses Product JS -->
+    <script>
+      // Add Product (Sunglasses)
+      document.addEventListener("DOMContentLoaded", () => {
+        const addButtons = document.querySelectorAll("#sunglasses-products .btn-primary");
 
-<!-- Sunglasses Product JS -->
-<script>
-  // Add Product (Sunglasses)
-  document.addEventListener("DOMContentLoaded", () => {
-    const addButtons = document.querySelectorAll("#sunglasses-products .btn-primary");
+        const categoryInput = document.getElementById("sunglassesCategory");
+        const addProductForm = document.getElementById("addSunglassesForm");
+        const ageGroupWrapper = document.getElementById("sunglassesAgeGroupWrapper");
+        const addProductModalEl = document.getElementById("addSunglassesModal");
 
-    const categoryInput = document.getElementById("sunglassesCategory");
-    const addProductForm = document.getElementById("addSunglassesForm");
-    const ageGroupWrapper = document.getElementById("sunglassesAgeGroupWrapper");
-    const addProductModalEl = document.getElementById("addSunglassesModal");
+        // Map which button belongs to which category (matches your sunglasses section IDs)
+        const categories = {
+          metalSunglasses: "metalSunglasses",
+          regularSunglasses: "regularSunglasses",
+          brandedSunglasses: "brandedSunglasses",
+          kidsSunglasses: "kidsSunglasses",
+        };
 
-    // Map which button belongs to which category (matches your sunglasses section IDs)
-    const categories = {
-      metalSunglasses: "metalSunglasses",
-      regularSunglasses: "regularSunglasses",
-      brandedSunglasses: "brandedSunglasses",
-      kidsSunglasses: "kidsSunglasses",
-    };
+        addButtons.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            // Reset form *before opening modal*
+            addProductForm.reset();
 
-    addButtons.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        // Reset form *before opening modal*
-        addProductForm.reset();
+            const tabId = e.target.closest(".tab-pane").getAttribute("id");
+            const category = categories[tabId];
 
-        const tabId = e.target.closest(".tab-pane").getAttribute("id");
-        const category = categories[tabId];
+            categoryInput.value = category;
 
-        categoryInput.value = category;
+            // Show/hide Age Group for Kids section
+            if (category === "kidsSunglasses") {
+              ageGroupWrapper.classList.remove("d-none");
+            } else {
+              ageGroupWrapper.classList.add("d-none");
+            }
 
-        // Show/hide Age Group for Kids section
-        if (category === "kidsSunglasses") {
-          ageGroupWrapper.classList.remove("d-none");
-        } else {
+            new bootstrap.Modal(document.getElementById("addSunglassesModal")).show();
+          });
+        });
+
+        // Reset form when modal is CLOSED (cancel, click outside, etc.)
+        addProductModalEl.addEventListener("hidden.bs.modal", () => {
+          addProductForm.reset();
+          categoryInput.value = "";
           ageGroupWrapper.classList.add("d-none");
-        }
+        });
 
-        new bootstrap.Modal(document.getElementById("addSunglassesModal")).show();
-      });
-    });
+        // Form submit
+        addProductForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-    // Reset form when modal is CLOSED (cancel, click outside, etc.)
-    addProductModalEl.addEventListener("hidden.bs.modal", () => {
-      addProductForm.reset();
-      categoryInput.value = "";
-      ageGroupWrapper.classList.add("d-none");
-    });
+          // Form Validation
+          let valid = true;
 
-    // Form submit
-    addProductForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+          // Clear old errors
+          addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
 
-      // Form Validation
-      let valid = true;
+          const name = addProductForm.querySelector("[name='name']");
+          const price = addProductForm.querySelector("[name='price']");
+          const stock = addProductForm.querySelector("[name='stock']");
+          const mainImage = addProductForm.querySelector("[name='mainImage']");
 
-      // Clear old errors
-      addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
+          // product name
+          if (!name.value.trim()) {
+            showError(name, "Product name is required");
+            valid = false;
+          }
 
-      const name = addProductForm.querySelector("[name='name']");
-      const price = addProductForm.querySelector("[name='price']");
-      const stock = addProductForm.querySelector("[name='stock']");
-      const mainImage = addProductForm.querySelector("[name='mainImage']");
+          // price
+          if (!price.value || price.value <= 0) {
+            showError(price, "Price is required and must be greater than zero.");
+            valid = false;
+          }
 
-      // product name
-      if (!name.value.trim()) {
-        showError(name, "Product name is required");
-        valid = false;
-      }
+          // stock
+          if (!stock.value || stock.value <= 0) {
+            showError(stock, "Stock is required and must be greater than zero.");
+            valid = false;
+          }
 
-      // price
-      if (!price.value || price.value <= 0) {
-        showError(price, "Price is required and must be greater than zero.");
-        valid = false;
-      }
+          // main image
+          if (!mainImage.files || mainImage.files.length === 0) {
+            showError(mainImage, "Main image is required");
+            valid = false;
+          }
 
-      // stock
-      if (!stock.value || stock.value <= 0) {
-        showError(stock, "Stock is required and must be greater than zero.");
-        valid = false;
-      }
+          if (!valid) return; // stop here if validation fails
 
-      // main image
-      if (!mainImage.files || mainImage.files.length === 0) {
-        showError(mainImage, "Main image is required");
-        valid = false;
-      }
+          const formData = new FormData(addProductForm);
 
-      if (!valid) return; // stop here if validation fails
+          const res = await fetch("/api/sunglasses/add", {
+            method: "POST",
+            body: formData,
+          });
 
-      const formData = new FormData(addProductForm);
+          const data = await res.json();
 
-      const res = await fetch("/api/sunglasses/add", {
-        method: "POST",
-        body: formData,
-      });
+          // Close add product modal if open
+          const addModal = bootstrap.Modal.getInstance(document.getElementById("addSunglassesModal"));
+          if (addModal) addModal.hide();
 
-      const data = await res.json();
+          // Show confirmation modal
+          const confirmationMessage = document.getElementById("sunglassesConfirmationMessage");
+          const confirmationModalEl = document.getElementById("sunglassesConfirmationModal");
+          const confirmationModal = new bootstrap.Modal(confirmationModalEl);
 
-      // Close add product modal if open
-      const addModal = bootstrap.Modal.getInstance(document.getElementById("addSunglassesModal"));
-      if (addModal) addModal.hide();
-
-      // Show confirmation modal
-      const confirmationMessage = document.getElementById("sunglassesConfirmationMessage");
-      const confirmationModalEl = document.getElementById("sunglassesConfirmationModal");
-      const confirmationModal = new bootstrap.Modal(confirmationModalEl);
-
-      if (data.success) {
-        confirmationMessage.innerHTML = `<i class="fas fa-check-circle text-primary"></i> Product added successfully!`;
-        confirmationModal.show();
-
-        // Auto reload after short delay
-        setTimeout(() => location.reload(), 3000);
-      } else {
-        confirmationMessage.innerText = "❌ Error adding product.";
-        confirmationModal.show();
-      }
-    });
-
-    // helper function to show errors
-    function showError(input, message) {
-      // avoid duplicate error
-      if (input.parentNode.querySelector(".error-message")) return;
-
-      const error = document.createElement("div");
-      error.className = "error-message text-danger small mt-1";
-      error.innerText = message;
-      input.parentNode.appendChild(error);
-
-      // Remove error when user focuses OR types
-      function clearError() {
-        const existingError = input.parentNode.querySelector(".error-message");
-        if (existingError) existingError.remove();
-        input.removeEventListener("focus", clearError);
-        input.removeEventListener("input", clearError);
-      }
-
-      input.addEventListener("focus", clearError);
-      input.addEventListener("input", clearError);
-    }
-  });
-
-  // Get/Render/View/Edit/Delete products for Sunglasses
-  document.addEventListener("DOMContentLoaded", () => {
-    const categories = ["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"];
-
-    categories.forEach(category => {
-      fetch(`/api/sunglasses/${category}`)
-        .then(res => res.json())
-        .then(data => {
           if (data.success) {
-            const container = document.querySelector(`#${category} .row`);
-            if (!container) return;
-            container.innerHTML = ""; // clear demo product
+            confirmationMessage.innerHTML = `<i class="fas fa-check-circle text-primary"></i> Product added successfully!`;
+            confirmationModal.show();
 
-            data.products.forEach(product => {
-              const card = document.createElement("div");
-              card.className = "col-md-3 mb-4";
-              card.innerHTML = `
-                <div class="card product-card h-100">
-                  <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
-                  <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
+            // Auto reload after short delay
+            setTimeout(() => location.reload(), 3000);
+          } else {
+            confirmationMessage.innerText = "❌ Error adding product.";
+            confirmationModal.show();
+          }
+        });
+
+        // helper function to show errors
+        function showError(input, message) {
+          // avoid duplicate error
+          if (input.parentNode.querySelector(".error-message")) return;
+
+          const error = document.createElement("div");
+          error.className = "error-message text-danger small mt-1";
+          error.innerText = message;
+          input.parentNode.appendChild(error);
+
+          // Remove error when user focuses OR types
+          function clearError() {
+            const existingError = input.parentNode.querySelector(".error-message");
+            if (existingError) existingError.remove();
+            input.removeEventListener("focus", clearError);
+            input.removeEventListener("input", clearError);
+          }
+
+          input.addEventListener("focus", clearError);
+          input.addEventListener("input", clearError);
+        }
+      });
+
+      // Get/Render/View/Edit/Delete products for Sunglasses
+      document.addEventListener("DOMContentLoaded", () => {
+        const categories = ["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"];
+
+        categories.forEach(category => {
+          fetch(`/api/sunglasses/${category}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                const container = document.querySelector(`#${category} .row`);
+                if (!container) return;
+                container.innerHTML = ""; // clear demo product
+
+                  data.products.forEach(product => {
+                  const card = document.createElement("div");
+                  card.className = "col-md-3 mb-4";
+                  card.innerHTML = `
+                    <div class="card product-card h-100">
+                      <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                      <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        ${
+                          product.category === "kidsSunglasses" 
+                            ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
+                            : ""
+                        }
+                        <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                        <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                      </div>
+                      <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                          <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                          <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                          <i class="fas fa-trash"></i> Delete
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  container.appendChild(card);
+                });
+              }
+            });
+        });
+
+        // Scope event delegation to sunglasses-products section to avoid conflicts
+        const sunglassesSection = document.getElementById("sunglasses-products");
+
+        // View/Edit/Delete buttons (delegated)
+        sunglassesSection.addEventListener("click", async (e) => {
+          // VIEW
+          const viewBtn = e.target.closest(".view-product-btn");
+          if (viewBtn) {
+            e.stopPropagation(); // prevent eyeglasses handlers from also firing
+            const productId = viewBtn.dataset.id;
+
+            // Fetch product details by ID
+            try {
+              const res = await fetch(`/api/sunglasses/product/${productId}`);
+              const product = await res.json();
+
+              if (!product || !product.success) return;
+
+              const p = product.product; // assume API returns { success: true, product: {...} }
+
+              const modalBody = document.getElementById("viewSunglassModalBody");
+              modalBody.innerHTML = `
+                <div class="row">
+                  <div class="col-md-5 text-center">
+                    <img src="${p.mainImage}" class="img-fluid rounded mb-3" alt="${p.name}">
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                      ${
+                        p.subImages && p.subImages.length
+                          ? p.subImages.map(img => `<img src="${img}" class="img-thumbnail" style="width:80px; height:80px;">`).join("")
+                          : ""
+                      }
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <h4>${p.name}</h4>
+                    <p>${p.description || "No description available."}</p>
+                    <p><strong>Price:</strong> Rs. ${p.price}</p>
+                    <p><strong>Stock:</strong> ${p.stock}</p>
                     ${
-                      product.category === "kidsSunglasses" 
-                        ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
+                      p.category === "kidsSunglasses"
+                        ? `<p><strong>Age Group:</strong> ${p.ageGroup}</p>`
                         : ""
                     }
-                    <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                    <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                  </div>
-                  <div class="card-footer d-flex justify-content-between">
-                    <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                      <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                      <i class="fas fa-trash"></i> Delete
-                    </button>
                   </div>
                 </div>
               `;
-              container.appendChild(card);
-            });
-          }
-        });
-    });
 
-    // Scope event delegation to sunglasses-products section to avoid conflicts
-    const sunglassesSection = document.getElementById("sunglasses-products");
-
-    // View/Edit/Delete buttons (delegated)
-    sunglassesSection.addEventListener("click", async (e) => {
-      // VIEW
-      const viewBtn = e.target.closest(".view-product-btn");
-      if (viewBtn) {
-        e.stopPropagation(); // prevent eyeglasses handlers from also firing
-        const productId = viewBtn.dataset.id;
-
-        // Fetch product details by ID
-        try {
-          const res = await fetch(`/api/sunglasses/product/${productId}`);
-          const product = await res.json();
-
-          if (!product || !product.success) return;
-
-          const p = product.product; // assume API returns { success: true, product: {...} }
-
-          const modalBody = document.getElementById("viewSunglassModalBody");
-          modalBody.innerHTML = `
-            <div class="row">
-              <div class="col-md-5 text-center">
-                <img src="${p.mainImage}" class="img-fluid rounded mb-3" alt="${p.name}">
-                <div class="d-flex gap-2 flex-wrap justify-content-center">
-                  ${
-                    p.subImages && p.subImages.length
-                      ? p.subImages.map(img => `<img src="${img}" class="img-thumbnail" style="width:80px; height:80px;">`).join("")
-                      : ""
-                  }
-                </div>
-              </div>
-              <div class="col-md-7">
-                <h4>${p.name}</h4>
-                <p>${p.description || "No description available."}</p>
-                <p><strong>Price:</strong> Rs. ${p.price}</p>
-                <p><strong>Stock:</strong> ${p.stock}</p>
-                ${
-                  p.category === "kidsSunglasses"
-                    ? `<p><strong>Age Group:</strong> ${p.ageGroup}</p>`
-                    : ""
-                }
-              </div>
-            </div>
-          `;
-
-          new bootstrap.Modal(document.getElementById("viewSunglassModal")).show();
-        } catch (err) {
-          console.error("Error fetching product for view:", err);
-        }
-        return;
-      }
-
-      // EDIT
-      const editBtn = e.target.closest(".edit-product-btn");
-      if (editBtn) {
-        e.stopPropagation();
-        const productId = editBtn.dataset.id;
-
-        try {
-          const res = await fetch(`/api/sunglasses/product/${productId}`);
-          const data = await res.json();
-
-          if (data.success) {
-            const p = data.product;
-
-            // populate edit modal
-            document.getElementById("editSunglassProductId").value = p._id;
-            document.getElementById("editSunglassName").value = p.name || "";
-            document.getElementById("editSunglassPrice").value = p.price || "";
-            document.getElementById("editSunglassStock").value = p.stock || "";
-
-            if (p.category === "kidsSunglasses") {
-              document.getElementById("editSunglassAgeGroupWrapper").classList.remove("d-none");
-              document.getElementById("editSunglassAgeGroup").value = p.ageGroup || "";
-            } else {
-              document.getElementById("editSunglassAgeGroupWrapper").classList.add("d-none");
-              document.getElementById("editSunglassAgeGroup").value = "";
+              new bootstrap.Modal(document.getElementById("viewSunglassModal")).show();
+            } catch (err) {
+              console.error("Error fetching product for view:", err);
             }
-
-            new bootstrap.Modal(document.getElementById("editSunglassProductModal")).show();
+            return;
           }
-        } catch (err) {
-          console.error("Error fetching product for edit:", err);
-        }
-        return;
-      }
 
-      // DELETE (open confirmation)
-      const delBtn = e.target.closest(".delete-product-btn");
-      if (delBtn) {
-        e.stopPropagation();
-        window.__sunglassDeleteId = delBtn.dataset.id; // temporary storage
-        new bootstrap.Modal(document.getElementById("deleteSunglassProductModal")).show();
-        return;
-      }
-    });
+          // EDIT
+          const editBtn = e.target.closest(".edit-product-btn");
+          if (editBtn) {
+            e.stopPropagation();
+            const productId = editBtn.dataset.id;
 
-    // EDIT product logic
-    const editModalEl = document.getElementById("editSunglassProductModal");
-    const editModal = new bootstrap.Modal(editModalEl);
-    const editForm = document.getElementById("editSunglassForm");
-    const editProductIdEl = document.getElementById("editSunglassProductId");
-    const editName = document.getElementById("editSunglassName");
-    const editPrice = document.getElementById("editSunglassPrice");
-    const editStock = document.getElementById("editSunglassStock");
-    const editAgeGroupWrapper = document.getElementById("editSunglassAgeGroupWrapper");
-    const editAgeGroup = document.getElementById("editSunglassAgeGroup");
+            try {
+              const res = await fetch(`/api/sunglasses/product/${productId}`);
+              const data = await res.json();
 
-    // Helper functions for error messages
-    function showErrorEdit(inputEl, message) {
-      let errorEl = inputEl.parentElement.querySelector(".error-text");
-      if (!errorEl) {
-        errorEl = document.createElement("div");
-        errorEl.className = "error-text text-danger mt-1";
-        inputEl.parentElement.appendChild(errorEl);
-      }
-      errorEl.textContent = message;
-    }
+              if (data.success) {
+                const p = data.product;
 
-    function clearErrorEdit(inputEl) {
-      const errorEl = inputEl.parentElement.querySelector(".error-text");
-      if (errorEl) errorEl.textContent = "";
-    }
+                // populate edit modal
+                document.getElementById("editSunglassProductId").value = p._id;
+                document.getElementById("editSunglassName").value = p.name || "";
+                document.getElementById("editSunglassPrice").value = p.price || "";
+                document.getElementById("editSunglassStock").value = p.stock || "";
 
-    // Clear form + errors
-    function resetEditForm() {
-      editForm.reset();
-      [editName, editPrice, editStock, editAgeGroup].forEach(clearErrorEdit);
-      editProductIdEl.value = "";
-      editAgeGroupWrapper.classList.add("d-none");
-    }
+                if (p.category === "kidsSunglasses") {
+                  document.getElementById("editSunglassAgeGroupWrapper").classList.remove("d-none");
+                  document.getElementById("editSunglassAgeGroup").value = p.ageGroup || "";
+                } else {
+                  document.getElementById("editSunglassAgeGroupWrapper").classList.add("d-none");
+                  document.getElementById("editSunglassAgeGroup").value = "";
+                }
 
-    // Remove error when user focuses or types
-    [editName, editPrice, editStock, editAgeGroup].forEach(input => {
-      input.addEventListener("focus", () => clearErrorEdit(input));
-      input.addEventListener("input", () => clearErrorEdit(input));
-    });
+                new bootstrap.Modal(document.getElementById("editSunglassProductModal")).show();
+              }
+            } catch (err) {
+              console.error("Error fetching product for edit:", err);
+            }
+            return;
+          }
 
-    // Reset form whenever modal closes (Cancel or after Save)
-    editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
-
-    // Handle save changes
-    editForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      let isValid = true;
-
-      // Validate Name
-      if (!editName.value.trim()) {
-        showErrorEdit(editName, "Name is required");
-        isValid = false;
-      } else {
-        clearErrorEdit(editName);
-      }
-
-      // Validate Price
-      if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
-        showErrorEdit(editPrice, "Price must be a valid non-negative number");
-        isValid = false;
-      } else {
-        clearErrorEdit(editPrice);
-      }
-
-      // Validate Stock
-      if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
-        showErrorEdit(editStock, "Stock must be a valid non-negative number");
-        isValid = false;
-      } else {
-        clearErrorEdit(editStock);
-      }
-
-      if (!isValid) return; // stop if validation fails
-
-      const updatedProduct = {
-        name: editName.value.trim(),
-        price: Number(editPrice.value),
-        stock: Number(editStock.value),
-      };
-
-      // only send ageGroup if the field is visible
-      if (!editAgeGroupWrapper.classList.contains("d-none")) {
-        updatedProduct.ageGroup = editAgeGroup.value;
-      }
-
-      try {
-        const res = await fetch(`/api/sunglasses/update/${editProductIdEl.value}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedProduct),
+          // DELETE (open confirmation)
+          const delBtn = e.target.closest(".delete-product-btn");
+          if (delBtn) {
+            e.stopPropagation();
+            window.__sunglassDeleteId = delBtn.dataset.id; // temporary storage
+            new bootstrap.Modal(document.getElementById("deleteSunglassProductModal")).show();
+            return;
+          }
         });
 
-        const data = await res.json();
+        // EDIT product logic
+        const editModalEl = document.getElementById("editSunglassProductModal");
+        const editModal = new bootstrap.Modal(editModalEl);
+        const editForm = document.getElementById("editSunglassForm");
+        const editProductIdEl = document.getElementById("editSunglassProductId");
+        const editName = document.getElementById("editSunglassName");
+        const editPrice = document.getElementById("editSunglassPrice");
+        const editStock = document.getElementById("editSunglassStock");
+        const editAgeGroupWrapper = document.getElementById("editSunglassAgeGroupWrapper");
+        const editAgeGroup = document.getElementById("editSunglassAgeGroup");
 
-        if (data.success) {
-          const activeModal = bootstrap.Modal.getInstance(editModalEl);
-          if (activeModal) activeModal.hide();
+        // Helper functions for error messages
+        function showErrorEdit(inputEl, message) {
+          let errorEl = inputEl.parentElement.querySelector(".error-text");
+          if (!errorEl) {
+            errorEl = document.createElement("div");
+            errorEl.className = "error-text text-danger mt-1";
+            inputEl.parentElement.appendChild(errorEl);
+          }
+          errorEl.textContent = message;
+        }
 
-          // Refresh only products inside categories
-          const updatedCategory = data.product.category; // backend must return category
-          const container = document.querySelector(`#${updatedCategory} .row`);
+        function clearErrorEdit(inputEl) {
+          const errorEl = inputEl.parentElement.querySelector(".error-text");
+          if (errorEl) errorEl.textContent = "";
+        }
 
-          if (container) {
-            fetch(`/api/sunglasses/${updatedCategory}`)
-              .then(res => res.json())
-              .then(data => {
+        // Clear form + errors
+        function resetEditForm() {
+          editForm.reset();
+          [editName, editPrice, editStock, editAgeGroup].forEach(clearErrorEdit);
+          editProductIdEl.value = "";
+          editAgeGroupWrapper.classList.add("d-none");
+        }
+
+        // Remove error when user focuses or types
+        [editName, editPrice, editStock, editAgeGroup].forEach(input => {
+          input.addEventListener("focus", () => clearErrorEdit(input));
+          input.addEventListener("input", () => clearErrorEdit(input));
+        });
+
+        // Reset form whenever modal closes (Cancel or after Save)
+        editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
+
+        // Handle save changes
+        editForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          let isValid = true;
+
+          // Validate Name
+          if (!editName.value.trim()) {
+            showErrorEdit(editName, "Name is required");
+            isValid = false;
+          } else {
+            clearErrorEdit(editName);
+          }
+
+          // Validate Price
+          if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
+            showErrorEdit(editPrice, "Price must be a valid non-negative number");
+            isValid = false;
+          } else {
+            clearErrorEdit(editPrice);
+          }
+
+          // Validate Stock
+          if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
+            showErrorEdit(editStock, "Stock must be a valid non-negative number");
+            isValid = false;
+          } else {
+            clearErrorEdit(editStock);
+          }
+
+          if (!isValid) return; // stop if validation fails
+
+          const updatedProduct = {
+            name: editName.value.trim(),
+            price: Number(editPrice.value),
+            stock: Number(editStock.value),
+          };
+
+          // only send ageGroup if the field is visible
+          if (!editAgeGroupWrapper.classList.contains("d-none")) {
+            updatedProduct.ageGroup = editAgeGroup.value;
+          }
+
+          try {
+            const res = await fetch(`/api/sunglasses/update/${editProductIdEl.value}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(updatedProduct),
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+              const activeModal = bootstrap.Modal.getInstance(editModalEl);
+              if (activeModal) activeModal.hide();
+
+              // Refresh only products inside categories
+              const updatedCategory = data.product.category; // backend must return category
+              const container = document.querySelector(`#${updatedCategory} .row`);
+
+              if (container) {
+                fetch(`/api/sunglasses/${updatedCategory}`)
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) {
+                      container.innerHTML = "";
+                      data.products.forEach(product => {
+                        const card = document.createElement("div");
+                        card.className = "col-md-3 mb-4";
+                        card.innerHTML = `
+                          <div class="card product-card h-100">
+                            <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                            <div class="card-body">
+                              <h5 class="card-title">${product.name}</h5>
+                              ${
+                                product.category === "kidsSunglasses"
+                                  ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>`
+                                  : ""
+                              }
+                              <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                              <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                              <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                                <i class="fas fa-eye"></i> View
+                              </button>
+                              <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                                <i class="fas fa-edit"></i> Edit
+                              </button>
+                              <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                                <i class="fas fa-trash"></i> Delete
+                              </button>
+                            </div>
+                          </div>
+                        `;
+                        container.appendChild(card);
+                      });
+                    }
+                  })
+                  .catch(err => console.error("Error refreshing products:", err));
+              }
+            } else {
+              alert("❌ Failed to update product.");
+            }
+          } catch (err) {
+            console.error("Error updating product:", err);
+          }
+        });
+
+        // DELETE functionality
+        let deleteProductId = null;
+        const deleteModalEl = document.getElementById("deleteSunglassProductModal");
+        const deleteModal = new bootstrap.Modal(deleteModalEl);
+        const confirmDeleteBtn = document.getElementById("confirmDeleteSunglassBtn");
+
+        // Confirm deletion
+        confirmDeleteBtn.addEventListener("click", async () => {
+          // If a deletion id is stored via window.__sunglassDeleteId, use that
+          if (!window.__sunglassDeleteId) return;
+          deleteProductId = window.__sunglassDeleteId;
+
+          try {
+            const res = await fetch(`/api/sunglasses/delete/${deleteProductId}`, {
+              method: "DELETE",
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              deleteModal.hide();
+              window.__sunglassDeleteId = null;
+              deleteProductId = null;
+
+              // Refresh product list
+              const categories = ["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"];
+              for (const category of categories) {
+                const container = document.querySelector(`#${category} .row`);
+                if (!container) continue;
+
+                const res = await fetch(`/api/sunglasses/${category}`);
+                const data = await res.json();
                 if (data.success) {
                   container.innerHTML = "";
                   data.products.forEach(product => {
@@ -1757,8 +1832,8 @@
                         <div class="card-body">
                           <h5 class="card-title">${product.name}</h5>
                           ${
-                            product.category === "kidsSunglasses"
-                              ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>`
+                            product.category === "kidsSunglasses" 
+                              ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
                               : ""
                           }
                           <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
@@ -1777,94 +1852,18 @@
                         </div>
                       </div>
                     `;
+
                     container.appendChild(card);
                   });
                 }
-              })
-              .catch(err => console.error("Error refreshing products:", err));
-          }
-        } else {
-          alert("❌ Failed to update product.");
-        }
-      } catch (err) {
-        console.error("Error updating product:", err);
-      }
-    });
-
-    // DELETE functionality
-    let deleteProductId = null;
-    const deleteModalEl = document.getElementById("deleteSunglassProductModal");
-    const deleteModal = new bootstrap.Modal(deleteModalEl);
-    const confirmDeleteBtn = document.getElementById("confirmDeleteSunglassBtn");
-
-    // Confirm deletion
-    confirmDeleteBtn.addEventListener("click", async () => {
-      // If a deletion id is stored via window.__sunglassDeleteId, use that
-      if (!window.__sunglassDeleteId) return;
-      deleteProductId = window.__sunglassDeleteId;
-
-      try {
-        const res = await fetch(`/api/sunglasses/delete/${deleteProductId}`, {
-          method: "DELETE",
-        });
-        const data = await res.json();
-
-        if (data.success) {
-          deleteModal.hide();
-          window.__sunglassDeleteId = null;
-          deleteProductId = null;
-
-          // Refresh product list
-          const categories = ["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"];
-          for (const category of categories) {
-            const container = document.querySelector(`#${category} .row`);
-            if (!container) continue;
-
-            const res = await fetch(`/api/sunglasses/${category}`);
-            const data = await res.json();
-            if (data.success) {
-              container.innerHTML = "";
-              data.products.forEach(product => {
-                const card = document.createElement("div");
-                card.className = "col-md-3 mb-4";
-                card.innerHTML = `
-                  <div class="card product-card h-100">
-                    <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
-                    <div class="card-body">
-                      <h5 class="card-title">${product.name}</h5>
-                      ${
-                        product.category === "kidsSunglasses" 
-                          ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` 
-                          : ""
-                      }
-                      <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                      <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                      <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                        <i class="fas fa-edit"></i> Edit
-                      </button>
-                      <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                        <i class="fas fa-trash"></i> Delete
-                      </button>
-                    </div>
-                  </div>
-                `;
-
-                container.appendChild(card);
-              });
+              }
             }
+          } catch (err) {
+            console.error("Error deleting product:", err);
           }
-        }
-      } catch (err) {
-        console.error("Error deleting product:", err);
-      }
-    });
-  });
-</script>
+        });
+      });
+    </script>
 
 
     <!-- Products Management - Watches -->
