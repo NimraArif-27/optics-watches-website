@@ -1,247 +1,177 @@
-//Eyeglasses
-async function loadProductDetails() {
-  const params = new URLSearchParams(window.location.search);
-  const productId = params.get("id");
+(async function () {
+  // --- Helpers ---
+  function formatCategory(category) {
+    if (!category) return "";
+    return category
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
 
-  if (!productId) return;
+  function safeSetText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
+  }
 
-  try {
-    const res = await fetch(`/api/eyeglasses/product/${productId}`);
-    const data = await res.json();
+  function renderProduct(product) {
+    // Main image
+    const mainImageEl = document.getElementById("mainImage");
+    if (mainImageEl) mainImageEl.src = product.mainImage || "";
 
-    if (!data.success) {
-      document.getElementById("productName").innerText = "Product not found";
-      return;
-    }
-
-    const product = data.product;
-
-    // ---- Main Image ----
-    document.getElementById("mainImage").src = product.mainImage;
-
-    // ---- Sub Images (thumbnails) ----
+    // Thumbnails
     const thumbContainer = document.getElementById("thumbContainer");
-    thumbContainer.innerHTML = `
-      <img src="${product.mainImage}" class="thumb-img active" onclick="changeImage(this)">
-      ${product.subImages
-        .map(img => `<img src="${img}" class="thumb-img" onclick="changeImage(this)">`)
-        .join("")}
-    `;
-
-    // ---- Format category (camelCase → Title Case) ----
-    function formatCategory(category) {
-      return category
-        .replace(/([a-z])([A-Z])/g, "$1 $2")
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
+    if (thumbContainer) {
+      const subImages = Array.isArray(product.subImages) ? product.subImages : [];
+      const thumbs = [
+        `<img src="${product.mainImage || ""}" class="thumb-img active" onclick="changeImage(this)">`,
+        ...subImages.map(img => `<img src="${img}" class="thumb-img" onclick="changeImage(this)">`)
+      ].join("");
+      thumbContainer.innerHTML = thumbs;
     }
 
-    // ---- Product Details ----
-    document.getElementById("productName").innerText = product.name;
-    document.getElementById("productCategory").innerText = formatCategory(product.category);
-    document.getElementById("productPrice").innerText = "Rs. " + product.price;
+    // Basic details
+    safeSetText("productName", product.name || "Unnamed product");
+    safeSetText("productCategory", formatCategory(product.category || ""));
+    safeSetText("productPrice", product.price !== undefined ? "Rs. " + product.price : "");
     let descText = product.description || "No description available.";
 
-    // Add age group if kidsEyeglasses
-    if (product.category === "kidsEyeglasses" && product.ageGroup) {
+    // Age group for kids (handles both eyeglasses and sunglasses categories)
+    if (product.ageGroup && /kids/i.test(product.category || "")) {
       descText += `\nAge Group: ${product.ageGroup}`;
     }
-    document.getElementById("productDesc").innerText = descText;
-
-    // ---- Load Related Products ----
-    loadRelatedProducts(product.category, product._id, formatCategory);
-  } catch (err) {
-    console.error("Error fetching product:", err);
+    safeSetText("productDesc", descText);
   }
-}
 
-// Change main image when clicking thumbnail
-function changeImage(el) {
-  document.getElementById("mainImage").src = el.src;
-  document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
-  el.classList.add("active");
-}
+  // Shared functions used by markup (kept global)
+  window.changeImage = function (el) {
+    const main = document.getElementById("mainImage");
+    if (main && el && el.src) main.src = el.src;
+    document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
+    if (el) el.classList.add("active");
+  };
 
-// Quantity controls
-function updateQty(change) {
-  const qtyInput = document.getElementById("quantity");
-  let value = parseInt(qtyInput.value) + change;
-  if (value < 1) value = 1;
-  qtyInput.value = value;
-}
+  window.updateQty = function (change) {
+    const qtyInput = document.getElementById("quantity");
+    if (!qtyInput) return;
+    let value = parseInt(qtyInput.value || "0", 10) + change;
+    if (isNaN(value) || value < 1) value = 1;
+    qtyInput.value = value;
+  };
 
-function addToCart() {
-  alert("Added to cart!");
-}
+  window.addToCart = function () { alert("Added to cart!"); };
+  window.buyNow = function () { alert("Proceeding to checkout!"); };
 
-function buyNow() {
-  alert("Proceeding to checkout!");
-}
-
-// ---- Load Related Products Section ----
-async function loadRelatedProducts(category, excludeId, formatCategory) {
-  try {
-    const res = await fetch(`/api/eyeglasses/related/${category}/${excludeId}`);
-    const data = await res.json();
-
-    if (!data.success) return;
-
-    const container = document.getElementById("relatedProducts");
-    const title = document.getElementById("relatedTitle");
-    container.innerHTML = "";
-
-    // Set section heading
-    title.textContent = `More ${formatCategory(category)}`;
-
-    // Render cards in same layout
-    data.products.forEach((p) => {
-      // Include age group for kids
-      let extraInfo = "";
-      if (p.category === "kidsEyeglasses" && p.ageGroup) {
-        extraInfo = `<p class="text-muted">Age: ${p.ageGroup}</p>`;
-      }
-
-      container.innerHTML += `
-        <div class="col-md-3">
-          <div class="card">
-            <img src="${p.mainImage}" class="card-img-top" alt="${p.name}">
-            <div class="card-body text-center">
-              <h6>${p.name}</h6>
-              ${extraInfo}
-              <p class="text-primary">Rs. ${p.price}</p>
-              <a href="products.html?id=${p._id}" class="btn btn-sm btn-outline-primary">View</a>
+  // Related loaders (kept as-declared)
+  async function loadRelatedProducts(category, excludeId) {
+    try {
+      const res = await fetch(`/api/eyeglasses/related/${category}/${excludeId}`);
+      const data = await res.json();
+      if (!data || !data.success) return;
+      const container = document.getElementById("relatedProducts");
+      const title = document.getElementById("relatedTitle");
+      if (title) title.textContent = `More ${formatCategory(category)}`;
+      if (!container) return;
+      container.innerHTML = "";
+      data.products.forEach(p => {
+        const extraInfo = (p.category === "kidsEyeglasses" && p.ageGroup) ? `<p class="text-muted">Age: ${p.ageGroup}</p>` : "";
+        container.innerHTML += `
+          <div class="col-md-3">
+            <div class="card">
+              <img src="${p.mainImage || ""}" class="card-img-top" alt="${p.name || ""}">
+              <div class="card-body text-center">
+                <h6>${p.name || ""}</h6>
+                ${extraInfo}
+                <p class="text-primary">Rs. ${p.price ?? ""}</p>
+                <a href="products.html?id=${p._id}" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
             </div>
           </div>
-        </div>
-      `;
-    });
-  } catch (err) {
-    console.error("Error loading related products:", err);
+        `;
+      });
+    } catch (err) {
+      console.error("Error loading related eyeglasses:", err);
+    }
   }
-}
 
-document.addEventListener("DOMContentLoaded", loadProductDetails);
-
-//Sunglasses
-async function loadSunglassDetails() {
-  const params = new URLSearchParams(window.location.search);
-  const productId = params.get("id");
-
-  if (!productId) return;
-
-  try {
-    const res = await fetch(`/api/sunglasses/product/${productId}`);
-    const data = await res.json();
-
-    if (!data.success) {
-      document.getElementById("productName").innerText = "Product not found";
-      return;
-    }
-
-    const product = data.product;
-
-    // ---- Main Image ----
-    document.getElementById("mainImage").src = product.mainImage;
-
-    // ---- Sub Images (thumbnails) ----
-    const thumbContainer = document.getElementById("thumbContainer");
-    thumbContainer.innerHTML = `
-      <img src="${product.mainImage}" class="thumb-img active" onclick="changeImage(this)">
-      ${product.subImages
-        .map(img => `<img src="${img}" class="thumb-img" onclick="changeImage(this)">`)
-        .join("")}
-    `;
-
-    // ---- Format category (camelCase → Title Case) ----
-    function formatCategory(category) {
-      return category
-        .replace(/([a-z])([A-Z])/g, "$1 $2")
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
-    }
-
-    // ---- Product Details ----
-    document.getElementById("productName").innerText = product.name;
-    document.getElementById("productCategory").innerText = formatCategory(product.category);
-    document.getElementById("productPrice").innerText = "Rs. " + product.price;
-    let descText = product.description || "No description available.";
-
-    // Add age group if kidsSunglasses
-    if (product.category === "kidsSunglasses" && product.ageGroup) {
-      descText += `\nAge Group: ${product.ageGroup}`;
-    }
-    document.getElementById("productDesc").innerText = descText;
-
-    // ---- Load Related Products ----
-    loadRelatedSunglasses(product.category, product._id, formatCategory);
-  } catch (err) {
-    console.error("Error fetching product:", err);
-  }
-}
-
-// Change main image when clicking thumbnail
-function changeImage(el) {
-  document.getElementById("mainImage").src = el.src;
-  document.querySelectorAll(".thumb-img").forEach(img => img.classList.remove("active"));
-  el.classList.add("active");
-}
-
-// Quantity controls
-function updateQty(change) {
-  const qtyInput = document.getElementById("quantity");
-  let value = parseInt(qtyInput.value) + change;
-  if (value < 1) value = 1;
-  qtyInput.value = value;
-}
-
-function addToCart() {
-  alert("Added to cart!");
-}
-
-function buyNow() {
-  alert("Proceeding to checkout!");
-}
-
-// ---- Load Related Products Section ----
-async function loadRelatedSunglasses(category, excludeId, formatCategory) {
-  try {
-    const res = await fetch(`/api/sunglasses/related/${category}/${excludeId}`);
-    const data = await res.json();
-
-    if (!data.success) return;
-
-    const container = document.getElementById("relatedProducts");
-    const title = document.getElementById("relatedTitle");
-    container.innerHTML = "";
-
-    // Set section heading
-    title.textContent = `More ${formatCategory(category)}`;
-
-    // Render cards in same layout
-    data.products.forEach((p) => {
-      // Include age group for kids
-      let extraInfo = "";
-      if (p.category === "kidsSunglasses" && p.ageGroup) {
-        extraInfo = `<p class="text-muted">Age: ${p.ageGroup}</p>`;
-      }
-
-      container.innerHTML += `
-        <div class="col-md-3">
-          <div class="card">
-            <img src="${p.mainImage}" class="card-img-top" alt="${p.name}">
-            <div class="card-body text-center">
-              <h6>${p.name}</h6>
-              ${extraInfo}
-              <p class="text-primary">Rs. ${p.price}</p>
-              <a href="products.html?id=${p._id}" class="btn btn-sm btn-outline-primary">View</a>
+  async function loadRelatedSunglasses(category, excludeId) {
+    try {
+      const res = await fetch(`/api/sunglasses/related/${category}/${excludeId}`);
+      const data = await res.json();
+      if (!data || !data.success) return;
+      const container = document.getElementById("relatedProducts");
+      const title = document.getElementById("relatedTitle");
+      if (title) title.textContent = `More ${formatCategory(category)}`;
+      if (!container) return;
+      container.innerHTML = "";
+      data.products.forEach(p => {
+        const extraInfo = (p.category === "kidsSunglasses" && p.ageGroup) ? `<p class="text-muted">Age: ${p.ageGroup}</p>` : "";
+        container.innerHTML += `
+          <div class="col-md-3">
+            <div class="card">
+              <img src="${p.mainImage || ""}" class="card-img-top" alt="${p.name || ""}">
+              <div class="card-body text-center">
+                <h6>${p.name || ""}</h6>
+                ${extraInfo}
+                <p class="text-primary">Rs. ${p.price ?? ""}</p>
+                <a href="products.html?id=${p._id}" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
             </div>
           </div>
-        </div>
-      `;
-    });
-  } catch (err) {
-    console.error("Error loading related sunglasses:", err);
+        `;
+      });
+    } catch (err) {
+      console.error("Error loading related sunglasses:", err);
+    }
   }
-}
 
-document.addEventListener("DOMContentLoaded", loadSunglassDetails);
+  // --- Main loader: tries eyeglasses then sunglasses ---
+  async function loadAnyProductDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+    if (!productId) return; // nothing to show if no id param
+
+    const endpoints = [
+      { kind: "eyeglasses", url: `/api/eyeglasses/product/${productId}`, related: loadRelatedProducts },
+      { kind: "sunglasses", url: `/api/sunglasses/product/${productId}`, related: loadRelatedSunglasses }
+    ];
+
+    let found = false;
+    for (const ep of endpoints) {
+      try {
+        const res = await fetch(ep.url);
+        // try to parse JSON; if not JSON, skip
+        let data;
+        try { data = await res.json(); } catch (err) { continue; }
+
+        if (data && data.success && data.product) {
+          renderProduct(data.product);
+          // call appropriate related loader
+          ep.related(data.product.category, data.product._id);
+          found = true;
+          break; // stop after first successful load
+        }
+      } catch (err) {
+        console.warn(`Fetch error for ${ep.kind}:`, err);
+        // continue to next endpoint
+      }
+    }
+
+    if (!found) {
+      safeSetText("productName", "Product not found");
+      safeSetText("productCategory", "");
+      safeSetText("productPrice", "");
+      safeSetText("productDesc", "");
+      const thumb = document.getElementById("thumbContainer");
+      if (thumb) thumb.innerHTML = "";
+      const main = document.getElementById("mainImage");
+      if (main) main.src = "";
+    }
+  }
+
+  // Run on DOM ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadAnyProductDetails);
+  } else {
+    loadAnyProductDetails();
+  }
+})();
