@@ -2155,392 +2155,470 @@
         </div>
       </div>
     </div>
-<script>
-  // ================== Watches Product JS (Add modal + validation) ==================
-  document.addEventListener("DOMContentLoaded", () => {
-    const addButtons = document.querySelectorAll("#watches-products .btn-primary");
+    <script>
+      // ================== Watches Product JS (Add modal + validation) ==================
+      document.addEventListener("DOMContentLoaded", () => {
+        const addButtons = document.querySelectorAll("#watches-products .btn-primary");
 
-    const categoryInput = document.getElementById("watchesCategory");
-    const addProductForm = document.getElementById("addWatchesForm");
-    const watchAgeGroupWrapper = document.getElementById("watchAgeGroupWrapper");
-    const addProductModalEl = document.getElementById("addWatchesModal");
+        const categoryInput = document.getElementById("watchesCategory");
+        const addProductForm = document.getElementById("addWatchesForm");
+        const watchAgeGroupWrapper = document.getElementById("watchAgeGroupWrapper");
+        const addProductModalEl = document.getElementById("addWatchesModal");
 
-    // Map which tab id -> category (include alias for backward compatibility)
-    const categories = {
-      gentsWatches: "gentsWatches",
-      ladiesWatches: "ladiesWatches",
-      premiumWatches: "premiumWatches",
-      kidsWatches: "kidsWatches",
-      brandedWatches: "premiumWatches" // alias if your HTML still uses brandedWatches
-    };
+        // Map which tab id -> category (include alias for backward compatibility)
+        const categories = {
+          gentsWatches: "gentsWatches",
+          ladiesWatches: "ladiesWatches",
+          premiumWatches: "premiumWatches",
+          kidsWatches: "kidsWatches",
+          brandedWatches: "premiumWatches" // alias if your HTML still uses brandedWatches
+        };
 
-    addButtons.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        // Reset form *before opening modal*
-        addProductForm.reset();
+        addButtons.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            // Reset form *before opening modal*
+            addProductForm.reset();
 
-        const tabPane = e.target.closest(".tab-pane");
-        if (!tabPane) return;
-        const tabId = tabPane.getAttribute("id");
-        const category = categories[tabId] || tabId; // fallback to tabId if mapping missing
+            const tabPane = e.target.closest(".tab-pane");
+            if (!tabPane) return;
+            const tabId = tabPane.getAttribute("id");
+            const category = categories[tabId] || tabId; // fallback to tabId if mapping missing
 
-        categoryInput.value = category;
+            categoryInput.value = category;
 
-        // Show/hide Age Group for Kids section
-        if (category === "kidsWatches") {
-          watchAgeGroupWrapper.classList.remove("d-none");
-        } else {
-          watchAgeGroupWrapper.classList.add("d-none");
-        }
+            // Show/hide Age Group for Kids section
+            if (category === "kidsWatches") {
+              watchAgeGroupWrapper.classList.remove("d-none");
+            } else {
+              watchAgeGroupWrapper.classList.add("d-none");
+            }
 
-        new bootstrap.Modal(document.getElementById("addWatchesModal")).show();
-      });
-    });
-
-    // Reset form when modal is CLOSED (cancel, click outside, etc.)
-    addProductModalEl.addEventListener("hidden.bs.modal", () => {
-      addProductForm.reset();
-      categoryInput.value = "";
-      if (watchAgeGroupWrapper) watchAgeGroupWrapper.classList.add("d-none");
-    });
-
-    // Form submit
-    addProductForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      // Form Validation
-      let valid = true;
-
-      // Clear old errors
-      addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
-
-      const name = addProductForm.querySelector("[name='name']");
-      const price = addProductForm.querySelector("[name='price']");
-      const stock = addProductForm.querySelector("[name='stock']");
-      const mainImage = addProductForm.querySelector("[name='mainImage']");
-
-      // product name
-      if (!name.value.trim()) {
-        showError(name, "Product name is required");
-        valid = false;
-      }
-
-      // price
-      if (!price.value || Number(price.value) <= 0) {
-        showError(price, "Price is required and must be greater than zero.");
-        valid = false;
-      }
-
-      // stock
-      if (!stock.value || Number(stock.value) <= 0) {
-        showError(stock, "Stock is required and must be greater than zero.");
-        valid = false;
-      }
-
-      // main image
-      if (!mainImage.files || mainImage.files.length === 0) {
-        showError(mainImage, "Main image is required");
-        valid = false;
-      }
-
-      if (!valid) return; // stop here if validation fails
-
-      const formData = new FormData(addProductForm);
-
-      try {
-        const res = await fetch("/api/watches/add", {
-          method: "POST",
-          body: formData,
+            new bootstrap.Modal(document.getElementById("addWatchesModal")).show();
+          });
         });
 
-        const data = await res.json();
+        // Reset form when modal is CLOSED (cancel, click outside, etc.)
+        addProductModalEl.addEventListener("hidden.bs.modal", () => {
+          addProductForm.reset();
+          categoryInput.value = "";
+          if (watchAgeGroupWrapper) watchAgeGroupWrapper.classList.add("d-none");
+        });
 
-        // Close add product modal if open
-        const addModal = bootstrap.Modal.getInstance(document.getElementById("addWatchesModal"));
-        if (addModal) addModal.hide();
+        // Form submit
+        addProductForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-        // Show confirmation modal
-        const confirmationMessage = document.getElementById("watchesConfirmationMessage");
-        const confirmationModalEl = document.getElementById("watchesConfirmationModal");
-        const confirmationModal = new bootstrap.Modal(confirmationModalEl);
+          // Form Validation
+          let valid = true;
 
-        if (data.success) {
-          confirmationMessage.innerHTML = `<i class="fas fa-check-circle text-primary"></i> Product added successfully!`;
-          confirmationModal.show();
+          // Clear old errors
+          addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
 
-          // Auto reload after short delay
-          setTimeout(() => location.reload(), 3000);
-        } else {
-          confirmationMessage.innerText = "❌ Error adding product.";
-          confirmationModal.show();
+          const name = addProductForm.querySelector("[name='name']");
+          const price = addProductForm.querySelector("[name='price']");
+          const stock = addProductForm.querySelector("[name='stock']");
+          const mainImage = addProductForm.querySelector("[name='mainImage']");
+
+          // product name
+          if (!name.value.trim()) {
+            showError(name, "Product name is required");
+            valid = false;
+          }
+
+          // price
+          if (!price.value || Number(price.value) <= 0) {
+            showError(price, "Price is required and must be greater than zero.");
+            valid = false;
+          }
+
+          // stock
+          if (!stock.value || Number(stock.value) <= 0) {
+            showError(stock, "Stock is required and must be greater than zero.");
+            valid = false;
+          }
+
+          // main image
+          if (!mainImage.files || mainImage.files.length === 0) {
+            showError(mainImage, "Main image is required");
+            valid = false;
+          }
+
+          if (!valid) return; // stop here if validation fails
+
+          const formData = new FormData(addProductForm);
+
+          try {
+            const res = await fetch("/api/watches/add", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await res.json();
+
+            // Close add product modal if open
+            const addModal = bootstrap.Modal.getInstance(document.getElementById("addWatchesModal"));
+            if (addModal) addModal.hide();
+
+            // Show confirmation modal
+            const confirmationMessage = document.getElementById("watchesConfirmationMessage");
+            const confirmationModalEl = document.getElementById("watchesConfirmationModal");
+            const confirmationModal = new bootstrap.Modal(confirmationModalEl);
+
+            if (data.success) {
+              confirmationMessage.innerHTML = `<i class="fas fa-check-circle text-primary"></i> Product added successfully!`;
+              confirmationModal.show();
+
+              // Auto reload after short delay
+              setTimeout(() => location.reload(), 3000);
+            } else {
+              confirmationMessage.innerText = "❌ Error adding product.";
+              confirmationModal.show();
+            }
+          } catch (err) {
+            console.error("Error adding watch:", err);
+            const confirmationMessage = document.getElementById("watchesConfirmationMessage");
+            const confirmationModalEl = document.getElementById("watchesConfirmationModal");
+            const confirmationModal = new bootstrap.Modal(confirmationModalEl);
+            confirmationMessage.innerText = "❌ Error adding product.";
+            confirmationModal.show();
+          }
+        });
+
+        // helper function to show errors
+        function showError(input, message) {
+          // avoid duplicate error
+          if (input.parentNode.querySelector(".error-message")) return;
+
+          const error = document.createElement("div");
+          error.className = "error-message text-danger small mt-1";
+          error.innerText = message;
+          input.parentNode.appendChild(error);
+
+          // Remove error when user focuses OR types
+          function clearError() {
+            const existingError = input.parentNode.querySelector(".error-message");
+            if (existingError) existingError.remove();
+            input.removeEventListener("focus", clearError);
+            input.removeEventListener("input", clearError);
+          }
+
+          input.addEventListener("focus", clearError);
+          input.addEventListener("input", clearError);
         }
-      } catch (err) {
-        console.error("Error adding watch:", err);
-        const confirmationMessage = document.getElementById("watchesConfirmationMessage");
-        const confirmationModalEl = document.getElementById("watchesConfirmationModal");
-        const confirmationModal = new bootstrap.Modal(confirmationModalEl);
-        confirmationMessage.innerText = "❌ Error adding product.";
-        confirmationModal.show();
-      }
-    });
+      });
 
-    // helper function to show errors
-    function showError(input, message) {
-      // avoid duplicate error
-      if (input.parentNode.querySelector(".error-message")) return;
+      // ================== Fetch / View / Edit / Delete watches (dashboard) ==================
+      document.addEventListener("DOMContentLoaded", () => {
+        const categories = ["gentsWatches", "ladiesWatches", "premiumWatches", "kidsWatches"];
 
-      const error = document.createElement("div");
-      error.className = "error-message text-danger small mt-1";
-      error.innerText = message;
-      input.parentNode.appendChild(error);
+        categories.forEach(category => {
+          fetch(`/api/watches/${category}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                const container = document.querySelector(`#${category} .row`);
+                if (!container) return;
+                container.innerHTML = ""; // clear demo product
 
-      // Remove error when user focuses OR types
-      function clearError() {
-        const existingError = input.parentNode.querySelector(".error-message");
-        if (existingError) existingError.remove();
-        input.removeEventListener("focus", clearError);
-        input.removeEventListener("input", clearError);
-      }
+                data.products.forEach(product => {
+                  const card = document.createElement("div");
+                  card.className = "col-md-3 mb-4";
+                  card.innerHTML = `
+                    <div class="card product-card h-100">
+                      <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                      <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        ${ product.category === "kidsWatches" ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` : "" }
+                        <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                        <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                      </div>
+                      <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                          <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                          <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                          <i class="fas fa-trash"></i> Delete
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  container.appendChild(card);
+                });
+              }
+            })
+            .catch(err => console.error(`Error fetching category ${category}:`, err));
+        });
 
-      input.addEventListener("focus", clearError);
-      input.addEventListener("input", clearError);
-    }
-  });
+        // Handle View button click using event delegation
+        document.addEventListener("click", (e) => {
+          const btn = e.target.closest(".view-product-btn");
+          if (!btn) return;
 
-  // ================== Fetch / View / Edit / Delete watches (dashboard) ==================
-  document.addEventListener("DOMContentLoaded", () => {
-    const categories = ["gentsWatches", "ladiesWatches", "premiumWatches", "kidsWatches"];
+          const productId = btn.dataset.id;
 
-    categories.forEach(category => {
-      fetch(`/api/watches/${category}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            const container = document.querySelector(`#${category} .row`);
-            if (!container) return;
-            container.innerHTML = ""; // clear demo product
+          // Fetch product details by ID
+          fetch(`/api/watches/product/${productId}`)
+            .then(res => res.json())
+            .then(product => {
+              if (!product || !product.success) return;
 
-            data.products.forEach(product => {
-              const card = document.createElement("div");
-              card.className = "col-md-3 mb-4";
-              card.innerHTML = `
-                <div class="card product-card h-100">
-                  <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
-                  <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
-                    ${ product.category === "kidsWatches" ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` : "" }
-                    <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                    <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+              const p = product.product; // assume API returns { success: true, product: {...} }
+
+              const modalBody = document.getElementById("viewWatchModalBody");
+              modalBody.innerHTML = `
+                <div class="row">
+                  <div class="col-md-5 text-center">
+                    <img src="${p.mainImage}" class="img-fluid rounded mb-3" alt="${p.name}">
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                      ${
+                        p.subImages && p.subImages.length
+                          ? p.subImages.map(img => `<img src="${img}" class="img-thumbnail" style="width:80px; height:80px;">`).join("")
+                          : ""
+                      }
+                    </div>
                   </div>
-                  <div class="card-footer d-flex justify-content-between">
-                    <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                      <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                      <i class="fas fa-trash"></i> Delete
-                    </button>
+                  <div class="col-md-7">
+                    <h4>${p.name}</h4>
+                    <p>${p.description || "No description available."}</p>
+                    <p><strong>Price:</strong> Rs. ${p.price}</p>
+                    <p><strong>Stock:</strong> ${p.stock}</p>
+                    ${
+                      p.category === "kidsWatches"
+                        ? `<p><strong>Age Group:</strong> ${p.ageGroup}</p>`
+                        : ""
+                    }
                   </div>
                 </div>
               `;
-              container.appendChild(card);
-            });
-          }
-        })
-        .catch(err => console.error(`Error fetching category ${category}:`, err));
-    });
 
-    // Handle View button click using event delegation
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".view-product-btn");
-      if (!btn) return;
-
-      const productId = btn.dataset.id;
-
-      // Fetch product details by ID
-      fetch(`/api/watches/product/${productId}`)
-        .then(res => res.json())
-        .then(product => {
-          if (!product || !product.success) return;
-
-          const p = product.product; // assume API returns { success: true, product: {...} }
-
-          const modalBody = document.getElementById("viewWatchModalBody");
-          modalBody.innerHTML = `
-            <div class="row">
-              <div class="col-md-5 text-center">
-                <img src="${p.mainImage}" class="img-fluid rounded mb-3" alt="${p.name}">
-                <div class="d-flex gap-2 flex-wrap justify-content-center">
-                  ${
-                    p.subImages && p.subImages.length
-                      ? p.subImages.map(img => `<img src="${img}" class="img-thumbnail" style="width:80px; height:80px;">`).join("")
-                      : ""
-                  }
-                </div>
-              </div>
-              <div class="col-md-7">
-                <h4>${p.name}</h4>
-                <p>${p.description || "No description available."}</p>
-                <p><strong>Price:</strong> Rs. ${p.price}</p>
-                <p><strong>Stock:</strong> ${p.stock}</p>
-                ${
-                  p.category === "kidsWatches"
-                    ? `<p><strong>Age Group:</strong> ${p.ageGroup}</p>`
-                    : ""
-                }
-              </div>
-            </div>
-          `;
-
-          new bootstrap.Modal(document.getElementById("viewWatchModal")).show();
-        })
-        .catch(err => console.error("Error fetching watch details:", err));
-    });
-
-    // EDIT PRODUCT
-    const editModalEl = document.getElementById("editWatchProductModal");
-    const editModal = new bootstrap.Modal(editModalEl);
-    const editForm = document.getElementById("editWatchForm");
-    const editProductId = document.getElementById("editWatchProductId");
-    const editName = document.getElementById("editWatchName");
-    const editPrice = document.getElementById("editWatchPrice");
-    const editStock = document.getElementById("editWatchStock");
-    const editAgeGroupWrapper = document.getElementById("editWatchAgeGroupWrapper");
-    const editAgeGroup = document.getElementById("editWatchAgeGroup");
-
-    // Helper functions for error messages (scoped to edit)
-    function showEditError(inputEl, message) {
-      let errorEl = inputEl.parentElement.querySelector(".error-text");
-      if (!errorEl) {
-        errorEl = document.createElement("div");
-        errorEl.className = "error-text text-danger mt-1";
-        inputEl.parentElement.appendChild(errorEl);
-      }
-      errorEl.textContent = message;
-    }
-
-    function clearEditError(inputEl) {
-      const errorEl = inputEl.parentElement.querySelector(".error-text");
-      if (errorEl) errorEl.textContent = "";
-    }
-
-    // Clear form + errors
-    function resetEditForm() {
-      editForm.reset();
-      [editName, editPrice, editStock, editAgeGroup].forEach(clearEditError);
-      editProductId.value = "";
-      if (editAgeGroupWrapper) editAgeGroupWrapper.classList.add("d-none");
-    }
-
-    // Remove error when user focuses or types
-    [editName, editPrice, editStock, editAgeGroup].forEach(input => {
-      if (!input) return;
-      input.addEventListener("focus", () => clearEditError(input));
-      input.addEventListener("input", () => clearEditError(input));
-    });
-
-    // Reset form whenever modal closes (Cancel or after Save)
-    if (editModalEl) editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
-
-    // Open modal and load product data for edit
-    document.addEventListener("click", async (e) => {
-      const btn = e.target.closest(".edit-product-btn"); // edit button
-      if (!btn) return;
-
-      const productId = btn.dataset.id;
-
-      try {
-        const res = await fetch(`/api/watches/product/${productId}`);
-        const data = await res.json();
-
-        if (data.success) {
-          const p = data.product;
-
-          editProductId.value = p._id;
-          editName.value = p.name;
-          editPrice.value = p.price;
-          editStock.value = p.stock;
-
-          if (p.category === "kidsWatches") {
-            editAgeGroupWrapper.classList.remove("d-none");
-            editAgeGroup.value = p.ageGroup || "";
-          } else {
-            editAgeGroupWrapper.classList.add("d-none");
-            editAgeGroup.value = "";
-          }
-
-          editModal.show();
-        }
-      } catch (err) {
-        console.error("Error fetching product for edit:", err);
-      }
-    });
-
-    // Handle save changes
-    editForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      let isValid = true;
-
-      // Validate Name
-      if (!editName.value.trim()) {
-        showEditError(editName, "Name is required");
-        isValid = false;
-      } else {
-        clearEditError(editName);
-      }
-
-      // Validate Price
-      if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
-        showEditError(editPrice, "Price must be a valid non-negative number");
-        isValid = false;
-      } else {
-        clearEditError(editPrice);
-      }
-
-      // Validate Stock
-      if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
-        showEditError(editStock, "Stock must be a valid non-negative number");
-        isValid = false;
-      } else {
-        clearEditError(editStock);
-      }
-
-      if (!isValid) return; // stop if validation fails
-
-      const updatedProduct = {
-        name: editName.value.trim(),
-        price: Number(editPrice.value),
-        stock: Number(editStock.value),
-      };
-
-      // only send ageGroup if the field is visible
-      if (editAgeGroupWrapper && !editAgeGroupWrapper.classList.contains("d-none")) {
-        updatedProduct.ageGroup = editAgeGroup.value;
-      }
-
-      try {
-        const res = await fetch(`/api/watches/update/${editProductId.value}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedProduct),
+              new bootstrap.Modal(document.getElementById("viewWatchModal")).show();
+            })
+            .catch(err => console.error("Error fetching watch details:", err));
         });
 
-        const data = await res.json();
+        // EDIT PRODUCT
+        const editModalEl = document.getElementById("editWatchProductModal");
+        const editModal = new bootstrap.Modal(editModalEl);
+        const editForm = document.getElementById("editWatchForm");
+        const editProductId = document.getElementById("editWatchProductId");
+        const editName = document.getElementById("editWatchName");
+        const editPrice = document.getElementById("editWatchPrice");
+        const editStock = document.getElementById("editWatchStock");
+        const editAgeGroupWrapper = document.getElementById("editWatchAgeGroupWrapper");
+        const editAgeGroup = document.getElementById("editWatchAgeGroup");
 
-        if (data.success) {
-          editModal.hide(); // modal close will trigger resetEditForm()
+        // Helper functions for error messages (scoped to edit)
+        function showEditError(inputEl, message) {
+          let errorEl = inputEl.parentElement.querySelector(".error-text");
+          if (!errorEl) {
+            errorEl = document.createElement("div");
+            errorEl.className = "error-text text-danger mt-1";
+            inputEl.parentElement.appendChild(errorEl);
+          }
+          errorEl.textContent = message;
+        }
 
-          // Refresh only products inside categories
-          const updatedCategory = data.product.category; // backend must return category
-          const container = document.querySelector(`#${updatedCategory} .row`);
+        function clearEditError(inputEl) {
+          const errorEl = inputEl.parentElement.querySelector(".error-text");
+          if (errorEl) errorEl.textContent = "";
+        }
 
-          if (container) {
-            fetch(`/api/watches/${updatedCategory}`)
-              .then(res => res.json())
-              .then(data => {
+        // Clear form + errors
+        function resetEditForm() {
+          editForm.reset();
+          [editName, editPrice, editStock, editAgeGroup].forEach(clearEditError);
+          editProductId.value = "";
+          if (editAgeGroupWrapper) editAgeGroupWrapper.classList.add("d-none");
+        }
+
+        // Remove error when user focuses or types
+        [editName, editPrice, editStock, editAgeGroup].forEach(input => {
+          if (!input) return;
+          input.addEventListener("focus", () => clearEditError(input));
+          input.addEventListener("input", () => clearEditError(input));
+        });
+
+        // Reset form whenever modal closes (Cancel or after Save)
+        if (editModalEl) editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
+
+        // Open modal and load product data for edit
+        document.addEventListener("click", async (e) => {
+          const btn = e.target.closest(".edit-product-btn"); // edit button
+          if (!btn) return;
+
+          const productId = btn.dataset.id;
+
+          try {
+            const res = await fetch(`/api/watches/product/${productId}`);
+            const data = await res.json();
+
+            if (data.success) {
+              const p = data.product;
+
+              editProductId.value = p._id;
+              editName.value = p.name;
+              editPrice.value = p.price;
+              editStock.value = p.stock;
+
+              if (p.category === "kidsWatches") {
+                editAgeGroupWrapper.classList.remove("d-none");
+                editAgeGroup.value = p.ageGroup || "";
+              } else {
+                editAgeGroupWrapper.classList.add("d-none");
+                editAgeGroup.value = "";
+              }
+
+              editModal.show();
+            }
+          } catch (err) {
+            console.error("Error fetching product for edit:", err);
+          }
+        });
+
+        // Handle save changes
+        editForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          let isValid = true;
+
+          // Validate Name
+          if (!editName.value.trim()) {
+            showEditError(editName, "Name is required");
+            isValid = false;
+          } else {
+            clearEditError(editName);
+          }
+
+          // Validate Price
+          if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
+            showEditError(editPrice, "Price must be a valid non-negative number");
+            isValid = false;
+          } else {
+            clearEditError(editPrice);
+          }
+
+          // Validate Stock
+          if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
+            showEditError(editStock, "Stock must be a valid non-negative number");
+            isValid = false;
+          } else {
+            clearEditError(editStock);
+          }
+
+          if (!isValid) return; // stop if validation fails
+
+          const updatedProduct = {
+            name: editName.value.trim(),
+            price: Number(editPrice.value),
+            stock: Number(editStock.value),
+          };
+
+          // only send ageGroup if the field is visible
+          if (editAgeGroupWrapper && !editAgeGroupWrapper.classList.contains("d-none")) {
+            updatedProduct.ageGroup = editAgeGroup.value;
+          }
+
+          try {
+            const res = await fetch(`/api/watches/update/${editProductId.value}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(updatedProduct),
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+              editModal.hide(); // modal close will trigger resetEditForm()
+
+              // Refresh only products inside categories
+              const updatedCategory = data.product.category; // backend must return category
+              const container = document.querySelector(`#${updatedCategory} .row`);
+
+              if (container) {
+                fetch(`/api/watches/${updatedCategory}`)
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) {
+                      container.innerHTML = "";
+                      data.products.forEach(product => {
+                        const card = document.createElement("div");
+                        card.className = "col-md-3 mb-4";
+                        card.innerHTML = `
+                          <div class="card product-card h-100">
+                            <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                            <div class="card-body">
+                              <h5 class="card-title">${product.name}</h5>
+                              ${ product.category === "kidsWatches" ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` : "" }
+                              <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                              <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                              <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                                <i class="fas fa-eye"></i> View
+                              </button>
+                              <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                                <i class="fas fa-edit"></i> Edit
+                              </button>
+                              <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                                <i class="fas fa-trash"></i> Delete
+                              </button>
+                            </div>
+                          </div>
+                        `;
+                        container.appendChild(card);
+                      });
+                    }
+                  })
+                  .catch(err => console.error("Error refreshing products:", err));
+              }
+            } else {
+              alert("❌ Failed to update product.");
+            }
+          } catch (err) {
+            console.error("Error updating product:", err);
+          }
+        });
+
+        // ================== DELETE functionality for Watches ==================
+        let deleteWatchId = null;
+        const deleteWatchModalEl = document.getElementById("deleteWatchProductModal");
+        const deleteWatchModal = new bootstrap.Modal(deleteWatchModalEl);
+        const confirmDeleteWatchBtn = document.getElementById("confirmDeleteWatchBtn");
+
+        // Attach to the correct container
+        const watchesContainer = document.getElementById("watches-products");
+
+        watchesContainer?.addEventListener("click", (e) => {
+          const btn = e.target.closest(".delete-product-btn");
+          if (!btn) return;
+
+          deleteWatchId = btn.dataset.id;
+          deleteWatchModal.show();
+        });
+
+        // Confirm deletion
+        confirmDeleteWatchBtn.addEventListener("click", async () => {
+          if (!deleteWatchId) return;
+
+          try {
+            const res = await fetch(`/api/watches/delete/${deleteWatchId}`, { method: "DELETE" });
+            const data = await res.json();
+
+            if (data.success) {
+              deleteWatchModal.hide();
+              deleteWatchId = null;
+
+              // Refresh all categories
+              const categories = ["gentsWatches", "ladiesWatches", "premiumWatches", "kidsWatches"];
+              for (const category of categories) {
+                const container = document.querySelector(`#${category} .row`);
+                if (!container) continue;
+
+                const res = await fetch(`/api/watches/${category}`);
+                const data = await res.json();
                 if (data.success) {
                   container.innerHTML = "";
                   data.products.forEach(product => {
@@ -2571,97 +2649,16 @@
                     container.appendChild(card);
                   });
                 }
-              })
-              .catch(err => console.error("Error refreshing products:", err));
+              }
+            } else {
+              alert("❌ Failed to delete product.");
+            }
+          } catch (err) {
+            console.error("Error deleting product:", err);
           }
-        } else {
-          alert("❌ Failed to update product.");
-        }
-      } catch (err) {
-        console.error("Error updating product:", err);
-      }
-    });
-
-    // ================== DELETE functionality for Watches ==================
-let deleteWatchId = null;
-const deleteWatchModalEl = document.getElementById("deleteWatchProductModal");
-const deleteWatchModal = new bootstrap.Modal(deleteWatchModalEl);
-const confirmDeleteWatchBtn = document.getElementById("confirmDeleteWatchBtn");
-
-// Attach to the correct container
-const watchesContainer = document.getElementById("watches-products");
-
-watchesContainer?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".delete-product-btn");
-  if (!btn) return;
-
-  deleteWatchId = btn.dataset.id;
-  deleteWatchModal.show();
-});
-
-// Confirm deletion
-confirmDeleteWatchBtn.addEventListener("click", async () => {
-  if (!deleteWatchId) return;
-
-  try {
-    const res = await fetch(`/api/watches/delete/${deleteWatchId}`, { method: "DELETE" });
-    const data = await res.json();
-
-    if (data.success) {
-      deleteWatchModal.hide();
-      deleteWatchId = null;
-
-      // Refresh all categories
-      const categories = ["gentsWatches", "ladiesWatches", "premiumWatches", "kidsWatches"];
-      for (const category of categories) {
-        const container = document.querySelector(`#${category} .row`);
-        if (!container) continue;
-
-        const res = await fetch(`/api/watches/${category}`);
-        const data = await res.json();
-        if (data.success) {
-          container.innerHTML = "";
-          data.products.forEach(product => {
-            const card = document.createElement("div");
-            card.className = "col-md-3 mb-4";
-            card.innerHTML = `
-              <div class="card product-card h-100">
-                <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
-                <div class="card-body">
-                  <h5 class="card-title">${product.name}</h5>
-                  ${ product.category === "kidsWatches" ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>` : "" }
-                  <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                  <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                  <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                    <i class="fas fa-eye"></i> View
-                  </button>
-                  <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                    <i class="fas fa-trash"></i> Delete
-                  </button>
-                </div>
-              </div>
-            `;
-            container.appendChild(card);
-          });
-        }
-      }
-    } else {
-      alert("❌ Failed to delete product.");
-    }
-  } catch (err) {
-    console.error("Error deleting product:", err);
-  }
-});
-
-
-
-  });
-</script>
+        });
+      });
+    </script>
 
 
     <!-- Products Management - Lenses -->
