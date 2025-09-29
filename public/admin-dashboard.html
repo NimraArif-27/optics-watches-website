@@ -263,7 +263,7 @@
         </div>
       </div>
     </section>
-
+ 
     <!-- Products Management - Eyeglasses -->
     <section id="eyeglasses-products" class="content-section">
       <h2>Eyeglasses Products</h2>
@@ -1060,7 +1060,6 @@
     </script>
     
 
-
     <!-- Products Management - Sunglasses -->
     <section id="sunglasses-products" class="content-section">
       <h2>Sunglasses Products</h2>
@@ -1784,83 +1783,82 @@
         });
 
         // Sunglasses DELETE functionality
-let deleteSunglassId = null;
-const deleteSunglassModalEl = document.getElementById("deleteSunglassProductModal");
-const deleteSunglassModal = new bootstrap.Modal(deleteSunglassModalEl);
-const confirmDeleteSunglassBtn = document.getElementById("confirmDeleteSunglassBtn");
+        let deleteSunglassId = null;
+        const deleteSunglassModalEl = document.getElementById("deleteSunglassProductModal");
+        const deleteSunglassModal = new bootstrap.Modal(deleteSunglassModalEl);
+        const confirmDeleteSunglassBtn = document.getElementById("confirmDeleteSunglassBtn");
 
-// Event delegation for delete buttons
-const sunglassesContainer = document.getElementById("sunglasses-products");
+        // Event delegation for delete buttons
+        const sunglassesContainer = document.getElementById("sunglasses-products");
 
-sunglassesContainer?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".delete-product-btn");
-  if (!btn) return;
+        sunglassesContainer?.addEventListener("click", (e) => {
+          const btn = e.target.closest(".delete-product-btn");
+          if (!btn) return;
 
-  deleteSunglassId = btn.dataset.id;
-  deleteSunglassModal.show();
-});
+          deleteSunglassId = btn.dataset.id;
+          deleteSunglassModal.show();
+        });
 
-// Confirm deletion
-confirmDeleteSunglassBtn.addEventListener("click", async () => {
-  if (!deleteSunglassId) return;
+        // Confirm deletion
+        confirmDeleteSunglassBtn.addEventListener("click", async () => {
+          if (!deleteSunglassId) return;
 
-  try {
-    const res = await fetch(`/api/sunglasses/delete/${deleteSunglassId}`, { method: "DELETE" });
-    const data = await res.json();
+          try {
+            const res = await fetch(`/api/sunglasses/delete/${deleteSunglassId}`, { method: "DELETE" });
+            const data = await res.json();
+ 
+            if (data.success) {
+              deleteSunglassModal.hide();
+              deleteSunglassId = null;
 
-    if (data.success) {
-      deleteSunglassModal.hide();
-      deleteSunglassId = null;
+              // Refresh product list for all 4 categories
+              const categories = ["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"];
+              for (const category of categories) {
+                const container = document.querySelector(`#${category} .row`);
+                if (!container) continue;
 
-      // Refresh product list for all 4 categories
-      const categories = ["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"];
-      for (const category of categories) {
-        const container = document.querySelector(`#${category} .row`);
-        if (!container) continue;
-
-        const res = await fetch(`/api/sunglasses/${category}`);
-        const data = await res.json();
-        if (data.success) {
-          container.innerHTML = "";
-          data.products.forEach(product => {
-            const card = document.createElement("div");
-            card.className = "col-md-3 mb-4";
-            card.innerHTML = `
-              <div class="card product-card h-100">
-                <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
-                <div class="card-body">
-                  <h5 class="card-title">${product.name}</h5>
-                  ${
-                    product.category === "kidsSunglasses"
-                      ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>`
-                      : ""
-                  }
-                  <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                  <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                  <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                    <i class="fas fa-eye"></i> View
-                  </button>
-                  <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                    <i class="fas fa-trash"></i> Delete
-                  </button>
-                </div>
-              </div>
-            `;
-            container.appendChild(card);
-          });
-        }
-      }
-    }
-  } catch (err) {
-    console.error("Error deleting sunglasses product:", err);
-  }
-});
-
+                const res = await fetch(`/api/sunglasses/${category}`);
+                const data = await res.json();
+                if (data.success) {
+                  container.innerHTML = "";
+                  data.products.forEach(product => {
+                    const card = document.createElement("div");
+                    card.className = "col-md-3 mb-4";
+                    card.innerHTML = `
+                      <div class="card product-card h-100">
+                        <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
+                        <div class="card-body">
+                          <h5 class="card-title">${product.name}</h5>
+                          ${
+                            product.category === "kidsSunglasses"
+                              ? `<p class="card-text"><strong>Age Group:</strong> ${product.ageGroup}</p>`
+                              : ""
+                          }
+                          <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                          <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                          <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                            <i class="fas fa-eye"></i> View
+                          </button>
+                          <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                            <i class="fas fa-edit"></i> Edit
+                          </button>
+                          <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                            <i class="fas fa-trash"></i> Delete
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                    container.appendChild(card);
+                  });
+                }
+              }
+            }
+          } catch (err) {
+            console.error("Error deleting sunglasses product:", err);
+          }
+        });
       });
     </script>
 
@@ -1999,77 +1997,77 @@ confirmDeleteSunglassBtn.addEventListener("click", async () => {
     </section>
     <!-- Add Watches Product Modal -->
     <div class="modal fade" id="addWatchesModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">   
-    <form id="addWatchesForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
-      <div class="modal-content">
-        <div class="modal-header text-white bg-primary">
-          <h5 class="modal-title">Add Watches Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+      <div class="modal-dialog modal-lg">   
+        <form id="addWatchesForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
+          <div class="modal-content">
+            <div class="modal-header text-white bg-primary">
+              <h5 class="modal-title">Add Watches Product</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-        <div class="modal-body">
-          <input type="hidden" name="category" id="watchesCategory">
+            <div class="modal-body">
+              <input type="hidden" name="category" id="watchesCategory">
 
-          <!-- Product Name -->
-          <div class="mb-3">
-            <label class="form-label">Product Name</label>
-            <input type="text" name="name" class="form-control" required>
-            <div class="invalid-feedback">Product name is required.</div>
+              <!-- Product Name -->
+              <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <input type="text" name="name" class="form-control" required>
+                <div class="invalid-feedback">Product name is required.</div>
+              </div>
+
+              <!-- Description -->
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+              </div>
+
+              <!-- Price -->
+              <div class="mb-3">
+                <label class="form-label">Price</label>
+                <input type="number" name="price" class="form-control" min="1" step="any" required>
+                <div class="invalid-feedback">Price is required and must be greater than zero.</div>
+              </div>
+
+              <!-- Stock -->
+              <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" name="stock" class="form-control" min="1" step="1" required>
+                <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
+              </div>
+
+              <!-- Age Group (Kids only) -->
+              <div class="mb-3 d-none" id="watchAgeGroupWrapper">
+                <label class="form-label">Age Group</label>
+                <select name="ageGroup" class="form-control" required>
+                  <option value="3-5 years">3–5 Years</option>
+                  <option value="6-8 years">6–8 Years</option>
+                  <option value="9-12 years">9–12 Years</option>
+                  <option value="13-15 years">13–15 Years</option>
+                </select>
+              </div>
+
+              <!-- Main Image -->
+              <div class="mb-3">
+                <label class="form-label">Main Image</label>
+                <input type="file" name="mainImage" class="form-control" accept="image/*" required>
+                <div class="invalid-feedback">Main product image is required.</div>
+              </div>
+
+              <!-- Sub Images -->
+              <div class="mb-3">
+                <label class="form-label">Sub Images (up to 3)</label>
+                <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Save Product</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
           </div>
-
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" rows="3"></textarea>
-          </div>
-
-          <!-- Price -->
-          <div class="mb-3">
-            <label class="form-label">Price</label>
-            <input type="number" name="price" class="form-control" min="1" step="any" required>
-            <div class="invalid-feedback">Price is required and must be greater than zero.</div>
-          </div>
-
-          <!-- Stock -->
-          <div class="mb-3">
-            <label class="form-label">Stock</label>
-            <input type="number" name="stock" class="form-control" min="1" step="1" required>
-            <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
-          </div>
-
-          <!-- Age Group (Kids only) -->
-          <div class="mb-3 d-none" id="watchAgeGroupWrapper">
-            <label class="form-label">Age Group</label>
-              <select name="ageGroup" class="form-control" required>
-                <option value="3-5 years">3–5 Years</option>
-                <option value="6-8 years">6–8 Years</option>
-                <option value="9-12 years">9–12 Years</option>
-                <option value="13-15 years">13–15 Years</option>
-              </select>
-          </div>
-
-          <!-- Main Image -->
-          <div class="mb-3">
-            <label class="form-label">Main Image</label>
-            <input type="file" name="mainImage" class="form-control" accept="image/*" required>
-            <div class="invalid-feedback">Main product image is required.</div>
-          </div>
-
-          <!-- Sub Images -->
-          <div class="mb-3">
-            <label class="form-label">Sub Images (up to 3)</label>
-            <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save Product</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
+    </div>
     <!-- Watches Confirmation Modal -->
 <div class="modal fade" id="watchesConfirmationModal" tabindex="-1">
   <div class="modal-dialog modal-md modal-dialog-centered">
