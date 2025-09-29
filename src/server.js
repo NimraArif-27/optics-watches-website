@@ -8,6 +8,7 @@ const contactInfoRoutes = require("./routes/contactInfo");
 const reviewRoutes = require("./routes/review");
 const eyeglassesRoutes = require("./routes/eyeglasses");
 const sunglassesRoutes = require("./routes/sunglasses");
+const watchesRoutes = require("./routes/watches");
 
 
 
@@ -21,6 +22,7 @@ app.use("/api/contact-info", contactInfoRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/eyeglasses", eyeglassesRoutes);
 app.use("/api/sunglasses", sunglassesRoutes);
+app.use("/api/watches", watchesRoutes);
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/shop", {
