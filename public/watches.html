@@ -380,28 +380,7 @@
 <section id="gentswatches-section" class="py-5 bg-white">
   <div class="container">
     <h2 class="text-center mb-5">Gents Watches Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="gentswatch.png" class="card-img-top" alt="Gents Watch 1">
-              <div class="product-overlay d-flex flex-column justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Casio Edifice Classic</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="gentsWatchesContainer"></div>
   </div>
 </section>
 
@@ -409,28 +388,7 @@
 <section id="ladieswatches-section" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-5">Ladies Watches Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="ladies.jpg" class="card-img-top" alt="Ladies Watch 1">
-              <div class="product-overlay d-flex justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Coach Park Stainless Steel Watch</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="ladiesWatchesContainer"></div>
   </div>
 </section>
 
@@ -438,28 +396,7 @@
 <section id="premiumwatches-section" class="py-5 bg-white">
   <div class="container">
     <h2 class="text-center mb-5">Premium Watches Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="premiumwatch.jpg" class="card-img-top" alt="Premium Watch 1">
-              <div class="product-overlay d-flex justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">Rado Integral Ceramic Black</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="premiumWatchesContainer"></div>
   </div>
 </section>
 
@@ -467,30 +404,73 @@
 <section id="kidswatches-section" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-5">Kids Watches Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
+    <div class="row g-4" id="kidsWatchesContainer"></div>
+  </div>
+</section>
+<script>
+  // Utility function to render a watch card
+  function renderWatchCard(product) {
+    return `
       <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
+        <a href="products.html?id=${product._id}" class="text-decoration-none">
           <div class="card product-card shadow-sm h-100">
             <div class="position-relative">
-              <img src="kidswatches.png" class="card-img-top" alt="Kids Watch 1">
+              <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
               <div class="product-overlay d-flex justify-content-center align-items-center">
                 <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
                 <span class="icon mx-2"><i class="fas fa-eye"></i></span>
               </div>
             </div>
             <div class="card-body text-center">
-              <h5 class="card-title text-dark">Fun Cartoon Watch</h5>
-              <p class="text-muted">Rs. 00</p>
+              <h5 class="card-title text-dark">${product.name}</h5>
+              ${
+                product.category === "kidsWatches"
+                  ? `<p class="text-muted">${product.ageGroup}</p>`
+                  : ""
+              }
+              <p class="text-muted">Rs. ${product.price}</p>
             </div>
           </div>
         </a>
       </div>
+    `;
+  }
 
-    </div>
-  </div>
-</section>
+  // Function to fetch and render watches
+  async function loadWatches(category, containerId) {
+    try {
+      const res = await fetch(`/api/watches/${category}`);
+      const data = await res.json();
+
+      if (data.success) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        data.products.forEach(product => {
+          container.innerHTML += renderWatchCard(product);
+        });
+      }
+    } catch (err) {
+      console.error(`❌ Error loading ${category} watches:`, err);
+    }
+  }
+
+  // Load all watches categories on page load
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadWatches("gentsWatches", "gentsWatchesContainer");
+    await loadWatches("ladiesWatches", "ladiesWatchesContainer");
+    await loadWatches("premiumWatches", "premiumWatchesContainer");
+    await loadWatches("kidsWatches", "kidsWatchesContainer");
+
+    // Scroll to hash section if exists
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+</script>
+
 
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2025 Khalid Optics & Watches</p>

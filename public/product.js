@@ -33,9 +33,10 @@
     safeSetText("productName", product.name || "Unnamed product");
     safeSetText("productCategory", formatCategory(product.category || ""));
     safeSetText("productPrice", product.price !== undefined ? "Rs. " + product.price : "");
-    let descText = product.description || "No description available.";
+    let descText = product.description  || "";
+    // let descText = product.description || "No description available.";
 
-    // Age group for kids (handles both eyeglasses and sunglasses categories)
+    // Age group for kids (eyeglasses, sunglasses, watches)
     if (product.ageGroup && /kids/i.test(product.category || "")) {
       descText += `\nAge Group: ${product.ageGroup}`;
     }
@@ -61,7 +62,7 @@
   window.addToCart = function () { alert("Added to cart!"); };
   window.buyNow = function () { alert("Proceeding to checkout!"); };
 
-  // Related loaders (kept as-declared)
+  // Related loaders
   async function loadRelatedProducts(category, excludeId) {
     try {
       const res = await fetch(`/api/eyeglasses/related/${category}/${excludeId}`);
@@ -124,7 +125,39 @@
     }
   }
 
-  // --- Main loader: tries eyeglasses then sunglasses ---
+  // --- Related loader for watches ---
+  async function loadRelatedWatches(category, excludeId) {
+    try {
+      const res = await fetch(`/api/watches/related/${category}/${excludeId}`);
+      const data = await res.json();
+      if (!data || !data.success) return;
+      const container = document.getElementById("relatedProducts");
+      const title = document.getElementById("relatedTitle");
+      if (title) title.textContent = `More ${formatCategory(category)}`;
+      if (!container) return;
+      container.innerHTML = "";
+      data.products.forEach(p => {
+        const extraInfo = (p.category.toLowerCase().includes("kids") && p.ageGroup) ? `<p class="text-muted">Age: ${p.ageGroup}</p>` : "";
+        container.innerHTML += `
+          <div class="col-md-3">
+            <div class="card">
+              <img src="${p.mainImage || ""}" class="card-img-top" alt="${p.name || ""}">
+              <div class="card-body text-center">
+                <h6>${p.name || ""}</h6>
+                ${extraInfo}
+                <p class="text-primary">Rs. ${p.price ?? ""}</p>
+                <a href="products.html?id=${p._id}" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    } catch (err) {
+      console.error("Error loading related watches:", err);
+    }
+  }
+
+  // --- Main loader: tries eyeglasses, sunglasses, then watches ---
   async function loadAnyProductDetails() {
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("id");
@@ -132,27 +165,25 @@
 
     const endpoints = [
       { kind: "eyeglasses", url: `/api/eyeglasses/product/${productId}`, related: loadRelatedProducts },
-      { kind: "sunglasses", url: `/api/sunglasses/product/${productId}`, related: loadRelatedSunglasses }
+      { kind: "sunglasses", url: `/api/sunglasses/product/${productId}`, related: loadRelatedSunglasses },
+      { kind: "watches", url: `/api/watches/product/${productId}`, related: loadRelatedWatches } // <--- Watches added
     ];
 
     let found = false;
     for (const ep of endpoints) {
       try {
         const res = await fetch(ep.url);
-        // try to parse JSON; if not JSON, skip
         let data;
         try { data = await res.json(); } catch (err) { continue; }
 
         if (data && data.success && data.product) {
           renderProduct(data.product);
-          // call appropriate related loader
           ep.related(data.product.category, data.product._id);
           found = true;
-          break; // stop after first successful load
+          break;
         }
       } catch (err) {
         console.warn(`Fetch error for ${ep.kind}:`, err);
-        // continue to next endpoint
       }
     }
 
