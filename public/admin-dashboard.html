@@ -2156,6 +2156,7 @@
         </div>
       </div>
     </div>
+    <!-- Watches Product JS -->
     <script>
       // ================== Watches Product JS (Add modal + validation) ==================
       document.addEventListener("DOMContentLoaded", () => {
@@ -2661,7 +2662,7 @@
       });
     </script>
 
-
+    <!-- ========================= LENSES PAGE ======================= -->
     <!-- Products Management - Lenses -->
     <section id="lenses-products" class="content-section">
       <h2>Lenses Products</h2>
@@ -2898,6 +2899,7 @@
         </div>
       </div>
     </div>
+    <!-- Lenses Product JS -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         // ================ Add Lens Modal (Add + validation) =================
@@ -3176,235 +3178,235 @@
             .catch(err => console.error("Error fetching lens details:", err));
         });
 
-  // ================== Edit product ==================
-  const editModalEl = document.getElementById("editLensProductModal");
-  const editModal = new bootstrap.Modal(editModalEl);
-  const editForm = document.getElementById("editLensForm");
-  const editProductId = document.getElementById("editLensProductId");
-  const editName = document.getElementById("editLensName");
-  const editPrice = document.getElementById("editLensPrice");
-  const editStock = document.getElementById("editLensStock");
+        // ================== Edit product ==================
+        const editModalEl = document.getElementById("editLensProductModal");
+        const editModal = new bootstrap.Modal(editModalEl);
+        const editForm = document.getElementById("editLensForm");
+        const editProductId = document.getElementById("editLensProductId");
+        const editName = document.getElementById("editLensName");
+        const editPrice = document.getElementById("editLensPrice");
+        const editStock = document.getElementById("editLensStock");
 
-  // helper edit error handling
-  function showEditError(inputEl, message) {
-    if (!inputEl || !inputEl.parentElement) return;
-    let errorEl = inputEl.parentElement.querySelector(".error-text");
-    if (!errorEl) {
-      errorEl = document.createElement("div");
-      errorEl.className = "error-text text-danger mt-1";
-      inputEl.parentElement.appendChild(errorEl);
-    }
-    errorEl.textContent = message;
-  }
-  function clearEditError(inputEl) {
-    if (!inputEl || !inputEl.parentElement) return;
-    const errorEl = inputEl.parentElement.querySelector(".error-text");
-    if (errorEl) errorEl.textContent = "";
-  }
-
-  function resetEditForm() {
-    if (!editForm) return;
-    editForm.reset();
-    [editName, editPrice, editStock].forEach(clearEditError);
-    editProductId.value = "";
-  }
-
-  [editName, editPrice, editStock].forEach(input => {
-    if (!input) return;
-    input.addEventListener("focus", () => clearEditError(input));
-    input.addEventListener("input", () => clearEditError(input));
-  });
-
-  if (editModalEl) editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
-
-  // open edit modal when edit button clicked
-  document.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".edit-product-btn");
-    if (!btn) return;
-    const productId = btn.dataset.id;
-    try {
-      const res = await fetch(`/api/lenses/product/${productId}`);
-      const data = await res.json();
-      if (data.success) {
-        const p = data.product;
-        editProductId.value = p._id;
-        editName.value = p.name || "";
-        editPrice.value = p.price ?? "";
-        editStock.value = p.stock ?? "";
-        editModal.show();
-      }
-    } catch (err) {
-      console.error("Error fetching lens for edit:", err);
-    }
-  });
-
-  // handle edit save
-  if (editForm) {
-    editForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      let isValid = true;
-
-      if (!editName.value.trim()) {
-        showEditError(editName, "Name is required");
-        isValid = false;
-      } else {
-        clearEditError(editName);
-      }
-
-      if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
-        showEditError(editPrice, "Price must be a valid non-negative number");
-        isValid = false;
-      } else {
-        clearEditError(editPrice);
-      }
-
-      if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
-        showEditError(editStock, "Stock must be a valid non-negative number");
-        isValid = false;
-      } else {
-        clearEditError(editStock);
-      }
-
-      if (!isValid) return;
-
-      const updatedProduct = {
-        name: editName.value.trim(),
-        price: Number(editPrice.value),
-        stock: Number(editStock.value)
-      };
-
-      try {
-        const res = await fetch(`/api/lenses/update/${editProductId.value}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedProduct)
-        });
-        const data = await res.json();
-        if (data.success) {
-          editModal.hide();
-
-          // refresh only the updated category tab
-          const updatedCategory = data.product.category; // "PowerLenses" or "ColoredLenses"
-          const tabId = catToTabId[updatedCategory];
-          const container = document.querySelector(`#${tabId} .row`);
-          if (container) {
-            const resp = await fetch(`/api/lenses/${updatedCategory}`);
-            const d = await resp.json();
-            if (d.success) {
-              container.innerHTML = "";
-              d.products.forEach(product => {
-                const card = document.createElement("div");
-                card.className = "col-md-3 mb-4";
-                card.innerHTML = `
-                  <div class="card product-card h-100">
-                    <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
-                    <div class="card-body">
-                      <h5 class="card-title">${escapeHtml(product.name)}</h5>
-                      ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
-                      <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                      <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                      <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                        <i class="fas fa-edit"></i> Edit
-                      </button>
-                      <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                        <i class="fas fa-trash"></i> Delete
-                      </button>
-                    </div>
-                  </div>
-                `;
-                container.appendChild(card);
-              });
-            }
+        // helper edit error handling
+        function showEditError(inputEl, message) {
+          if (!inputEl || !inputEl.parentElement) return;
+          let errorEl = inputEl.parentElement.querySelector(".error-text");
+          if (!errorEl) {
+            errorEl = document.createElement("div");
+            errorEl.className = "error-text text-danger mt-1";
+            inputEl.parentElement.appendChild(errorEl);
           }
-        } else {
-          alert("❌ Failed to update product.");
+          errorEl.textContent = message;
         }
-      } catch (err) {
-        console.error("Error updating lens:", err);
-      }
-    });
-  }
+        function clearEditError(inputEl) {
+          if (!inputEl || !inputEl.parentElement) return;
+          const errorEl = inputEl.parentElement.querySelector(".error-text");
+          if (errorEl) errorEl.textContent = "";
+        }
 
-  // ================== DELETE functionality for Lenses ==================
-  let deleteLensId = null;
-  const deleteLensModalEl = document.getElementById("deleteLensProductModal");
-  const deleteLensModal = new bootstrap.Modal(deleteLensModalEl);
-  const confirmDeleteLensBtn = document.getElementById("confirmDeleteLensBtn");
-  const lensesContainer = document.getElementById("lenses-products");
+        function resetEditForm() {
+          if (!editForm) return;
+          editForm.reset();
+          [editName, editPrice, editStock].forEach(clearEditError);
+          editProductId.value = "";
+        }
 
-  lensesContainer?.addEventListener("click", (e) => {
-    const btn = e.target.closest(".delete-product-btn");
-    if (!btn) return;
-    deleteLensId = btn.dataset.id;
-    deleteLensModal.show();
-  });
+        [editName, editPrice, editStock].forEach(input => {
+          if (!input) return;
+          input.addEventListener("focus", () => clearEditError(input));
+          input.addEventListener("input", () => clearEditError(input));
+        });
 
-  confirmDeleteLensBtn?.addEventListener("click", async () => {
-    if (!deleteLensId) return;
-    try {
-      const res = await fetch(`/api/lenses/delete/${deleteLensId}`, { method: "DELETE" });
-      const data = await res.json();
-      if (data.success) {
-        deleteLensModal.hide();
-        deleteLensId = null;
+        if (editModalEl) editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
 
-        // Refresh both categories tabs
-        const categories = ["PowerLenses", "ColoredLenses"];
-        for (const category of categories) {
-          const tabId = catToTabId[category];
-          const container = document.querySelector(`#${tabId} .row`);
-          if (!container) continue;
+        // open edit modal when edit button clicked
+        document.addEventListener("click", async (e) => {
+          const btn = e.target.closest(".edit-product-btn");
+          if (!btn) return;
+          const productId = btn.dataset.id;
           try {
-            const resp = await fetch(`/api/lenses/${category}`);
-            const d = await resp.json();
-            if (d.success) {
-              container.innerHTML = "";
-              d.products.forEach(product => {
-                const card = document.createElement("div");
-                card.className = "col-md-3 mb-4";
-                card.innerHTML = `
-                  <div class="card product-card h-100">
-                    <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
-                    <div class="card-body">
-                      <h5 class="card-title">${escapeHtml(product.name)}</h5>
-                      ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
-                      <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
-                      <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                      <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
-                        <i class="fas fa-edit"></i> Edit
-                      </button>
-                      <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
-                        <i class="fas fa-trash"></i> Delete
-                      </button>
-                    </div>
-                  </div>
-                `;
-                container.appendChild(card);
-              });
+            const res = await fetch(`/api/lenses/product/${productId}`);
+            const data = await res.json();
+            if (data.success) {
+              const p = data.product;
+              editProductId.value = p._id;
+              editName.value = p.name || "";
+              editPrice.value = p.price ?? "";
+              editStock.value = p.stock ?? "";
+              editModal.show();
             }
           } catch (err) {
-            console.error("Error refreshing category", category, err);
+            console.error("Error fetching lens for edit:", err);
           }
-        }
-      } else {
-        alert("❌ Failed to delete product.");
-      }
-    } catch (err) {
-      console.error("Error deleting lens:", err);
-    }
-  });
+        });
 
-});
+        // handle edit save
+        if (editForm) {
+          editForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            let isValid = true;
+
+            if (!editName.value.trim()) {
+              showEditError(editName, "Name is required");
+              isValid = false;
+            } else {
+              clearEditError(editName);
+            }
+
+            if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
+              showEditError(editPrice, "Price must be a valid non-negative number");
+              isValid = false;
+            } else {
+              clearEditError(editPrice);
+            }
+
+            if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
+              showEditError(editStock, "Stock must be a valid non-negative number");
+              isValid = false;
+            } else {
+              clearEditError(editStock);
+            }
+
+            if (!isValid) return;
+
+            const updatedProduct = {
+              name: editName.value.trim(),
+              price: Number(editPrice.value),
+              stock: Number(editStock.value)
+            };
+
+            try {
+              const res = await fetch(`/api/lenses/update/${editProductId.value}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedProduct)
+              });
+              const data = await res.json();
+              if (data.success) {
+                editModal.hide();
+
+                // refresh only the updated category tab
+                const updatedCategory = data.product.category; // "PowerLenses" or "ColoredLenses"
+                const tabId = catToTabId[updatedCategory];
+                const container = document.querySelector(`#${tabId} .row`);
+                if (container) {
+                  const resp = await fetch(`/api/lenses/${updatedCategory}`);
+                  const d = await resp.json();
+                  if (d.success) {
+                    container.innerHTML = "";
+                    d.products.forEach(product => {
+                      const card = document.createElement("div");
+                      card.className = "col-md-3 mb-4";
+                      card.innerHTML = `
+                        <div class="card product-card h-100">
+                          <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
+                          <div class="card-body">
+                            <h5 class="card-title">${escapeHtml(product.name)}</h5>
+                            ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
+                            <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                            <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                          </div>
+                          <div class="card-footer d-flex justify-content-between">
+                            <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                              <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                              <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                              <i class="fas fa-trash"></i> Delete
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                      container.appendChild(card);
+                    });
+                  }
+                }
+              } else {
+                alert("❌ Failed to update product.");
+              }
+            } catch (err) {
+              console.error("Error updating lens:", err);
+            }
+          });
+        }
+
+        // ================== DELETE functionality for Lenses ==================
+        let deleteLensId = null;
+        const deleteLensModalEl = document.getElementById("deleteLensProductModal");
+        const deleteLensModal = new bootstrap.Modal(deleteLensModalEl);
+        const confirmDeleteLensBtn = document.getElementById("confirmDeleteLensBtn");
+        const lensesContainer = document.getElementById("lenses-products");
+
+        lensesContainer?.addEventListener("click", (e) => {
+          const btn = e.target.closest(".delete-product-btn");
+          if (!btn) return;
+          deleteLensId = btn.dataset.id;
+          deleteLensModal.show();
+        });
+
+        confirmDeleteLensBtn?.addEventListener("click", async () => {
+          if (!deleteLensId) return;
+          try {
+            const res = await fetch(`/api/lenses/delete/${deleteLensId}`, { method: "DELETE" });
+            const data = await res.json();
+            if (data.success) {
+              deleteLensModal.hide();
+              deleteLensId = null;
+
+              // Refresh both categories tabs
+              const categories = ["PowerLenses", "ColoredLenses"];
+              for (const category of categories) {
+                const tabId = catToTabId[category];
+                const container = document.querySelector(`#${tabId} .row`);
+                if (!container) continue;
+                try {
+                  const resp = await fetch(`/api/lenses/${category}`);
+                  const d = await resp.json();
+                  if (d.success) {
+                    container.innerHTML = "";
+                    d.products.forEach(product => {
+                      const card = document.createElement("div");
+                      card.className = "col-md-3 mb-4";
+                      card.innerHTML = `
+                        <div class="card product-card h-100">
+                          <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
+                          <div class="card-body">
+                            <h5 class="card-title">${escapeHtml(product.name)}</h5>
+                            ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
+                            <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                            <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                          </div>
+                          <div class="card-footer d-flex justify-content-between">
+                            <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                              <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                              <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                              <i class="fas fa-trash"></i> Delete
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                      container.appendChild(card);
+                    });
+                  }
+                } catch (err) {
+                  console.error("Error refreshing category", category, err);
+                }
+              }
+            } else {
+              alert("❌ Failed to delete product.");
+            }
+          } catch (err) {
+            console.error("Error deleting lens:", err);
+          }
+        });
+
+      });
     </script>
 
 
