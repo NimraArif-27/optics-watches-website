@@ -2733,93 +2733,93 @@
       </div>
     </section>
     <!-- Add Lens Product Modal -->
-<div class="modal fade" id="addLensModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <form id="addLensForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
-      <div class="modal-content">
-        <div class="modal-header text-white bg-primary">
-          <h5 class="modal-title">Add Lens Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+    <div class="modal fade" id="addLensModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <form id="addLensForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
+          <div class="modal-content">
+            <div class="modal-header text-white bg-primary">
+              <h5 class="modal-title">Add Lens Product</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-        <div class="modal-body">
-          <!-- Hidden Category (PowerLenses / ColoredLenses) -->
-          <input type="hidden" name="category" id="lensCategory">
+            <div class="modal-body">
+              <!-- Hidden Category (PowerLenses / ColoredLenses) -->
+              <input type="hidden" name="category" id="lensCategory">
 
-          <!-- Product Name -->
-          <div class="mb-3">
-            <label class="form-label">Product Name</label>
-            <input type="text" name="name" class="form-control" required>
-            <div class="invalid-feedback">Product name is required.</div>
-          </div>
+              <!-- Product Name -->
+              <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <input type="text" name="name" class="form-control" required>
+                <div class="invalid-feedback">Product name is required.</div>
+              </div>
 
-          <!-- Brand -->
-          <div class="mb-3">
-            <label class="form-label">Brand</label>
-            <input type="text" name="brand" class="form-control" required>
-            <div class="invalid-feedback">Brand name is required.</div>
-          </div>
+              <!-- Brand -->
+              <div class="mb-3">
+                <label class="form-label">Brand</label>
+                <input type="text" name="brand" class="form-control" required>
+                <div class="invalid-feedback">Brand name is required.</div>
+              </div>
 
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" rows="3"></textarea>
-          </div>
+              <!-- Description -->
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+              </div>
 
-          <!-- Price -->
-          <div class="mb-3">
-            <label class="form-label">Price</label>
-            <input type="number" name="price" class="form-control" min="1" step="any" required>
-            <div class="invalid-feedback">Price is required and must be greater than zero.</div>
-          </div>
+              <!-- Price -->
+              <div class="mb-3">
+                <label class="form-label">Price</label>
+                <input type="number" name="price" class="form-control" min="1" step="any" required>
+                <div class="invalid-feedback">Price is required and must be greater than zero.</div>
+              </div>
 
-          <!-- Stock -->
-          <div class="mb-3">
-            <label class="form-label">Stock</label>
-            <input type="number" name="stock" class="form-control" min="1" step="1" required>
-            <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
-          </div>
+              <!-- Stock -->
+              <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" name="stock" class="form-control" min="1" step="1" required>
+                <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
+              </div>
 
-          <!-- Color (for ColoredLenses only, but allowed for both) -->
-          <div class="mb-3" id="colorWrapper">
-            <label class="form-label">Color</label>
-            <input type="text" name="color" class="form-control" placeholder="e.g., Blue, Green, Hazel">
-            <div class="form-text">Leave blank for clear lenses.</div>
-          </div>
+              <!-- Color -->
+              <div class="mb-3" id="colorWrapper">
+                <label class="form-label">Color</label>
+                <input type="text" name="color" class="form-control" placeholder="e.g., Blue, Green, Hazel">
+                <div class="form-text text-primary">Leave blank for clear lenses.</div>
+              </div>
 
-          <!-- Power Fields (for Power Lenses only) -->
-          <div id="powerFields" class="d-none">
+              <!-- Power Fields (for Power Lenses only) -->
+              <div id="powerFields" class="d-none">
 
-            <div class="mb-3">
-              <label class="form-label">Lens Type</label>
-              <select name="lensType" class="form-control">
-                <option value="Single Vision">Single Vision</option>
-              </select>
+                <div class="mb-3">
+                  <label class="form-label">Lens Type</label>
+                  <select name="lensType" class="form-control">
+                    <option value="Single Vision">Single Vision</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Main Image -->
+              <div class="mb-3">
+                <label class="form-label">Main Image</label>
+                <input type="file" name="mainImage" class="form-control" accept="image/*" required>
+                <div class="invalid-feedback">Main product image is required.</div>
+              </div>
+
+              <!-- Sub Images -->
+              <div class="mb-3">
+                <label class="form-label">Sub Images (up to 3)</label>
+                <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Save Product</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
           </div>
-
-          <!-- Main Image -->
-          <div class="mb-3">
-            <label class="form-label">Main Image</label>
-            <input type="file" name="mainImage" class="form-control" accept="image/*" required>
-            <div class="invalid-feedback">Main product image is required.</div>
-          </div>
-
-          <!-- Sub Images -->
-          <div class="mb-3">
-            <label class="form-label">Sub Images (up to 3)</label>
-            <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save Product</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
+    </div>
 <!-- Lenses Confirmation Modal -->
 <div class="modal fade" id="lensesConfirmationModal" tabindex="-1">
   <div class="modal-dialog modal-md modal-dialog-centered">
