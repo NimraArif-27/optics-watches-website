@@ -2732,6 +2732,686 @@
         </div>
       </div>
     </section>
+    <!-- Add Lens Product Modal -->
+<div class="modal fade" id="addLensModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <form id="addLensForm" class="needs-validation" enctype="multipart/form-data" novalidate autocomplete="off">
+      <div class="modal-content">
+        <div class="modal-header text-white bg-primary">
+          <h5 class="modal-title">Add Lens Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Hidden Category (PowerLenses / ColoredLenses) -->
+          <input type="hidden" name="category" id="lensCategory">
+
+          <!-- Product Name -->
+          <div class="mb-3">
+            <label class="form-label">Product Name</label>
+            <input type="text" name="name" class="form-control" required>
+            <div class="invalid-feedback">Product name is required.</div>
+          </div>
+
+          <!-- Brand -->
+          <div class="mb-3">
+            <label class="form-label">Brand</label>
+            <input type="text" name="brand" class="form-control" required>
+            <div class="invalid-feedback">Brand name is required.</div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"></textarea>
+          </div>
+
+          <!-- Price -->
+          <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" name="price" class="form-control" min="1" step="any" required>
+            <div class="invalid-feedback">Price is required and must be greater than zero.</div>
+          </div>
+
+          <!-- Stock -->
+          <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <input type="number" name="stock" class="form-control" min="1" step="1" required>
+            <div class="invalid-feedback">Stock is required and must be greater than zero.</div>
+          </div>
+
+          <!-- Color (for ColoredLenses only, but allowed for both) -->
+          <div class="mb-3" id="colorWrapper">
+            <label class="form-label">Color</label>
+            <input type="text" name="color" class="form-control" placeholder="e.g., Blue, Green, Hazel">
+            <div class="form-text">Leave blank for clear lenses.</div>
+          </div>
+
+          <!-- Power Fields (for Power Lenses only) -->
+          <div id="powerFields" class="d-none">
+
+            <div class="mb-3">
+              <label class="form-label">Lens Type</label>
+              <select name="lensType" class="form-control">
+                <option value="Single Vision">Single Vision</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Main Image -->
+          <div class="mb-3">
+            <label class="form-label">Main Image</label>
+            <input type="file" name="mainImage" class="form-control" accept="image/*" required>
+            <div class="invalid-feedback">Main product image is required.</div>
+          </div>
+
+          <!-- Sub Images -->
+          <div class="mb-3">
+            <label class="form-label">Sub Images (up to 3)</label>
+            <input type="file" name="subImages" class="form-control" accept="image/*" multiple>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Product</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Lenses Confirmation Modal -->
+<div class="modal fade" id="lensesConfirmationModal" tabindex="-1">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content rounded-2" style="width: 350px; height: 200px; margin: auto;">
+      <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
+        <p id="lensesConfirmationMessage" class="fs-4"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- View Lens Modal -->
+<div class="modal fade" id="viewLensModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title">Lens Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="viewLensModalBody">
+        <!-- Lens details will be dynamically injected here -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Edit Lens Product Modal -->
+<div class="modal fade" id="editLensProductModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title">Edit Lens Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editLensForm" autocomplete="off" novalidate>
+          <input type="hidden" id="editLensProductId" name="productId">
+
+          <div class="mb-3">
+            <label for="editLensName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="editLensName" name="name" autocomplete="off" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editLensPrice" class="form-label">Price</label>
+            <input type="number" class="form-control" id="editLensPrice" name="price" min="1" autocomplete="off" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editLensStock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="editLensStock" name="stock" min="1" autocomplete="off" required>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="editLensForm" class="btn btn-info">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Lens Modal -->
+<div class="modal fade" id="deleteLensProductModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this Lens Product?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmDeleteLensBtn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // ================ Add Lens Modal (Add + validation) =================
+  const addButtons = document.querySelectorAll("#lenses-products .btn-primary");
+  const categoryInput = document.getElementById("lensCategory");
+  const addProductForm = document.getElementById("addLensForm");
+  const powerFieldsWrapper = document.getElementById("powerFields");
+  const addProductModalEl = document.getElementById("addLensModal");
+
+  // Map tabPane id -> category value used by backend/schema
+  const tabToCategory = {
+    powerLens: "PowerLenses",
+    colorLens: "ColoredLenses"
+  };
+
+  addButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      // Reset form before opening
+      addProductForm.reset();
+      // clear any old inline errors
+      addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
+
+      const tabPane = e.target.closest(".tab-pane");
+      if (!tabPane) return;
+      const tabId = tabPane.getAttribute("id");
+      const category = tabToCategory[tabId] || tabId;
+
+      categoryInput.value = category;
+
+      // Show/hide power fields for PowerLenses
+      if (category === "PowerLenses") {
+        powerFieldsWrapper.classList.remove("d-none");
+      } else {
+        powerFieldsWrapper.classList.add("d-none");
+      }
+
+      new bootstrap.Modal(document.getElementById("addLensModal")).show();
+    });
+  });
+
+  // Reset when modal closed
+  if (addProductModalEl) {
+    addProductModalEl.addEventListener("hidden.bs.modal", () => {
+      addProductForm.reset();
+      categoryInput.value = "";
+      if (powerFieldsWrapper) powerFieldsWrapper.classList.add("d-none");
+      addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
+    });
+  }
+
+  // Add form submit
+  addProductForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let valid = true;
+    addProductForm.querySelectorAll(".error-message").forEach(el => el.remove());
+
+    const name = addProductForm.querySelector("[name='name']");
+    const brand = addProductForm.querySelector("[name='brand']");
+    const price = addProductForm.querySelector("[name='price']");
+    const stock = addProductForm.querySelector("[name='stock']");
+    const mainImage = addProductForm.querySelector("[name='mainImage']");
+
+    // name
+    if (!name.value.trim()) {
+      showError(name, "Product name is required");
+      valid = false;
+    }
+
+    // brand
+    if (!brand.value.trim()) {
+      showError(brand, "Brand is required");
+      valid = false;
+    }
+
+    // price
+    if (!price.value || Number(price.value) <= 0) {
+      showError(price, "Price is required and must be greater than zero.");
+      valid = false;
+    }
+
+    // stock
+    if (!stock.value || Number(stock.value) <= 0) {
+      showError(stock, "Stock is required and must be greater than zero.");
+      valid = false;
+    }
+
+    // main image
+    if (!mainImage.files || mainImage.files.length === 0) {
+      showError(mainImage, "Main image is required");
+      valid = false;
+    }
+
+
+    if (!valid) return;
+
+    const formData = new FormData(addProductForm);
+
+    try {
+      const res = await fetch("/api/lenses/add", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+
+      // close add modal
+      const addModalInstance = bootstrap.Modal.getInstance(document.getElementById("addLensModal"));
+      if (addModalInstance) addModalInstance.hide();
+
+      // show confirmation modal
+      const confirmationMessage = document.getElementById("lensesConfirmationMessage");
+      const confirmationModalEl = document.getElementById("lensesConfirmationModal");
+      const confirmationModal = new bootstrap.Modal(confirmationModalEl);
+
+      if (data.success) {
+        confirmationMessage.innerHTML = `<i class="fas fa-check-circle text-primary"></i> Product added successfully!`;
+        confirmationModal.show();
+        setTimeout(() => location.reload(), 3000);
+      } else {
+        confirmationMessage.innerText = "❌ Error adding product.";
+        confirmationModal.show();
+      }
+    } catch (err) {
+      console.error("Error adding lens:", err);
+      const confirmationMessage = document.getElementById("lensesConfirmationMessage");
+      const confirmationModalEl = document.getElementById("lensesConfirmationModal");
+      const confirmationModal = new bootstrap.Modal(confirmationModalEl);
+      confirmationMessage.innerText = "❌ Error adding product.";
+      confirmationModal.show();
+    }
+  });
+
+  // helper to show inline errors
+  function showError(input, message) {
+    if (!input || !input.parentNode) return;
+    if (input.parentNode.querySelector(".error-message")) return;
+    const error = document.createElement("div");
+    error.className = "error-message text-danger small mt-1";
+    error.innerText = message;
+    input.parentNode.appendChild(error);
+
+    function clearError() {
+      const existing = input.parentNode.querySelector(".error-message");
+      if (existing) existing.remove();
+      input.removeEventListener("focus", clearError);
+      input.removeEventListener("input", clearError);
+    }
+    input.addEventListener("focus", clearError);
+    input.addEventListener("input", clearError);
+  }
+
+  // Show/hide powerFields when user manually switches tab (optional)
+  // (If user switches tabs without opening add modal)
+  const lensesTabs = document.getElementById("lensesTabs");
+  if (lensesTabs) {
+    lensesTabs.addEventListener("shown.bs.tab", (e) => {
+      const target = e.target.getAttribute("data-bs-target"); // like #powerLens
+      const id = target?.replace("#", "");
+      const cat = tabToCategory[id];
+      if (cat === "PowerLenses") {
+        // nothing to do here unless form open; this keeps behaviour consistent
+      } else {
+        // nothing
+      }
+    });
+  }
+});
+
+// ================== Fetch / View / Edit / Delete lenses (dashboard) ==================
+document.addEventListener("DOMContentLoaded", () => {
+  // categories to fetch from backend (match schema values)
+  const categories = ["PowerLenses", "ColoredLenses"];
+  // map backend category -> tab-pane id in DOM
+  const catToTabId = {
+    PowerLenses: "powerLens",
+    ColoredLenses: "colorLens"
+  };
+
+  categories.forEach(category => {
+    fetch(`/api/lenses/${category}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const tabId = catToTabId[category];
+          const container = document.querySelector(`#${tabId} .row`);
+          if (!container) return;
+          container.innerHTML = "";
+          data.products.forEach(product => {
+            const card = document.createElement("div");
+            card.className = "col-md-3 mb-4";
+            card.innerHTML = `
+              <div class="card product-card h-100">
+                <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
+                <div class="card-body">
+                  <h5 class="card-title">${escapeHtml(product.name)}</h5>
+                  ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
+                  <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                  <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                  <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                    <i class="fas fa-eye"></i> View
+                  </button>
+                  <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        }
+      })
+      .catch(err => console.error(`Error fetching category ${category}:`, err));
+  });
+
+  // Helper: simple escape to avoid breaking HTML when injecting strings
+  function escapeHtml(str) {
+    if (!str && str !== 0) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  // ================= View product details (delegated) =================
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".view-product-btn");
+    if (!btn) return;
+    const productId = btn.dataset.id;
+    fetch(`/api/lenses/product/${productId}`)
+      .then(res => res.json())
+      .then(resp => {
+        if (!resp || !resp.success) return;
+        const p = resp.product;
+
+        const modalBody = document.getElementById("viewLensModalBody");
+        if (!modalBody) return;
+
+        modalBody.innerHTML = `
+          <div class="row">
+            <div class="col-md-5 text-center">
+              <img src="${p.mainImage}" class="img-fluid rounded mb-3" alt="${escapeHtml(p.name)}">
+              <div class="d-flex gap-2 flex-wrap justify-content-center">
+                ${
+                  p.subImages && p.subImages.length
+                    ? p.subImages.map(img => `<img src="${img}" class="img-thumbnail" style="width:80px; height:80px;">`).join("")
+                    : ""
+                }
+              </div>
+            </div>
+            <div class="col-md-7">
+              <h4>${escapeHtml(p.name)}</h4>
+              <p>${escapeHtml(p.description || "No description available.")}</p>
+              <p><strong>Brand:</strong> ${escapeHtml(p.brand || 'N/A')}</p>
+              <p><strong>Color:</strong> ${escapeHtml(p.color || 'Clear')}</p>
+              <p><strong>Price:</strong> Rs. ${p.price}</p>
+              <p><strong>Stock:</strong> ${p.stock}</p>
+              ${
+                p.category === "PowerLenses"
+                  ? `
+                     <p><strong>Lens Type:</strong> ${escapeHtml(p.lensType || 'Single Vision')}</p>`
+                  : ""
+              }
+            </div>
+          </div>
+        `;
+
+        new bootstrap.Modal(document.getElementById("viewLensModal")).show();
+      })
+      .catch(err => console.error("Error fetching lens details:", err));
+  });
+
+  // ================== Edit product ==================
+  const editModalEl = document.getElementById("editLensProductModal");
+  const editModal = new bootstrap.Modal(editModalEl);
+  const editForm = document.getElementById("editLensForm");
+  const editProductId = document.getElementById("editLensProductId");
+  const editName = document.getElementById("editLensName");
+  const editPrice = document.getElementById("editLensPrice");
+  const editStock = document.getElementById("editLensStock");
+
+  // helper edit error handling
+  function showEditError(inputEl, message) {
+    if (!inputEl || !inputEl.parentElement) return;
+    let errorEl = inputEl.parentElement.querySelector(".error-text");
+    if (!errorEl) {
+      errorEl = document.createElement("div");
+      errorEl.className = "error-text text-danger mt-1";
+      inputEl.parentElement.appendChild(errorEl);
+    }
+    errorEl.textContent = message;
+  }
+  function clearEditError(inputEl) {
+    if (!inputEl || !inputEl.parentElement) return;
+    const errorEl = inputEl.parentElement.querySelector(".error-text");
+    if (errorEl) errorEl.textContent = "";
+  }
+
+  function resetEditForm() {
+    if (!editForm) return;
+    editForm.reset();
+    [editName, editPrice, editStock].forEach(clearEditError);
+    editProductId.value = "";
+  }
+
+  [editName, editPrice, editStock].forEach(input => {
+    if (!input) return;
+    input.addEventListener("focus", () => clearEditError(input));
+    input.addEventListener("input", () => clearEditError(input));
+  });
+
+  if (editModalEl) editModalEl.addEventListener("hidden.bs.modal", resetEditForm);
+
+  // open edit modal when edit button clicked
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".edit-product-btn");
+    if (!btn) return;
+    const productId = btn.dataset.id;
+    try {
+      const res = await fetch(`/api/lenses/product/${productId}`);
+      const data = await res.json();
+      if (data.success) {
+        const p = data.product;
+        editProductId.value = p._id;
+        editName.value = p.name || "";
+        editPrice.value = p.price ?? "";
+        editStock.value = p.stock ?? "";
+        editModal.show();
+      }
+    } catch (err) {
+      console.error("Error fetching lens for edit:", err);
+    }
+  });
+
+  // handle edit save
+  if (editForm) {
+    editForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let isValid = true;
+
+      if (!editName.value.trim()) {
+        showEditError(editName, "Name is required");
+        isValid = false;
+      } else {
+        clearEditError(editName);
+      }
+
+      if (editPrice.value === "" || isNaN(editPrice.value) || Number(editPrice.value) < 0) {
+        showEditError(editPrice, "Price must be a valid non-negative number");
+        isValid = false;
+      } else {
+        clearEditError(editPrice);
+      }
+
+      if (editStock.value === "" || isNaN(editStock.value) || Number(editStock.value) < 0) {
+        showEditError(editStock, "Stock must be a valid non-negative number");
+        isValid = false;
+      } else {
+        clearEditError(editStock);
+      }
+
+      if (!isValid) return;
+
+      const updatedProduct = {
+        name: editName.value.trim(),
+        price: Number(editPrice.value),
+        stock: Number(editStock.value)
+      };
+
+      try {
+        const res = await fetch(`/api/lenses/update/${editProductId.value}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedProduct)
+        });
+        const data = await res.json();
+        if (data.success) {
+          editModal.hide();
+
+          // refresh only the updated category tab
+          const updatedCategory = data.product.category; // "PowerLenses" or "ColoredLenses"
+          const tabId = catToTabId[updatedCategory];
+          const container = document.querySelector(`#${tabId} .row`);
+          if (container) {
+            const resp = await fetch(`/api/lenses/${updatedCategory}`);
+            const d = await resp.json();
+            if (d.success) {
+              container.innerHTML = "";
+              d.products.forEach(product => {
+                const card = document.createElement("div");
+                card.className = "col-md-3 mb-4";
+                card.innerHTML = `
+                  <div class="card product-card h-100">
+                    <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
+                    <div class="card-body">
+                      <h5 class="card-title">${escapeHtml(product.name)}</h5>
+                      ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
+                      <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                      <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                      <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </div>
+                `;
+                container.appendChild(card);
+              });
+            }
+          }
+        } else {
+          alert("❌ Failed to update product.");
+        }
+      } catch (err) {
+        console.error("Error updating lens:", err);
+      }
+    });
+  }
+
+  // ================== DELETE functionality for Lenses ==================
+  let deleteLensId = null;
+  const deleteLensModalEl = document.getElementById("deleteLensProductModal");
+  const deleteLensModal = new bootstrap.Modal(deleteLensModalEl);
+  const confirmDeleteLensBtn = document.getElementById("confirmDeleteLensBtn");
+  const lensesContainer = document.getElementById("lenses-products");
+
+  lensesContainer?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".delete-product-btn");
+    if (!btn) return;
+    deleteLensId = btn.dataset.id;
+    deleteLensModal.show();
+  });
+
+  confirmDeleteLensBtn?.addEventListener("click", async () => {
+    if (!deleteLensId) return;
+    try {
+      const res = await fetch(`/api/lenses/delete/${deleteLensId}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        deleteLensModal.hide();
+        deleteLensId = null;
+
+        // Refresh both categories tabs
+        const categories = ["PowerLenses", "ColoredLenses"];
+        for (const category of categories) {
+          const tabId = catToTabId[category];
+          const container = document.querySelector(`#${tabId} .row`);
+          if (!container) continue;
+          try {
+            const resp = await fetch(`/api/lenses/${category}`);
+            const d = await resp.json();
+            if (d.success) {
+              container.innerHTML = "";
+              d.products.forEach(product => {
+                const card = document.createElement("div");
+                card.className = "col-md-3 mb-4";
+                card.innerHTML = `
+                  <div class="card product-card h-100">
+                    <img src="${product.mainImage}" class="card-img-top" alt="${escapeHtml(product.name)}">
+                    <div class="card-body">
+                      <h5 class="card-title">${escapeHtml(product.name)}</h5>
+                      ${ product.category === "PowerLenses" ? `<p class="card-text"><strong>Brand:</strong> ${escapeHtml(product.brand)}</p>` : `<p class="card-text"><strong>Color:</strong> ${escapeHtml(product.color || 'Clear')}</p>` }
+                      <p class="card-text"><strong>Price:</strong> Rs. ${product.price}</p>
+                      <p class="card-text"><strong>Stock:</strong> ${product.stock}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                      <button class="btn btn-warning btn-sm view-product-btn" data-id="${product._id}">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button class="btn btn-info btn-sm edit-product-btn" data-id="${product._id}">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                      <button class="btn btn-danger btn-sm delete-product-btn" data-id="${product._id}">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </div>
+                `;
+                container.appendChild(card);
+              });
+            }
+          } catch (err) {
+            console.error("Error refreshing category", category, err);
+          }
+        }
+      } else {
+        alert("❌ Failed to delete product.");
+      }
+    } catch (err) {
+      console.error("Error deleting lens:", err);
+    }
+  });
+
+});
+</script>
+
+
+
+
+
+
 
     <!-- Orders Management -->
     <section id="orders-management" class="content-section">
