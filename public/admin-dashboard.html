@@ -2820,84 +2820,84 @@
         </form>
       </div>
     </div>
-<!-- Lenses Confirmation Modal -->
-<div class="modal fade" id="lensesConfirmationModal" tabindex="-1">
-  <div class="modal-dialog modal-md modal-dialog-centered">
-    <div class="modal-content rounded-2" style="width: 350px; height: 200px; margin: auto;">
-      <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
-        <p id="lensesConfirmationMessage" class="fs-4"></p>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- View Lens Modal -->
-<div class="modal fade" id="viewLensModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-warning">
-        <h5 class="modal-title">Product Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="viewLensModalBody">
-        <!-- Lens details will be dynamically injected here -->
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Edit Lens Product Modal -->
-<div class="modal fade" id="editLensProductModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-info">
-        <h5 class="modal-title">Edit Product</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form id="editLensForm" autocomplete="off" novalidate>
-          <input type="hidden" id="editLensProductId" name="productId">
-
-          <div class="mb-3">
-            <label for="editLensName" class="form-label">Product Name</label>
-            <input type="text" class="form-control" id="editLensName" name="name" autocomplete="off" required>
+    <!-- Lenses Confirmation Modal -->
+    <div class="modal fade" id="lensesConfirmationModal" tabindex="-1">
+      <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content rounded-2" style="width: 350px; height: 200px; margin: auto;">
+          <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
+            <p id="lensesConfirmationMessage" class="fs-4"></p>
           </div>
-
-          <div class="mb-3">
-            <label for="editLensPrice" class="form-label">Price</label>
-            <input type="number" class="form-control" id="editLensPrice" name="price" min="1" autocomplete="off" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="editLensStock" class="form-label">Stock</label>
-            <input type="number" class="form-control" id="editLensStock" name="stock" min="1" autocomplete="off" required>
-          </div>
-
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="editLensForm" class="btn btn-info">Save Changes</button>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-<!-- Delete Lens Modal -->
-<div class="modal fade" id="deleteLensProductModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title">Confirm Delete</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to delete this Product?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" id="confirmDeleteLensBtn" class="btn btn-danger">Delete</button>
+    <!-- View Lens Modal -->
+    <div class="modal fade" id="viewLensModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title">Product Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="viewLensModalBody">
+            <!-- Lens details will be dynamically injected here -->
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+    <!-- Edit Lens Product Modal -->
+    <div class="modal fade" id="editLensProductModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-info">
+            <h5 class="modal-title">Edit Product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editLensForm" autocomplete="off" novalidate>
+              <input type="hidden" id="editLensProductId" name="productId">
+
+              <div class="mb-3">
+                <label for="editLensName" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="editLensName" name="name" autocomplete="off" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="editLensPrice" class="form-label">Price</label>
+                <input type="number" class="form-control" id="editLensPrice" name="price" min="1" autocomplete="off" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="editLensStock" class="form-label">Stock</label>
+                <input type="number" class="form-control" id="editLensStock" name="stock" min="1" autocomplete="off" required>
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="editLensForm" class="btn btn-info">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Lens Modal -->
+    <div class="modal fade" id="deleteLensProductModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirm Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this Product?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="confirmDeleteLensBtn" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // ================ Add Lens Modal (Add + validation) =================
