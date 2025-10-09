@@ -336,63 +336,80 @@
 
         <!-- ========== Lens Categories Products ========== -->
 
-<!-- ================== Power Eye Lens Section ================== -->
-<section id="powerEyeLens-section" class="py-5 bg-white">
+<!-- ================== Power Eye Lenses Section ================== -->
+<section id="powerlenses-section" class="py-5 bg-white">
   <div class="container">
     <h2 class="text-center mb-5">Power Eye Lenses Collection</h2>
-    <div class="row g-4">
-
-      <!-- Product 1 -->
-      <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
-            <div class="position-relative">
-              <img src="powerLens.jpg" class="card-img-top" alt="Power Eye Lens 1">
-              <div class="product-overlay d-flex flex-column justify-content-center align-items-center">
-                <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title text-dark">SharpSight Power Lenses</h5>
-              <p class="text-muted">Rs. 00</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+    <div class="row g-4" id="powerLensesContainer"></div>
   </div>
 </section>
 
-<!-- ================== Colored Lens Section ================== -->
-<section id="coloredLens-section" class="py-5 bg-light">
+<!-- ================== Colored Lenses Section ================== -->
+<section id="coloredlenses-section" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-5">Colored Lenses Collection</h2>
-    <div class="row g-4">
+    <div class="row g-4" id="coloredLensesContainer"></div>
+  </div>
+</section>
 
-      <!-- Product 1 -->
+<script>
+  // Utility function to render a lens card
+  function renderLensCard(product) {
+    return `
       <div class="col-6 col-md-3">
-        <a href="#" class="text-decoration-none">
+        <a href="lenses-product.html?id=${product._id}" class="text-decoration-none">
           <div class="card product-card shadow-sm h-100">
             <div class="position-relative">
-              <img src="hazel glow.jpg" class="card-img-top" alt="Colored Lens 1">
+              <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
               <div class="product-overlay d-flex justify-content-center align-items-center">
                 <span class="icon mx-2"><i class="fas fa-shopping-cart"></i></span>
                 <span class="icon mx-2"><i class="fas fa-eye"></i></span>
               </div>
             </div>
             <div class="card-body text-center">
-              <h5 class="card-title text-dark">Hazel Glow</h5>
-              <p class="text-muted">Rs. 00</p>
+              <h5 class="card-title text-dark">${product.name}</h5>
+              <p class="text-muted mb-1">Color: ${product.color}</p>
+              <p class="text-muted">Rs. ${product.price}</p>
             </div>
           </div>
         </a>
       </div>
+    `;
+  }
 
-    </div>
-  </div>
-</section>
+  // Function to fetch and render lenses
+  async function loadLenses(category, containerId) {
+    try {
+      const res = await fetch(`/api/lenses/${category}`);
+      const data = await res.json();
+
+      if (data.success) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        data.products.forEach(product => {
+          container.innerHTML += renderLensCard(product);
+        });
+      }
+    } catch (err) {
+      console.error(`❌ Error loading ${category} lenses:`, err);
+    }
+  }
+
+  // Load all lenses categories on page load
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadLenses("PowerLenses", "powerLensesContainer");
+    await loadLenses("ColoredLenses", "coloredLensesContainer");
+
+    // Scroll to hash section if exists
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+</script>
+
 
 
     <footer class="bg-dark text-white text-center py-3">
