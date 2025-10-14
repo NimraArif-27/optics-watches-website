@@ -388,6 +388,54 @@
     <div class="row g-4" id="kidsWatchesContainer"></div>
   </div>
 </section>
+
+<!-- Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white border-0 py-3 px-4 rounded-top-4">
+        <h5 class="modal-title fw-bold" id="quickViewLabel">Quick View</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body py-4">
+        <div class="row g-3">
+
+          <!-- Left Column: Main Image + Sub Images -->
+          <div class="col-md-6 text-center">
+            <!-- Main Image -->
+            <img
+              id="quickViewImage"
+              src=""
+              alt="Product Image"
+              class="img-fluid rounded shadow-sm mb-3"
+              style="max-height: 250px; object-fit: cover; width: 100%;"
+            />
+
+            <!-- Sub Images -->
+            <div id="quickViewSubImages" class="d-flex gap-2 overflow-auto" style="max-width:100%;">
+              <!-- JS inserts thumbnails here -->
+            </div>
+          </div>
+
+          <!-- Right Column: Text Info -->
+          <div class="col-md-6 d-flex flex-column justify-content-start">
+            <h4 id="quickViewName" class="fw-bold mb-2"></h4>
+            <p id="quickViewPrice" class="text-muted fs-5 mb-2"></p>
+            <p id="quickViewDescription" class="text-secondary small mb-2 d-none"></p>
+            <p id="quickViewAgeGroup" class="text-primary fw-semibold mb-0 d-none"></p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
   // Utility function to render a watch card
   function renderWatchCard(product) {
@@ -399,7 +447,7 @@
               <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
               <div class="product-overlay d-flex justify-content-center align-items-center">
                 <span class="icon mx-2 cart-icon"><i class="fas fa-shopping-cart"></i></span>
-                <span class="icon mx-2"><i class="fas fa-eye"></i></span>
+                <span class="icon mx-2 view-icon" data-id="${product._id}"><i class="fas fa-eye"></i></span>
               </div>
             </div>
             <div class="card-body text-center">
@@ -416,6 +464,102 @@
       </div>
     `;
   }
+
+  // === Quick View Functionality ===
+document.addEventListener("click", async (e) => {
+  const viewIcon = e.target.closest(".view-icon");
+  if (viewIcon) {
+    e.preventDefault();
+    const productId = viewIcon.dataset.id;
+
+    try {
+      const res = await fetch(`/api/watches/product/${productId}`);
+      const data = await res.json();
+
+      if (data.success && data.product) {
+        const product = data.product;
+
+        // Text Info
+        document.getElementById("quickViewName").textContent = product.name || "";
+        document.getElementById("quickViewPrice").textContent = product.price ? `Rs. ${product.price}` : "";
+
+        const descEl = document.getElementById("quickViewDescription");
+        if (product.description) {
+          descEl.textContent = product.description;
+          descEl.classList.remove("d-none");
+        } else {
+          descEl.classList.add("d-none");
+        }
+
+        const ageEl = document.getElementById("quickViewAgeGroup");
+        if (product.category === "kidsWatches" && product.ageGroup) {
+          ageEl.textContent = `Age Group: ${product.ageGroup}`;
+          ageEl.classList.remove("d-none");
+        } else {
+          ageEl.classList.add("d-none");
+        }
+
+        // Main Image
+        const mainImage = document.getElementById("quickViewImage");
+        const originalMainImage = product.mainImage || "https://via.placeholder.com/400x300?text=No+Image";
+        mainImage.src = originalMainImage;
+
+        // Sub Images
+        const subContainer = document.getElementById("quickViewSubImages");
+        subContainer.innerHTML = "";
+
+        // Add main image as first thumbnail
+        const mainThumb = document.createElement("img");
+        mainThumb.src = originalMainImage;
+        mainThumb.className = "img-thumbnail me-2 mb-2";
+        mainThumb.style.width = "70px";
+        mainThumb.style.height = "70px";
+        mainThumb.style.objectFit = "cover";
+        mainThumb.style.cursor = "pointer";
+        mainThumb.style.border = "2px solid #0d6efd"; // highlighted by default
+        mainThumb.title = "Main Image";
+
+        mainThumb.addEventListener("click", () => {
+          mainImage.src = originalMainImage;
+          document.querySelectorAll("#quickViewSubImages img").forEach(t => t.style.border = "none");
+          mainThumb.style.border = "2px solid #0d6efd";
+        });
+
+        subContainer.appendChild(mainThumb);
+
+        // Add other sub-images
+        if (product.subImages && product.subImages.length > 0) {
+          product.subImages.forEach((img) => {
+            const thumb = document.createElement("img");
+            thumb.src = img;
+            thumb.className = "img-thumbnail me-2 mb-2";
+            thumb.style.width = "70px";
+            thumb.style.height = "70px";
+            thumb.style.objectFit = "cover";
+            thumb.style.cursor = "pointer";
+
+            thumb.addEventListener("click", () => {
+              mainImage.src = img;
+              document.querySelectorAll("#quickViewSubImages img").forEach(t => t.style.border = "none");
+              thumb.style.border = "2px solid #0d6efd";
+            });
+
+            subContainer.appendChild(thumb);
+          });
+        }
+
+        // Show Modal
+        const modal = new bootstrap.Modal(document.getElementById("quickViewModal"));
+        modal.show();
+
+      } else {
+        console.error("Failed to load product details.");
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  }
+});
 
   // Function to fetch and render watches
   async function loadWatches(category, containerId) {
