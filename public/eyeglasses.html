@@ -418,10 +418,10 @@ function renderProductCard(product) {
             <h5 class="card-title text-dark">${product.name}</h5>
             ${
               product.category === "kidsEyeglasses"
-                ? `<p class="text-muted">${product.ageGroup}</p>`
+                ? `<p class="text-primary" style="color: #6c757d !important;">${product.ageGroup}</p>`
                 : ""
             }
-            <p class="text-muted">Rs. ${product.price}</p>
+            <p class="text-muted price">Rs. ${product.price}</p>
           </div>
         </div>
       </a>

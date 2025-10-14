@@ -91,7 +91,7 @@ document.addEventListener("click", function (e) {
 
     const card = e.target.closest(".card");
     const name = card.querySelector(".card-title").innerText.trim();
-    const priceText = card.querySelector(".text-muted").innerText.replace("Rs.", "").trim();
+    const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
     const price = parseInt(priceText) || 0;
 
     const existing = cart.find(item => item.name === name);
