@@ -25,17 +25,19 @@
       li.innerHTML = `
         <div>
           <strong>${item.name}</strong><br>
-          Rs <span>${item.price}</span>
+          Rs. <span>${item.price}</span>
+          ${item.power ? `<br><small>Power: R ${item.power.right}, L ${item.power.left}</small>` : ""}
         </div>
         <div class="d-flex align-items-center">
           <button class="btn btn-sm btn-outline-secondary me-1" onclick="updateCartQty(${index}, -1)">−</button>
           <span class="mx-1">${item.qty}</span>
           <button class="btn btn-sm btn-outline-secondary ms-1" onclick="updateCartQty(${index}, 1)">+</button>
           <button class="btn btn-sm btn-outline-danger ms-3" onclick="removeFromCart(${index})">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
       `;
+
       cartList.appendChild(li);
     });
 
@@ -59,53 +61,116 @@
 
   // --- ADD TO CART FUNCTION ---
   function addToCart() {
-    const name = document.getElementById("productName").innerText.trim();
-    const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
-    const price = parseInt(priceText) || 0;
-    const qty = parseInt(document.getElementById("quantity").value);
+  const name = document.getElementById("productName").innerText.trim();
+  const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
+  const price = parseInt(priceText) || 0;
+  const qty = parseInt(document.getElementById("quantity").value) || 1;
 
-    const existing = cart.find(item => item.name === name);
-    if (existing) {
-      existing.qty += qty;
-    } else {
-      cart.push({ name, price, qty });
-    }
+  // Capture lens power if available
+  const rightPowerEl = document.getElementById("rightEyePower");
+  const leftPowerEl = document.getElementById("leftEyePower");
 
-    renderCart();
-
-    // Open cart sidebar automatically
-    const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
-    cartSidebar.show();
+  let power = null;
+  if (rightPowerEl && leftPowerEl) {
+    power = {
+      right: rightPowerEl.value,
+      left: leftPowerEl.value
+    };
   }
+
+  // Check if same product + power exists in cart
+  const existing = cart.find(item => {
+    if (item.name !== name) return false;
+    if (!power) return !item.power; // normal product
+    return item.power && item.power.right === power.right && item.power.left === power.left;
+  });
+
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    const cartItem = { name, price, qty };
+    if (power) cartItem.power = power; // store lens power
+    cart.push(cartItem);
+  }
+
+  renderCart();
+
+  // Open cart sidebar automatically
+  const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+  cartSidebar.show();
+}
+
 
   // --- INITIAL RENDER ---
   document.addEventListener("DOMContentLoaded", renderCart);
 
   // --- ADD TO CART FROM HOVER ICON --- //
+// document.addEventListener("click", function (e) {
+//   if (
+//     (e.target.closest(".cart-icon") && e.target.closest(".product-overlay"))
+//   ) {
+//     e.preventDefault();
+//     e.stopPropagation();
+
+//     const card = e.target.closest(".card");
+//     const name = card.querySelector(".card-title").innerText.trim();
+//     const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
+//     const price = parseInt(priceText) || 0;
+
+//     const existing = cart.find(item => item.name === name);
+//     if (existing) {
+//       existing.qty += 1;
+//     } else {
+//       cart.push({ name, price, qty: 1 });
+//     }
+
+//     renderCart();
+
+//     const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//     cartSidebar.show();
+//   }
+// });
 document.addEventListener("click", function (e) {
-  if (
-    (e.target.closest(".cart-icon") && e.target.closest(".product-overlay"))
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
+  const icon = e.target.closest(".cart-icon");
+  if (!icon) return;
 
-    const card = e.target.closest(".card");
-    const name = card.querySelector(".card-title").innerText.trim();
-    const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
-    const price = parseInt(priceText) || 0;
+  const card = e.target.closest(".card");
+  if (!card) return;
 
-    const existing = cart.find(item => item.name === name);
-    if (existing) {
-      existing.qty += 1;
-    } else {
-      cart.push({ name, price, qty: 1 });
-    }
+  e.preventDefault();
+  e.stopPropagation();
 
-    renderCart();
+  const name = card.querySelector(".card-title").innerText.trim();
+  const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
+  const price = parseInt(priceText) || 0;
+  const qty = 1;
 
-    const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
-    cartSidebar.show();
+  let power = null;
+
+  // If the card is inside Power Lenses section, set default Plano power
+  if (card.closest("#powerlenses-section")) {
+    power = { right: "Plano (0.00)", left: "Plano (0.00)" };
   }
+
+  // Check if same product (and same power if any) exists
+  const existing = cart.find(item => {
+    if (item.name !== name) return false;
+    if (!power) return !item.power; // normal product without power
+    return item.power && item.power.right === power.right && item.power.left === power.left;
+  });
+
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    const cartItem = { name, price, qty };
+    if (power) cartItem.power = power;
+    cart.push(cartItem);
+  }
+
+  renderCart();
+
+  const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+  cartSidebar.show();
 });
 
 
