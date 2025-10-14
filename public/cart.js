@@ -80,3 +80,39 @@
 
   // --- INITIAL RENDER ---
   document.addEventListener("DOMContentLoaded", renderCart);
+
+  // --- ADD TO CART FROM HOVER ICON --- //
+document.addEventListener("click", function (e) {
+  if (
+    (e.target.closest(".cart-icon") && e.target.closest(".product-overlay"))
+  ) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const card = e.target.closest(".card");
+    const name = card.querySelector(".card-title").innerText.trim();
+    const priceText = card.querySelector(".text-muted").innerText.replace("Rs.", "").trim();
+    const price = parseInt(priceText) || 0;
+
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ name, price, qty: 1 });
+    }
+
+    renderCart();
+
+    const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+    cartSidebar.show();
+  }
+});
+
+
+
+// 🔁 Force refresh when user comes back to this page
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+      window.location.reload();
+    }
+  });
