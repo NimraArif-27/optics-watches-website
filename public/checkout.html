@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Khalid Optics — Checkout</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --brand:#0d6efd;
+      --muted:#6c757d;
+      --card-radius:10px;
+    }
+    body{background:#f4f6fb;font-family:Inter,system-ui,Segoe UI,Arial;margin:0;padding-top:70px;}
+    .navbar{background-color:#e3f2fd;border-bottom:1px solid #e9eef8;box-shadow:0 1px 0 rgba(13,110,253,0.03)}
+    .navbar .navbar-brand{font-weight:700}
+    .checkout-wrap{max-width:1100px;margin:auto;padding:28px 16px}
+    .card{border-radius:var(--card-radius);box-shadow:0 6px 20px rgba(15,20,30,0.04)}
+    .stepper{display:flex;gap:8px;align-items:center;margin-bottom:18px}
+    .step{flex:1;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #eef5ff}
+    .step.active{border-color:var(--brand);box-shadow:0 6px 18px rgba(13,110,253,0.06)}
+    .step .num{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;background:var(--brand);color:white;font-weight:700}
+    .section-title{font-weight:600;margin-bottom:12px}
+    .order-summary{position:sticky;top:90px}
+    .product-img{width:72px;height:72px;object-fit:cover;border-radius:8px}
+    .muted-small{color:var(--muted);font-size:0.9rem}
+    .form-label.required::after{content:" *";color:#d63333;font-weight:600;margin-left:3px;font-size:0.9rem}
+    @media(max-width:991.98px){ .order-summary{position:static;top:auto} .product-img{width:56px;height:56px} }
+    /* Prevent Chrome yellow autofill appearance staying white */
+    input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+      -webkit-text-fill-color: #000 !important;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+    /* small helpers */
+    .hidden { display:none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER (same style as contact.html) -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+        Khalid Optics & Watches
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+
+          <li class="nav-item dropdown">
+            <div class="btn-group">
+              <a href="eyeglasses.html" class="nav-link">Eyeglasses</a>
+              <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right:0.75rem;"><span class="visually-hidden">Toggle</span></button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="eyeglasses.html#metalframes-section">Metal Frames</a></li>
+                <li><a class="dropdown-item" href="eyeglasses.html#regularglasses-section">Regular Glasses</a></li>
+                <li><a class="dropdown-item" href="eyeglasses.html#branded-section">Branded Frames</a></li>
+                <li><a class="dropdown-item" href="eyeglasses.html#kids-section">Kids Section</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <div class="btn-group">
+              <a href="sunglasses.html" class="nav-link">Sunglasses</a>
+              <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right:0.75rem;"><span class="visually-hidden">Toggle</span></button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="sunglasses.html#sunglasses-section">Metal Sunglasses</a></li>
+                <li><a class="dropdown-item" href="sunglasses.html#Regularsunglasses-section">Regular Sunglasses</a></li>
+                <li><a class="dropdown-item" href="sunglasses.html#brandedsunglasses-section">Branded Sunglasses</a></li>
+                <li><a class="dropdown-item" href="sunglasses.html#kidsunglasses-section">Kids Section</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <div class="btn-group">
+              <a href="watches.html" class="nav-link">Watches</a>
+              <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right:0.75rem;"><span class="visually-hidden">Toggle</span></button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="watches.html#gentswatches-section">Gents</a></li>
+                <li><a class="dropdown-item" href="watches.html#ladieswatches-section">Ladies</a></li>
+                <li><a class="dropdown-item" href="watches.html#premiumwatches-section">Branded Watches</a></li>
+                <li><a class="dropdown-item" href="watches.html#kidswatches-section">Kids Section</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <div class="btn-group">
+              <a href="lenses.html" class="nav-link">Lenses</a>
+              <button type="button" class="nav-link dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" style="padding-right:0.75rem;"><span class="visually-hidden">Toggle</span></button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="lenses.html#powerlenses-section">Power Eye Lens</a></li>
+                <li><a class="dropdown-item" href="lenses.html#coloredlenses-section">Color Lens</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CHECKOUT -->
+  <main class="checkout-wrap">
+    <!-- Stepper -->
+    <div class="stepper mb-3">
+      <div class="step active" data-step="1"><div class="num">1</div><div><strong>Cart</strong><div class="muted-small">Review items</div></div></div>
+      <div class="step" data-step="2"><div class="num" style="background:#e9eefc;color:var(--brand)">2</div><div><strong>Address</strong><div class="muted-small">Shipping details</div></div></div>
+      <div class="step" data-step="3"><div class="num" style="background:#e9eefc;color:var(--brand)">3</div><div><strong>Payment</strong><div class="muted-small">Choose method</div></div></div>
+    </div>
+
+    <div class="row g-4">
+      <!-- LEFT: Steps -->
+      <div class="col-12 col-lg-8">
+        <!-- Step 1: Cart -->
+        <div class="card p-4 mb-3" id="step-1">
+          <h5 class="section-title">Your Cart</h5>
+
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex gap-3 align-items-center p-3">
+              <img src="https://via.placeholder.com/120x120?text=Frame" class="product-img" alt="product">
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div style="font-weight:600">Metal Frame Glasses</div>
+                    <div class="muted-small">Silver • Unisex</div>
+                    <div class="muted-small mt-2">Qty: <span id="qtyDisplay">1</span></div>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold">Rs 3,500</div>
+                    <div class="muted-small">In stock</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <div class="muted-small">Need help? <a href="contact.html">Contact us</a></div>
+            <button id="continueToAddress" class="btn btn-primary">Continue to Address</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Address -->
+        <div class="card p-4 mb-3 d-none" id="step-2">
+          <h5 class="section-title">Shipping Address</h5>
+
+          <!-- disable autocomplete suggestions and browser autofill -->
+          <form id="addressForm" class="row g-3 needs-validation" novalidate autocomplete="off" spellcheck="false">
+            <!-- hidden fake fields to reduce autofill -->
+            <input type="text" name="fake_user" style="display:none">
+            <input type="password" name="fake_pass" style="display:none">
+
+            <div class="col-md-6">
+              <label class="form-label required">Full name</label>
+              <input type="text" id="fullname" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback" id="fullnameFeedback">Please enter your full name (letters only).</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label required">Phone</label>
+              <input type="tel" id="phone" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback" id="phoneFeedback">Enter valid phone (10–11 digits).</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label required">Address</label>
+              <input type="text" id="addressLine" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback" id="addressFeedback">Please enter delivery address.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label required">City</label>
+              <input type="text" id="city" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback" id="cityFeedback">City required.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">State / Province</label>
+              <input type="text" id="state" class="form-control" autocomplete="off">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label required">Postal code</label>
+              <input type="text" id="postal" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback" id="postalFeedback">Postal code required.</div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-between">
+              <button id="backToCart" class="btn btn-outline-secondary">Back</button>
+              <button id="continueToPayment" class="btn btn-primary">Continue to Payment</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment -->
+        <div class="card p-4 mb-3 d-none" id="step-3">
+          <h5 class="section-title">Payment</h5>
+
+          <div class="mb-3 muted-small">Select a payment method</div>
+
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="methodCard" value="card" checked>
+            <label class="form-check-label" for="methodCard">Credit / Debit Card</label>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="methodCOD" value="cod">
+            <label class="form-check-label" for="methodCOD">Cash on Delivery (Pay at delivery)</label>
+          </div>
+
+          <form id="paymentForm" class="row g-3 needs-validation" novalidate autocomplete="off" spellcheck="false">
+            <!-- Card fields (hidden when COD selected) -->
+            <div class="col-12 card-group">
+              <label class="form-label required">Name on card</label>
+              <input type="text" id="cardName" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback">Name on card required.</div>
+            </div>
+
+            <div class="col-12 card-group">
+              <label class="form-label required">Card number</label>
+              <input type="text" id="cardNumber" class="form-control" maxlength="19" autocomplete="off" required inputmode="numeric" placeholder="xxxx xxxx xxxx xxxx">
+              <div class="invalid-feedback">Card number required.</div>
+            </div>
+
+            <div class="col-6 col-md-4 card-group">
+              <label class="form-label required">Expiry</label>
+              <input type="text" id="cardExp" class="form-control" maxlength="5" autocomplete="off" required placeholder="MM/YY">
+              <div class="invalid-feedback">Expiry required.</div>
+            </div>
+
+            <div class="col-6 col-md-4 card-group">
+              <label class="form-label required">CVV</label>
+              <input type="password" id="cardCvv" class="form-control" maxlength="4" autocomplete="off" required inputmode="numeric" placeholder="123">
+              <div class="invalid-feedback">CVV required.</div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-between">
+              <button id="backToAddress" class="btn btn-outline-secondary">Back</button>
+              <button id="placeOrderBtn" class="btn btn-primary">Place Order</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Success -->
+        <div class="card p-4 text-center d-none" id="orderSuccess">
+          <i class="bi bi-check-circle-fill text-success" style="font-size:64px"></i>
+          <h3 class="mt-3">Thank you — your order is placed!</h3>
+          <p class="muted-small">We will contact you at the provided phone number. Order ID: <strong id="orderId">--</strong></p>
+          <div class="d-flex justify-content-center gap-2 mt-3">
+            <a href="index.html" class="btn btn-outline-secondary">Continue Shopping</a>
+            <a href="contact.html" class="btn btn-primary">Contact Support</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: summary -->
+      <aside class="col-12 col-lg-4">
+        <div class="card p-3 order-summary">
+          <h6 class="section-title">Order Summary</h6>
+
+          <div id="summaryList" class="mb-3">
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <div style="font-weight:600">Metal Frame Glasses</div>
+                <div class="muted-small">Silver • Unisex</div>
+              </div>
+              <div class="fw-bold">Rs 3,500</div>
+            </div>
+          </div>
+
+          <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between"><small class="muted-small">Subtotal</small><strong id="subtotal">Rs 3,500</strong></li>
+            <li class="list-group-item d-flex justify-content-between"><small class="muted-small">Delivery</small><strong id="delivery">Rs 200</strong></li>
+            <li class="list-group-item d-flex justify-content-between"><small class="muted-small">Tax (13%)</small><strong id="tax">Rs 455</strong></li>
+            <li class="list-group-item d-flex justify-content-between"><small class="muted-small">Total</small><strong id="total">Rs 4,155</strong></li>
+          </ul>
+
+          <div class="muted-small text-center">Secure checkout — your card details are not stored by this demo.</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- FOOTER (same style as contact.html) -->
+  <footer class="bg-dark text-white text-center py-3 mt-4">
+    <p>&copy; <span id="year"></span> Khalid Optics & Watches</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Validation & COD logic -->
+  <script>
+    // set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Step elems
+    const step1 = document.getElementById('step-1'),
+          step2 = document.getElementById('step-2'),
+          step3 = document.getElementById('step-3'),
+          orderSuccess = document.getElementById('orderSuccess');
+
+    // Buttons
+    document.getElementById('continueToAddress').addEventListener('click', () => {
+      step1.classList.add('d-none');
+      step2.classList.remove('d-none');
+      setStepperActive(2);
+    });
+    document.getElementById('backToCart').addEventListener('click', (e) => {
+      e.preventDefault();
+      step2.classList.add('d-none');
+      step1.classList.remove('d-none');
+      setStepperActive(1);
+    });
+    document.getElementById('continueToPayment').addEventListener('click', (e) => {
+      e.preventDefault();
+      // validate address form
+      const addrForm = document.getElementById('addressForm');
+      if (!validateAddress()) {
+        addrForm.classList.add('was-validated');
+        return;
+      }
+      step2.classList.add('d-none');
+      step3.classList.remove('d-none');
+      setStepperActive(3);
+    });
+    document.getElementById('backToAddress').addEventListener('click', (e) => {
+      e.preventDefault();
+      step3.classList.add('d-none');
+      step2.classList.remove('d-none');
+      setStepperActive(2);
+    });
+
+    function setStepperActive(stepNo){
+      document.querySelectorAll('.step').forEach(s=>{
+        s.classList.toggle('active', Number(s.getAttribute('data-step')) === stepNo);
+      });
+    }
+
+    // Inputs
+    const fullname = document.getElementById('fullname');
+    const phone = document.getElementById('phone');
+    const addressLine = document.getElementById('addressLine');
+    const city = document.getElementById('city');
+    const postal = document.getElementById('postal');
+
+    // Address validation rules
+    function validateNameField() {
+      const val = fullname.value.trim();
+      const re = /^[A-Za-z\s]{2,}$/;
+      if (!val) return false;
+      return re.test(val);
+    }
+    function validatePhoneField() {
+      const val = phone.value.replace(/\D/g,'').trim();
+      return val.length >= 10 && val.length <= 11;
+    }
+    function validateEmailField(emailVal) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(String(emailVal).toLowerCase());
+    }
+    function validateAddress() {
+      let ok = true;
+      if (!validateNameField()) {
+        document.getElementById('fullname').classList.add('is-invalid');
+        ok = false;
+      } else { document.getElementById('fullname').classList.remove('is-invalid'); }
+      if (!validatePhoneField()) {
+        document.getElementById('phone').classList.add('is-invalid');
+        ok = false;
+      } else { document.getElementById('phone').classList.remove('is-invalid'); }
+      if (!addressLine.value.trim()) {
+        document.getElementById('addressLine').classList.add('is-invalid');
+        ok = false;
+      } else { document.getElementById('addressLine').classList.remove('is-invalid'); }
+      if (!city.value.trim()) {
+        document.getElementById('city').classList.add('is-invalid');
+        ok = false;
+      } else { document.getElementById('city').classList.remove('is-invalid'); }
+      if (!postal.value.trim()) {
+        document.getElementById('postal').classList.add('is-invalid');
+        ok = false;
+      } else { document.getElementById('postal').classList.remove('is-invalid'); }
+      return ok;
+    }
+
+    // Real-time simple formatting & prevention of suggestion:
+    fullname.setAttribute('autocomplete','off');
+    phone.setAttribute('autocomplete','off');
+    addressLine.setAttribute('autocomplete','off');
+    city.setAttribute('autocomplete','off');
+    postal.setAttribute('autocomplete','off');
+
+    phone.addEventListener('input', (e)=> {
+      // keep digits only
+      const cleaned = e.target.value.replace(/\D/g,'').slice(0,11);
+      e.target.value = cleaned;
+    });
+
+    fullname.addEventListener('input', (e)=>{
+      // allow letters and spaces only
+      e.target.value = e.target.value.replace(/[^A-Za-z\s]/g,'');
+    });
+
+    // Payment method toggle: hide card fields when COD chosen
+    const methodCard = document.getElementById('methodCard');
+    const methodCOD = document.getElementById('methodCOD');
+    const cardGroups = document.querySelectorAll('.card-group');
+
+    function toggleCardFields(){
+      const cod = methodCOD.checked;
+      cardGroups.forEach(g => {
+        g.style.display = cod ? 'none' : '';
+        // if cod hide required property to avoid validation blocking
+        g.querySelectorAll('input').forEach(inp => {
+          if (cod) inp.removeAttribute('required'); else inp.setAttribute('required','');
+        });
+      });
+    }
+
+    document.querySelectorAll('input[name="paymentMethod"]').forEach(r=> r.addEventListener('change', toggleCardFields));
+    toggleCardFields(); // initial
+
+    // format card inputs (nice UX)
+    const cardNumber = document.getElementById('cardNumber');
+    const cardExp = document.getElementById('cardExp');
+    if (cardNumber) {
+      cardNumber.addEventListener('input', e=>{
+        let v = e.target.value.replace(/\D/g,'').slice(0,16);
+        v = v.match(/.{1,4}/g)?.join(' ') || v;
+        e.target.value = v;
+      });
+    }
+    if (cardExp) {
+      cardExp.addEventListener('input', e=>{
+        let v = e.target.value.replace(/\D/g,'').slice(0,4);
+        if (v.length>2) v = v.slice(0,2) + '/' + v.slice(2);
+        e.target.value = v;
+      });
+    }
+
+    // FINAL ORDER PLACE
+    document.getElementById('paymentForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const codSelected = methodCOD.checked;
+
+      // if COD -> skip card validation but require address validated
+      if (!validateAddress()) {
+        // go back to address if not valid
+        step3.classList.add('d-none');
+        step2.classList.remove('d-none');
+        setStepperActive(2);
+        return;
+      }
+
+      if (!codSelected) {
+        // require card fields validity
+        const cardName = document.getElementById('cardName');
+        const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
+        const cardExpVal = document.getElementById('cardExp').value;
+        const cardCvvVal = document.getElementById('cardCvv').value;
+
+        // very light checks
+        if (!cardName.value.trim() || cardNumberVal.length < 13 || cardCvvVal.length < 3 || cardExpVal.length < 4) {
+          // mark invalids
+          if(!cardName.value.trim()) cardName.classList.add('is-invalid'); else cardName.classList.remove('is-invalid');
+          if(cardNumberVal.length < 13) document.getElementById('cardNumber').classList.add('is-invalid'); else document.getElementById('cardNumber').classList.remove('is-invalid');
+          if(cardCvvVal.length < 3) document.getElementById('cardCvv').classList.add('is-invalid'); else document.getElementById('cardCvv').classList.remove('is-invalid');
+          if(cardExpVal.length < 4) document.getElementById('cardExp').classList.add('is-invalid'); else document.getElementById('cardExp').classList.remove('is-invalid');
+          return;
+        }
+      }
+
+      // simulate processing
+      const btn = document.getElementById('placeOrderBtn');
+      btn.disabled = true;
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
+
+      setTimeout(()=> {
+        // success view
+        step1.classList.add('d-none');
+        step2.classList.add('d-none');
+        step3.classList.add('d-none');
+        orderSuccess.classList.remove('d-none');
+        // order id
+        document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
+        window.scrollTo({top:0,behavior:'smooth'});
+      }, 1200);
+    });
+
+    // Optional: quick validate on blur for address fields
+    fullname.addEventListener('blur', ()=> { if(!validateNameField()) fullname.classList.add('is-invalid'); else fullname.classList.remove('is-invalid'); });
+    phone.addEventListener('blur', ()=> { if(!validatePhoneField()) phone.classList.add('is-invalid'); else phone.classList.remove('is-invalid'); });
+    addressLine.addEventListener('blur', ()=> { if(!addressLine.value.trim()) addressLine.classList.add('is-invalid'); else addressLine.classList.remove('is-invalid'); });
+    city.addEventListener('blur', ()=> { if(!city.value.trim()) city.classList.add('is-invalid'); else city.classList.remove('is-invalid'); });
+    postal.addEventListener('blur', ()=> { if(!postal.value.trim()) postal.classList.add('is-invalid'); else postal.classList.remove('is-invalid'); });
+
+    // prevent form autocomplete suggestions from browsers
+    document.querySelectorAll('input').forEach(i=>{
+      i.setAttribute('autocomplete','off');
+      i.setAttribute('autocorrect','off');
+      i.setAttribute('autocapitalize','off');
+      i.setAttribute('spellcheck','false');
+    });
+
+  </script>
+</body>
+</html>
