@@ -196,24 +196,23 @@
 
       <!-- Delivery & Discounts -->
       <div id="site-info-container" class="mt-4 p-3 border rounded bg-light"></div>
-
-<script>
-  async function loadSiteSettings() {
-    const res = await fetch("/api/site-settings");
-    const data = await res.json();
-
-    if (data.success) {
-      const s = data.settings;
-      document.getElementById("site-info-container").innerHTML = `
-        <p><strong>Estimated Delivery:</strong> ${s.estimatedDelivery}</p>
-        <p><strong>Special Offer:</strong> ${s.specialOfferText}</p>
-        <p><strong>Return Policy:</strong> ${s.returnPolicy}</p>
-        <p><strong>Business Hours:</strong> ${s.businessHours}</p>
-      `;
-    }
-  }
-  loadSiteSettings();
-</script>
+      <script>
+        async function loadSiteSettings() {
+          const res = await fetch("/api/site-settings");
+          const data = await res.json();
+ 
+          if (data.success) {
+            const s = data.settings;
+            document.getElementById("site-info-container").innerHTML = `
+              <p><strong>Estimated Delivery:</strong> ${s.estimatedDelivery}</p>
+              <p><strong>Special Offer:</strong> ${s.specialOfferText}</p>
+              <p><strong>Return Policy:</strong> ${s.returnPolicy}</p>
+              <p><strong>Business Hours:</strong> ${s.businessHours}</p>
+            `;
+          }
+        }
+        loadSiteSettings();
+      </script>
 
     </div>
   </div>
