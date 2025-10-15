@@ -192,6 +192,7 @@
     <li class="nav-item"><a class="nav-link" href="#" data-section="orders-management"><i class="fas fa-shopping-cart"></i> Orders</a></li>
     <li class="nav-item"><a class="nav-link" href="#" data-section="reviews-management"><i class="fas fa-star"></i> Reviews</a></li>
     <li class="nav-item"><a class="nav-link" href="#" data-section="contact-us-management"><i class="fas fa-address-book"></i> Contact Us</a></li>
+    <li class="nav-item"><a class="nav-link" href="#" data-section="site-settings"><i class="fas fa-cog"></i> Site Settings</a></li>
   </ul>
 </nav>
 
@@ -3599,6 +3600,137 @@
       </div>
     </section>
 
+    <!-- Site Setting -->
+    <section id="site-settings" class="content-section" style="display: none;">
+  <h2 class="mb-4">Site Settings</h2>
+  <form id="siteSettingsForm" class="space-y-3" autocomplete="off">
+    <div class="mb-3">
+      <label class="form-label">Estimated Delivery</label>
+      <input type="text" id="estimatedDelivery" class="form-control" placeholder="e.g., 3-5 business days" autocomplete="off" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Special Offer Text</label>
+      <input type="text" id="specialOfferText" class="form-control" placeholder="e.g., Free delivery above Rs. 2000" autocomplete="off" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Free Delivery Above (Rs.)</label>
+      <input type="number" id="freeDeliveryAbove" class="form-control" placeholder="e.g., 2000" autocomplete="off" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Delivery Charges (Rs.)</label>
+      <input type="number" id="deliveryCharges" class="form-control" placeholder="e.g., 200" autocomplete="off" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Return Policy</label>
+      <textarea id="returnPolicy" class="form-control" rows="2" placeholder="e.g., 30-day easy returns" autocomplete="off"></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Business Hours</label>
+      <input type="text" id="businessHours" class="form-control" placeholder="e.g., Mon–Sat: 10:00 AM – 8:00 PM" autocomplete="off" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save Settings</button>
+    <p id="settingsMessage" class="mt-2 fw-semibold"></p>
+  </form>
+    </section>
+    <!-- Site Setting JS -->
+    <script>
+const links = document.querySelectorAll('.nav-link[data-section]');
+const sections = document.querySelectorAll('.content-section');
+
+links.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const sectionId = link.getAttribute('data-section');
+    sections.forEach(sec => sec.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'block';
+    
+    // Call specific load function if available
+    if (sectionId === 'site-settings') {
+      loadSiteSettings();
+    }
+  });
+});
+
+async function loadSiteSettings() {
+  const msg = document.getElementById("settingsMessage");
+  msg.textContent = "";
+
+  try {
+    const res = await fetch("/api/site-settings");
+    const data = await res.json();
+    if (data.success && data.settings) {
+      const s = data.settings;
+      document.getElementById("estimatedDelivery").value = s.estimatedDelivery || "";
+      document.getElementById("specialOfferText").value = s.specialOfferText || "";
+      document.getElementById("freeDeliveryAbove").value = s.freeDeliveryAbove || "";
+      document.getElementById("deliveryCharges").value = s.deliveryCharges || "";
+      document.getElementById("returnPolicy").value = s.returnPolicy || "";
+      document.getElementById("businessHours").value = s.businessHours || "";
+    }
+  } catch (err) {
+    console.error("Error loading site settings:", err);
+  }
+}
+
+document.getElementById("siteSettingsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById("settingsMessage");
+  msg.textContent = "";
+
+  const fields = [
+    "estimatedDelivery",
+    "specialOfferText",
+    "freeDeliveryAbove",
+    "deliveryCharges",
+    "returnPolicy",
+    "businessHours"
+  ];
+
+  // Check if any field is empty
+  const empty = fields.some(id => !document.getElementById(id).value.trim());
+  if (empty) {
+    msg.textContent = "Please fill out all fields before saving.";
+    msg.className = "mt-2 text-danger fw-semibold";
+    setTimeout(() => (msg.textContent = ""), 3000);
+    return;
+  }
+
+  // Prepare updated data
+  const updated = {
+    estimatedDelivery: document.getElementById("estimatedDelivery").value.trim(),
+    specialOfferText: document.getElementById("specialOfferText").value.trim(),
+    freeDeliveryAbove: Number(document.getElementById("freeDeliveryAbove").value),
+    deliveryCharges: Number(document.getElementById("deliveryCharges").value),
+    returnPolicy: document.getElementById("returnPolicy").value.trim(),
+    businessHours: document.getElementById("businessHours").value.trim()
+  };
+
+  try {
+    const res = await fetch("/api/site-settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated)
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      msg.textContent = "Settings updated successfully!";
+      msg.className = "mt-2 text-primary fw-semibold"; // Blue success message
+    } else {
+      msg.textContent = "Failed to update settings.";
+      msg.className = "mt-2 text-danger fw-semibold";
+    }
+  } catch (err) {
+    msg.textContent = "Error saving settings.";
+    msg.className = "mt-2 text-danger fw-semibold";
+    console.error(err);
+  }
+
+  setTimeout(() => (msg.textContent = ""), 3000);
+});
+    </script>
+
   </main>
 
   <footer class="footer">&copy; 2025 Khalid Optics & Watches</footer>
@@ -3700,6 +3832,7 @@
     showSection('dashboard-overview');
   });
 </script>
+
 
 <!-- Customer Review -->
 <script>

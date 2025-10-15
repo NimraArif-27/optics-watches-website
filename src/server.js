@@ -10,6 +10,7 @@ const eyeglassesRoutes = require("./routes/eyeglasses");
 const sunglassesRoutes = require("./routes/sunglasses");
 const watchesRoutes = require("./routes/watches");
 const lensesRoutes = require("./routes/lenses");
+const siteSettingsRoutes = require("./routes/siteSettings");
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use("/api/eyeglasses", eyeglassesRoutes);
 app.use("/api/sunglasses", sunglassesRoutes);
 app.use("/api/watches", watchesRoutes);
 app.use("/api/lenses", lensesRoutes);
+app.use("/api/site-settings", siteSettingsRoutes);
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/shop", {
