@@ -194,8 +194,9 @@
             </div>
 
             <div class="col-md-4">
-              <label class="form-label">State / Province</label>
-              <input type="text" id="state" class="form-control" autocomplete="off">
+              <label class="form-label required">State / Province</label>
+              <input type="text" id="state" class="form-control" autocomplete="off" required>
+              <div class="invalid-feedback" id="stateFeedback">State / province required.</div>
             </div>
 
             <div class="col-md-4">
@@ -526,227 +527,225 @@
   </script> -->
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const fullname = document.getElementById("fullname");
-      const phone = document.getElementById("phone");
-      const address = document.getElementById("addressLine");
-      const city = document.getElementById("city");
-      const postal = document.getElementById("postal");
-      const paymentForm = document.getElementById("paymentForm");
-      const methodCard = document.getElementById("methodCard");
-      const methodCOD = document.getElementById("methodCOD");
-      const cardGroups = document.querySelectorAll(".card-group");
-    
-      const touched = { fullname: false, phone: false, address: false, city: false, postal: false };
-    
-      // Validation functions
-      function validateName(showError = true) {
-        const nameRegex = /^[A-Za-z\s]{2,}$/;
-        const feedback = document.getElementById("fullnameFeedback");
-        if (!fullname.value.trim()) {
-          if (showError) feedback.textContent = "Full name is required.";
-          fullname.classList.add("is-invalid");
-          return false;
-        } else if (!nameRegex.test(fullname.value.trim())) {
-          if (showError) feedback.textContent = "Name must contain only alphabets.";
-          fullname.classList.add("is-invalid");
-          return false;
-        }
-        fullname.classList.remove("is-invalid");
-        feedback.textContent = "";
-        return true;
+    // set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  
+    // Step elements
+    const step1 = document.getElementById('step-1'),
+          step2 = document.getElementById('step-2'),
+          step3 = document.getElementById('step-3'),
+          orderSuccess = document.getElementById('orderSuccess');
+  
+    // Buttons
+    document.getElementById('continueToAddress').addEventListener('click', () => {
+      step1.classList.add('d-none');
+      step2.classList.remove('d-none');
+      setStepperActive(2);
+    });
+    document.getElementById('backToCart').addEventListener('click', (e) => {
+      e.preventDefault();
+      step2.classList.add('d-none');
+      step1.classList.remove('d-none');
+      setStepperActive(1);
+    });
+    document.getElementById('continueToPayment').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!validateAddress()) {
+        document.getElementById('addressForm').classList.add('was-validated');
+        return;
       }
-    
-      function validatePhone(showError = true) {
-        const phoneRegex = /^\d{10,11}$/;
-        const feedback = document.getElementById("phoneFeedback");
-        if (!phone.value.trim()) {
-          if (showError) feedback.textContent = "Phone number is required.";
-          phone.classList.add("is-invalid");
-          return false;
-        } else if (!phoneRegex.test(phone.value.trim())) {
-          if (showError) feedback.textContent = "Enter valid phone (10–11 digits).";
-          phone.classList.add("is-invalid");
-          return false;
-        }
-        phone.classList.remove("is-invalid");
-        feedback.textContent = "";
-        return true;
-      }
-    
-      function validateAddress(showError = true) {
-        const feedback = document.getElementById("addressFeedback");
-        if (!address.value.trim()) {
-          if (showError) feedback.textContent = "Address is required.";
-          address.classList.add("is-invalid");
-          return false;
-        }
-        address.classList.remove("is-invalid");
-        feedback.textContent = "";
-        return true;
-      }
-    
-      function validateCity(showError = true) {
-        const feedback = document.getElementById("cityFeedback");
-        if (!city.value.trim()) {
-          if (showError) feedback.textContent = "City is required.";
-          city.classList.add("is-invalid");
-          return false;
-        }
-        city.classList.remove("is-invalid");
-        feedback.textContent = "";
-        return true;
-      }
-    
-      function validatePostal(showError = true) {
-        const postalRegex = /^\d{5}$/;
-        const feedback = document.getElementById("postalFeedback");
-        if (!postal.value.trim()) {
-          if (showError) feedback.textContent = "Postal code is required.";
-          postal.classList.add("is-invalid");
-          return false;
-        } else if (!postalRegex.test(postal.value.trim())) {
-          if (showError) feedback.textContent = "Postal must be 5 digits.";
-          postal.classList.add("is-invalid");
-          return false;
-        }
-        postal.classList.remove("is-invalid");
-        feedback.textContent = "";
-        return true;
-      }
-    
-      // Blur validations
-      fullname.addEventListener("blur", () => { touched.fullname = true; validateName(); });
-      phone.addEventListener("blur", () => { touched.phone = true; validatePhone(); });
-      address.addEventListener("blur", () => { touched.address = true; validateAddress(); });
-      city.addEventListener("blur", () => { touched.city = true; validateCity(); });
-      postal.addEventListener("blur", () => { touched.postal = true; validatePostal(); });
-    
-      // Input filters (live formatting)
-      fullname.addEventListener("input", e => {
+      step2.classList.add('d-none');
+      step3.classList.remove('d-none');
+      setStepperActive(3);
+    });
+    document.getElementById('backToAddress').addEventListener('click', (e) => {
+      e.preventDefault();
+      step3.classList.add('d-none');
+      step2.classList.remove('d-none');
+      setStepperActive(2);
+    });
+  
+    function setStepperActive(stepNo){
+      document.querySelectorAll('.step').forEach(s=>{
+        s.classList.toggle('active', Number(s.getAttribute('data-step')) === stepNo);
+      });
+    }
+  
+    // Inputs
+    const fullname = document.getElementById('fullname');
+    const phone = document.getElementById('phone');
+    const addressLine = document.getElementById('addressLine');
+    const city = document.getElementById('city');
+    const state = document.getElementById('state');
+    const postal = document.getElementById('postal');
+  
+    // Validation rules
+    function validateNameField() {
+      const val = fullname.value.trim();
+      const re = /^[A-Za-z\s]+$/;
+      return re.test(val) && val.length >= 2;
+    }
+  
+    function validateCityField() {
+      const val = city.value.trim();
+      const re = /^[A-Za-z\s]+$/;
+      return re.test(val) && val.length >= 2;
+    }
+  
+    function validateStateField() {
+      const val = state.value.trim();
+      const re = /^[A-Za-z\s]+$/;
+      return re.test(val) && val.length >= 2;
+    }
+  
+    function validatePhoneField() {
+      const val = phone.value.replace(/\D/g,'').trim();
+      return /^[0-9]{11}$/.test(val);
+    }
+  
+    function validateAddress() {
+      let ok = true;
+  
+      if (!validateNameField()) { fullname.classList.add('is-invalid'); ok = false; }
+      else fullname.classList.remove('is-invalid');
+  
+      if (!validatePhoneField()) { phone.classList.add('is-invalid'); ok = false; }
+      else phone.classList.remove('is-invalid');
+  
+      if (!addressLine.value.trim()) { addressLine.classList.add('is-invalid'); ok = false; }
+      else addressLine.classList.remove('is-invalid');
+  
+      if (!validateCityField()) { city.classList.add('is-invalid'); ok = false; }
+      else city.classList.remove('is-invalid');
+  
+      if (!validateStateField()) { state.classList.add('is-invalid'); ok = false; }
+      else state.classList.remove('is-invalid');
+  
+      if (!postal.value.trim()) { postal.classList.add('is-invalid'); ok = false; }
+      else postal.classList.remove('is-invalid');
+  
+      return ok;
+    }
+  
+    // Real-time filters
+    [fullname, city, state].forEach(field => {
+      field.addEventListener('input', e => {
         e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '');
-        if (touched.fullname) validateName(false);
       });
-      phone.addEventListener("input", e => {
-        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 11);
-        if (touched.phone) validatePhone(false);
+    });
+  
+    phone.addEventListener('input', e => {
+      const cleaned = e.target.value.replace(/\D/g,'').slice(0,11);
+      e.target.value = cleaned;
+    });
+  
+    // Prevent autofill/suggestions
+    document.querySelectorAll('input').forEach(input => {
+      input.setAttribute('autocomplete', 'new-' + Math.random().toString(36).substring(2, 15));
+      input.setAttribute('autocorrect', 'off');
+      input.setAttribute('autocapitalize', 'off');
+      input.setAttribute('spellcheck', 'false');
+      input.addEventListener('focus', () => {
+        input.setAttribute('readonly', true);
+        setTimeout(() => input.removeAttribute('readonly'), 100);
       });
-      postal.addEventListener("input", e => {
-        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
-        if (touched.postal) validatePostal(false);
-      });
-    
-      // Disable browser suggestions
-      document.querySelectorAll("input").forEach(inp => {
-        inp.setAttribute("autocomplete", "off");
-        inp.setAttribute("autocorrect", "off");
-        inp.setAttribute("autocapitalize", "off");
-        inp.setAttribute("spellcheck", "false");
-      });
-    
-      // Payment method toggle (COD hides card fields)
-      function toggleCardFields() {
-        const cod = methodCOD.checked;
-        cardGroups.forEach(g => {
-          g.style.display = cod ? "none" : "";
-          g.querySelectorAll("input").forEach(inp => {
-            if (cod) inp.removeAttribute("required");
-            else inp.setAttribute("required", "");
-          });
+    });
+  
+    // Payment method toggle
+    const methodCard = document.getElementById('methodCard');
+    const methodCOD = document.getElementById('methodCOD');
+    const cardGroups = document.querySelectorAll('.card-group');
+  
+    function toggleCardFields(){
+      const cod = methodCOD.checked;
+      cardGroups.forEach(g => {
+        g.style.display = cod ? 'none' : '';
+        g.querySelectorAll('input').forEach(inp => {
+          if (cod) inp.removeAttribute('required'); 
+          else inp.setAttribute('required','');
         });
+      });
+    }
+  
+    document.querySelectorAll('input[name="paymentMethod"]').forEach(r=> 
+      r.addEventListener('change', toggleCardFields)
+    );
+    toggleCardFields();
+  
+    // Card formatting
+    const cardNumber = document.getElementById('cardNumber');
+    const cardExp = document.getElementById('cardExp');
+  
+    if (cardNumber) {
+      cardNumber.addEventListener('input', e=>{
+        let v = e.target.value.replace(/\D/g,'').slice(0,16);
+        v = v.match(/.{1,4}/g)?.join(' ') || v;
+        e.target.value = v;
+      });
+    }
+  
+    if (cardExp) {
+      cardExp.addEventListener('input', e=>{
+        let v = e.target.value.replace(/\D/g,'').slice(0,4);
+        if (v.length>2) v = v.slice(0,2) + '/' + v.slice(2);
+        e.target.value = v;
+      });
+    }
+  
+    // Order place
+    document.getElementById('paymentForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const codSelected = methodCOD.checked;
+  
+      if (!validateAddress()) {
+        step3.classList.add('d-none');
+        step2.classList.remove('d-none');
+        setStepperActive(2);
+        return;
       }
-      methodCard.addEventListener("change", toggleCardFields);
-      methodCOD.addEventListener("change", toggleCardFields);
-      toggleCardFields();
-    
-      // Step navigation
-      document.getElementById("continueToAddress").addEventListener("click", () => {
-        document.getElementById("step-1").classList.add("d-none");
-        document.getElementById("step-2").classList.remove("d-none");
-      });
-    
-      document.getElementById("continueToPayment").addEventListener("click", (e) => {
-        e.preventDefault();
-        const valid =
-          validateName(true) &&
-          validatePhone(true) &&
-          validateAddress(true) &&
-          validateCity(true) &&
-          validatePostal(true);
-        if (valid) {
-          document.getElementById("step-2").classList.add("d-none");
-          document.getElementById("step-3").classList.remove("d-none");
-        }
-      });
-    
-      document.getElementById("backToCart").addEventListener("click", e => {
-        e.preventDefault();
-        document.getElementById("step-2").classList.add("d-none");
-        document.getElementById("step-1").classList.remove("d-none");
-      });
-    
-      document.getElementById("backToAddress").addEventListener("click", e => {
-        e.preventDefault();
-        document.getElementById("step-3").classList.add("d-none");
-        document.getElementById("step-2").classList.remove("d-none");
-      });
-    
-      // Place order
-      paymentForm.addEventListener("submit", e => {
-        e.preventDefault();
-        const codSelected = methodCOD.checked;
-        const validAddress =
-          validateName(true) &&
-          validatePhone(true) &&
-          validateAddress(true) &&
-          validateCity(true) &&
-          validatePostal(true);
-    
-        if (!validAddress) {
-          alert("Please correct the highlighted fields before proceeding.");
+  
+      if (!codSelected) {
+        const cardName = document.getElementById('cardName');
+        const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
+        const cardExpVal = document.getElementById('cardExp').value;
+        const cardCvvVal = document.getElementById('cardCvv').value;
+  
+        if (!cardName.value.trim() || cardNumberVal.length < 13 || cardCvvVal.length < 3 || cardExpVal.length < 4) {
+          if(!cardName.value.trim()) cardName.classList.add('is-invalid'); else cardName.classList.remove('is-invalid');
+          if(cardNumberVal.length < 13) document.getElementById('cardNumber').classList.add('is-invalid'); else document.getElementById('cardNumber').classList.remove('is-invalid');
+          if(cardCvvVal.length < 3) document.getElementById('cardCvv').classList.add('is-invalid'); else document.getElementById('cardCvv').classList.remove('is-invalid');
+          if(cardExpVal.length < 4) document.getElementById('cardExp').classList.add('is-invalid'); else document.getElementById('cardExp').classList.remove('is-invalid');
           return;
         }
-    
-        if (!codSelected) {
-          const cardName = document.getElementById("cardName");
-          const cardNumber = document.getElementById("cardNumber");
-          const cardExp = document.getElementById("cardExp");
-          const cardCvv = document.getElementById("cardCvv");
-          const cardNumberVal = cardNumber.value.replace(/\s/g, '');
-    
-          if (
-            !cardName.value.trim() ||
-            cardNumberVal.length < 13 ||
-            !/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExp.value) ||
-            !/^\d{3,4}$/.test(cardCvv.value)
-          ) {
-            alert("Please fill in valid card details.");
-            return;
-          }
-        }
-    
-        // Success simulation
-        const btn = document.getElementById("placeOrderBtn");
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Processing...`;
-    
-        setTimeout(() => {
-          document.getElementById("step-1").classList.add("d-none");
-          document.getElementById("step-2").classList.add("d-none");
-          document.getElementById("step-3").classList.add("d-none");
-          document.getElementById("orderSuccess").classList.remove("d-none");
-          document.getElementById("orderId").textContent =
-            "KOPT-" + Math.floor(Math.random() * 900000 + 100000);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          btn.disabled = false;
-          btn.innerHTML = "Place Order";
-        }, 1200);
-      });
-    
-      // Set year
-      document.getElementById("year").textContent = new Date().getFullYear();
+      }
+  
+      const btn = document.getElementById('placeOrderBtn');
+      btn.disabled = true;
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
+  
+      setTimeout(()=> {
+        step1.classList.add('d-none');
+        step2.classList.add('d-none');
+        step3.classList.add('d-none');
+        orderSuccess.classList.remove('d-none');
+        document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
+        window.scrollTo({top:0,behavior:'smooth'});
+      }, 1200);
     });
-    </script>
+  
+    // Blur validations
+    fullname.addEventListener('blur', ()=> { if(!validateNameField()) fullname.classList.add('is-invalid'); else fullname.classList.remove('is-invalid'); });
+    phone.addEventListener('blur', ()=> { if(!validatePhoneField()) phone.classList.add('is-invalid'); else phone.classList.remove('is-invalid'); });
+    addressLine.addEventListener('blur', ()=> { if(!addressLine.value.trim()) addressLine.classList.add('is-invalid'); else addressLine.classList.remove('is-invalid'); });
+    city.addEventListener('blur', ()=> { if(!validateCityField()) city.classList.add('is-invalid'); else city.classList.remove('is-invalid'); });
+    state.addEventListener('blur', ()=> { if(!validateStateField()) state.classList.add('is-invalid'); else state.classList.remove('is-invalid'); });
+    postal.addEventListener('blur', ()=> { if(!postal.value.trim()) postal.classList.add('is-invalid'); else postal.classList.remove('is-invalid'); });
+  
+  </script>
+  
+
+ 
     
 </body>
 </html>
