@@ -3757,6 +3757,10 @@
           <input type="number" id="deliveryCharges" class="form-control" placeholder="e.g., 200" autocomplete="off" />
         </div>
         <div class="mb-3">
+          <label class="form-label">Tax (%)</label>
+          <input type="number" id="tax" class="form-control" placeholder="e.g., 13" autocomplete="off" />
+        </div>
+        <div class="mb-3">
           <label class="form-label">Return Policy</label>
           <textarea id="returnPolicy" class="form-control" rows="2" placeholder="e.g., 30-day easy returns" autocomplete="off"></textarea>
         </div>
@@ -3800,6 +3804,7 @@
             document.getElementById("specialOfferText").value = s.specialOfferText || "";
             document.getElementById("freeDeliveryAbove").value = s.freeDeliveryAbove || "";
             document.getElementById("deliveryCharges").value = s.deliveryCharges || "";
+            document.getElementById("tax").value = s.tax || "";
             document.getElementById("returnPolicy").value = s.returnPolicy || "";
             document.getElementById("businessHours").value = s.businessHours || "";
           }
@@ -3818,6 +3823,7 @@
           "specialOfferText",
           "freeDeliveryAbove",
           "deliveryCharges",
+          "tax",
           "returnPolicy",
           "businessHours"
         ];
@@ -3837,6 +3843,7 @@
           specialOfferText: document.getElementById("specialOfferText").value.trim(),
           freeDeliveryAbove: Number(document.getElementById("freeDeliveryAbove").value),
           deliveryCharges: Number(document.getElementById("deliveryCharges").value),
+          tax: Number(document.getElementById("tax").value),
           returnPolicy: document.getElementById("returnPolicy").value.trim(),
           businessHours: document.getElementById("businessHours").value.trim()
         };

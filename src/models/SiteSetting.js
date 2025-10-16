@@ -5,6 +5,7 @@ const siteSettingSchema = new mongoose.Schema({
   specialOfferText: { type: String, default: "Free delivery on orders above Rs. 2000!" },
   freeDeliveryAbove: { type: Number, default: 2000 },
   deliveryCharges: { type: Number, default: 200 },
+  tax: { type: Number, default: 13 },
   returnPolicy: { type: String, default: "30-day easy returns." },
   businessHours: { type: String, default: "Mon - Sat: 10:00 AM - 8:00 PM" }
 });
