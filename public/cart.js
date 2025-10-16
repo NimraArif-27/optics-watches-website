@@ -181,3 +181,11 @@ document.addEventListener("click", function (e) {
       window.location.reload();
     }
   });
+
+
+  // --- CHECKOUT BUTTON REDIRECT FROM CART-SIDEBAR ---
+document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
+  btn.addEventListener('click', () => {
+    window.location.href = 'checkout.html';
+  });
+});
