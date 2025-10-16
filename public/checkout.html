@@ -172,37 +172,37 @@
             <div class="col-md-6">
               <label class="form-label required">Full name</label>
               <input type="text" id="fullname" class="form-control" autocomplete="off" required>
-              <div class="invalid-feedback" id="fullnameFeedback">Please enter your full name (letters only).</div>
+              <div class="invalid-feedback" id="fullnameFeedback">Enter your full name (letters only).</div>
             </div>
 
             <div class="col-md-6">
               <label class="form-label required">Phone</label>
               <input type="tel" id="phone" class="form-control" autocomplete="off" required>
-              <div class="invalid-feedback" id="phoneFeedback">Enter valid phone (10–11 digits).</div>
+              <div class="invalid-feedback" id="phoneFeedback">Enter a valid phone number.</div>
             </div>
 
             <div class="col-12">
               <label class="form-label required">Address</label>
               <input type="text" id="addressLine" class="form-control" autocomplete="off" required>
-              <div class="invalid-feedback" id="addressFeedback">Please enter delivery address.</div>
+              <div class="invalid-feedback" id="addressFeedback">Enter delivery address.</div>
             </div>
 
             <div class="col-md-4">
               <label class="form-label required">City</label>
               <input type="text" id="city" class="form-control" autocomplete="off" required>
-              <div class="invalid-feedback" id="cityFeedback">City required.</div>
+              <div class="invalid-feedback" id="cityFeedback">Enter City Name.</div>
             </div>
 
             <div class="col-md-4">
               <label class="form-label required">State / Province</label>
               <input type="text" id="state" class="form-control" autocomplete="off" required>
-              <div class="invalid-feedback" id="stateFeedback">State / province required.</div>
+              <div class="invalid-feedback" id="stateFeedback"> Enter State / Province.</div>
             </div>
 
             <div class="col-md-4">
               <label class="form-label required">Postal code</label>
               <input type="text" id="postal" class="form-control" autocomplete="off" required>
-              <div class="invalid-feedback" id="postalFeedback">Postal code required.</div>
+              <div class="invalid-feedback" id="postalFeedback">Enter Postal code.</div>
             </div>
 
             <div class="col-12 d-flex justify-content-between">
@@ -310,442 +310,258 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Validation & COD logic -->
-  <!-- <script>
-    // set year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Step elems
-    const step1 = document.getElementById('step-1'),
-          step2 = document.getElementById('step-2'),
-          step3 = document.getElementById('step-3'),
-          orderSuccess = document.getElementById('orderSuccess');
-
-    // Buttons
-    document.getElementById('continueToAddress').addEventListener('click', () => {
-      step1.classList.add('d-none');
-      step2.classList.remove('d-none');
-      setStepperActive(2);
-    });
-    document.getElementById('backToCart').addEventListener('click', (e) => {
-      e.preventDefault();
-      step2.classList.add('d-none');
-      step1.classList.remove('d-none');
-      setStepperActive(1);
-    });
-    document.getElementById('continueToPayment').addEventListener('click', (e) => {
-      e.preventDefault();
-      // validate address form
-      const addrForm = document.getElementById('addressForm');
-      if (!validateAddress()) {
-        addrForm.classList.add('was-validated');
-        return;
-      }
-      step2.classList.add('d-none');
-      step3.classList.remove('d-none');
-      setStepperActive(3);
-    });
-    document.getElementById('backToAddress').addEventListener('click', (e) => {
-      e.preventDefault();
-      step3.classList.add('d-none');
-      step2.classList.remove('d-none');
-      setStepperActive(2);
-    });
-
-    function setStepperActive(stepNo){
-      document.querySelectorAll('.step').forEach(s=>{
-        s.classList.toggle('active', Number(s.getAttribute('data-step')) === stepNo);
-      });
-    }
-
-    // Inputs
-    const fullname = document.getElementById('fullname');
-    const phone = document.getElementById('phone');
-    const addressLine = document.getElementById('addressLine');
-    const city = document.getElementById('city');
-    const postal = document.getElementById('postal');
-
-    // Address validation rules
-    function validateNameField() {
-      const val = fullname.value.trim();
-      const re = /^[A-Za-z\s]{2,}$/;
-      if (!val) return false;
-      return re.test(val);
-    }
-    function validatePhoneField() {
-      const val = phone.value.replace(/\D/g,'').trim();
-      return val.length >= 10 && val.length <= 11;
-    }
-    function validateEmailField(emailVal) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(String(emailVal).toLowerCase());
-    }
-    function validateAddress() {
-      let ok = true;
-      if (!validateNameField()) {
-        document.getElementById('fullname').classList.add('is-invalid');
-        ok = false;
-      } else { document.getElementById('fullname').classList.remove('is-invalid'); }
-      if (!validatePhoneField()) {
-        document.getElementById('phone').classList.add('is-invalid');
-        ok = false;
-      } else { document.getElementById('phone').classList.remove('is-invalid'); }
-      if (!addressLine.value.trim()) {
-        document.getElementById('addressLine').classList.add('is-invalid');
-        ok = false;
-      } else { document.getElementById('addressLine').classList.remove('is-invalid'); }
-      if (!city.value.trim()) {
-        document.getElementById('city').classList.add('is-invalid');
-        ok = false;
-      } else { document.getElementById('city').classList.remove('is-invalid'); }
-      if (!postal.value.trim()) {
-        document.getElementById('postal').classList.add('is-invalid');
-        ok = false;
-      } else { document.getElementById('postal').classList.remove('is-invalid'); }
-      return ok;
-    }
-
-    // Real-time simple formatting & prevention of suggestion:
-    fullname.setAttribute('autocomplete','off');
-    phone.setAttribute('autocomplete','off');
-    addressLine.setAttribute('autocomplete','off');
-    city.setAttribute('autocomplete','off');
-    postal.setAttribute('autocomplete','off');
-
-    phone.addEventListener('input', (e)=> {
-      // keep digits only
-      const cleaned = e.target.value.replace(/\D/g,'').slice(0,11);
-      e.target.value = cleaned;
-    });
-
-    fullname.addEventListener('input', (e)=>{
-      // allow letters and spaces only
-      e.target.value = e.target.value.replace(/[^A-Za-z\s]/g,'');
-    });
-
-    // Payment method toggle: hide card fields when COD chosen
-    const methodCard = document.getElementById('methodCard');
-    const methodCOD = document.getElementById('methodCOD');
-    const cardGroups = document.querySelectorAll('.card-group');
-
-    function toggleCardFields(){
-      const cod = methodCOD.checked;
-      cardGroups.forEach(g => {
-        g.style.display = cod ? 'none' : '';
-        // if cod hide required property to avoid validation blocking
-        g.querySelectorAll('input').forEach(inp => {
-          if (cod) inp.removeAttribute('required'); else inp.setAttribute('required','');
-        });
-      });
-    }
-
-    document.querySelectorAll('input[name="paymentMethod"]').forEach(r=> r.addEventListener('change', toggleCardFields));
-    toggleCardFields(); // initial
-
-    // format card inputs (nice UX)
-    const cardNumber = document.getElementById('cardNumber');
-    const cardExp = document.getElementById('cardExp');
-    if (cardNumber) {
-      cardNumber.addEventListener('input', e=>{
-        let v = e.target.value.replace(/\D/g,'').slice(0,16);
-        v = v.match(/.{1,4}/g)?.join(' ') || v;
-        e.target.value = v;
-      });
-    }
-    if (cardExp) {
-      cardExp.addEventListener('input', e=>{
-        let v = e.target.value.replace(/\D/g,'').slice(0,4);
-        if (v.length>2) v = v.slice(0,2) + '/' + v.slice(2);
-        e.target.value = v;
-      });
-    }
-
-    // FINAL ORDER PLACE
-    document.getElementById('paymentForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const codSelected = methodCOD.checked;
-
-      // if COD -> skip card validation but require address validated
-      if (!validateAddress()) {
-        // go back to address if not valid
-        step3.classList.add('d-none');
-        step2.classList.remove('d-none');
-        setStepperActive(2);
-        return;
-      }
-
-      if (!codSelected) {
-        // require card fields validity
-        const cardName = document.getElementById('cardName');
-        const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
-        const cardExpVal = document.getElementById('cardExp').value;
-        const cardCvvVal = document.getElementById('cardCvv').value;
-
-        // very light checks
-        if (!cardName.value.trim() || cardNumberVal.length < 13 || cardCvvVal.length < 3 || cardExpVal.length < 4) {
-          // mark invalids
-          if(!cardName.value.trim()) cardName.classList.add('is-invalid'); else cardName.classList.remove('is-invalid');
-          if(cardNumberVal.length < 13) document.getElementById('cardNumber').classList.add('is-invalid'); else document.getElementById('cardNumber').classList.remove('is-invalid');
-          if(cardCvvVal.length < 3) document.getElementById('cardCvv').classList.add('is-invalid'); else document.getElementById('cardCvv').classList.remove('is-invalid');
-          if(cardExpVal.length < 4) document.getElementById('cardExp').classList.add('is-invalid'); else document.getElementById('cardExp').classList.remove('is-invalid');
-          return;
-        }
-      }
-
-      // simulate processing
-      const btn = document.getElementById('placeOrderBtn');
-      btn.disabled = true;
-      const orig = btn.innerHTML;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
-
-      setTimeout(()=> {
-        // success view
-        step1.classList.add('d-none');
-        step2.classList.add('d-none');
-        step3.classList.add('d-none');
-        orderSuccess.classList.remove('d-none');
-        // order id
-        document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
-        window.scrollTo({top:0,behavior:'smooth'});
-      }, 1200);
-    });
-
-    // Optional: quick validate on blur for address fields
-    fullname.addEventListener('blur', ()=> { if(!validateNameField()) fullname.classList.add('is-invalid'); else fullname.classList.remove('is-invalid'); });
-    phone.addEventListener('blur', ()=> { if(!validatePhoneField()) phone.classList.add('is-invalid'); else phone.classList.remove('is-invalid'); });
-    addressLine.addEventListener('blur', ()=> { if(!addressLine.value.trim()) addressLine.classList.add('is-invalid'); else addressLine.classList.remove('is-invalid'); });
-    city.addEventListener('blur', ()=> { if(!city.value.trim()) city.classList.add('is-invalid'); else city.classList.remove('is-invalid'); });
-    postal.addEventListener('blur', ()=> { if(!postal.value.trim()) postal.classList.add('is-invalid'); else postal.classList.remove('is-invalid'); });
-
-    // prevent form autocomplete suggestions from browsers
-    document.querySelectorAll('input').forEach(i=>{
-      i.setAttribute('autocomplete','off');
-      i.setAttribute('autocorrect','off');
-      i.setAttribute('autocapitalize','off');
-      i.setAttribute('spellcheck','false');
-    });
-
-  </script> -->
-
   <script>
-    // set year
-    document.getElementById('year').textContent = new Date().getFullYear();
-  
-    // Step elements
-    const step1 = document.getElementById('step-1'),
-          step2 = document.getElementById('step-2'),
-          step3 = document.getElementById('step-3'),
-          orderSuccess = document.getElementById('orderSuccess');
-  
-    // Buttons
-    document.getElementById('continueToAddress').addEventListener('click', () => {
-      step1.classList.add('d-none');
-      step2.classList.remove('d-none');
-      setStepperActive(2);
-    });
-    document.getElementById('backToCart').addEventListener('click', (e) => {
-      e.preventDefault();
-      step2.classList.add('d-none');
-      step1.classList.remove('d-none');
-      setStepperActive(1);
-    });
-    document.getElementById('continueToPayment').addEventListener('click', (e) => {
-      e.preventDefault();
-      if (!validateAddress()) {
-        document.getElementById('addressForm').classList.add('was-validated');
-        return;
-      }
-      step2.classList.add('d-none');
-      step3.classList.remove('d-none');
-      setStepperActive(3);
-    });
-    document.getElementById('backToAddress').addEventListener('click', (e) => {
-      e.preventDefault();
-      step3.classList.add('d-none');
-      step2.classList.remove('d-none');
-      setStepperActive(2);
-    });
-  
-    function setStepperActive(stepNo){
-      document.querySelectorAll('.step').forEach(s=>{
-        s.classList.toggle('active', Number(s.getAttribute('data-step')) === stepNo);
-      });
-    }
-  
-    // Inputs
-    const fullname = document.getElementById('fullname');
-    const phone = document.getElementById('phone');
-    const addressLine = document.getElementById('addressLine');
-    const city = document.getElementById('city');
-    const state = document.getElementById('state');
-    const postal = document.getElementById('postal');
-  
-    // Validation rules
-    function validateNameField() {
-      const val = fullname.value.trim();
-      const re = /^[A-Za-z\s]+$/;
-      return re.test(val) && val.length >= 2;
-    }
-  
-    function validateCityField() {
-      const val = city.value.trim();
-      const re = /^[A-Za-z\s]+$/;
-      return re.test(val) && val.length >= 2;
-    }
-  
-    function validateStateField() {
-      const val = state.value.trim();
-      const re = /^[A-Za-z\s]+$/;
-      return re.test(val) && val.length >= 2;
-    }
-  
-    function validatePhoneField() {
-      const val = phone.value.replace(/\D/g,'').trim();
-      return /^[0-9]{11}$/.test(val);
-    }
-  
-    function validateAddress() {
-      let ok = true;
-  
-      if (!validateNameField()) { fullname.classList.add('is-invalid'); ok = false; }
-      else fullname.classList.remove('is-invalid');
-  
-      if (!validatePhoneField()) { phone.classList.add('is-invalid'); ok = false; }
-      else phone.classList.remove('is-invalid');
-  
-      if (!addressLine.value.trim()) { addressLine.classList.add('is-invalid'); ok = false; }
-      else addressLine.classList.remove('is-invalid');
-  
-      if (!validateCityField()) { city.classList.add('is-invalid'); ok = false; }
-      else city.classList.remove('is-invalid');
-  
-      if (!validateStateField()) { state.classList.add('is-invalid'); ok = false; }
-      else state.classList.remove('is-invalid');
-  
-      if (!postal.value.trim()) { postal.classList.add('is-invalid'); ok = false; }
-      else postal.classList.remove('is-invalid');
-  
-      return ok;
-    }
-  
-    // Real-time filters
-    [fullname, city, state].forEach(field => {
-      field.addEventListener('input', e => {
-        e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '');
-      });
-    });
-  
-    phone.addEventListener('input', e => {
-      const cleaned = e.target.value.replace(/\D/g,'').slice(0,11);
-      e.target.value = cleaned;
-    });
-  
-    // Prevent autofill/suggestions
-    document.querySelectorAll('input').forEach(input => {
-      input.setAttribute('autocomplete', 'new-' + Math.random().toString(36).substring(2, 15));
-      input.setAttribute('autocorrect', 'off');
-      input.setAttribute('autocapitalize', 'off');
-      input.setAttribute('spellcheck', 'false');
-      input.addEventListener('focus', () => {
-        input.setAttribute('readonly', true);
-        setTimeout(() => input.removeAttribute('readonly'), 100);
-      });
-    });
-  
-    // Payment method toggle
-    const methodCard = document.getElementById('methodCard');
-    const methodCOD = document.getElementById('methodCOD');
-    const cardGroups = document.querySelectorAll('.card-group');
-  
-    function toggleCardFields(){
-      const cod = methodCOD.checked;
-      cardGroups.forEach(g => {
-        g.style.display = cod ? 'none' : '';
-        g.querySelectorAll('input').forEach(inp => {
-          if (cod) inp.removeAttribute('required'); 
-          else inp.setAttribute('required','');
-        });
-      });
-    }
-  
-    document.querySelectorAll('input[name="paymentMethod"]').forEach(r=> 
-      r.addEventListener('change', toggleCardFields)
-    );
-    toggleCardFields();
-  
-    // Card formatting
-    const cardNumber = document.getElementById('cardNumber');
-    const cardExp = document.getElementById('cardExp');
-  
-    if (cardNumber) {
-      cardNumber.addEventListener('input', e=>{
-        let v = e.target.value.replace(/\D/g,'').slice(0,16);
-        v = v.match(/.{1,4}/g)?.join(' ') || v;
-        e.target.value = v;
-      });
-    }
-  
-    if (cardExp) {
-      cardExp.addEventListener('input', e=>{
-        let v = e.target.value.replace(/\D/g,'').slice(0,4);
-        if (v.length>2) v = v.slice(0,2) + '/' + v.slice(2);
-        e.target.value = v;
-      });
-    }
-  
-    // Order place
-    document.getElementById('paymentForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const codSelected = methodCOD.checked;
-  
-      if (!validateAddress()) {
-        step3.classList.add('d-none');
-        step2.classList.remove('d-none');
-        setStepperActive(2);
-        return;
-      }
-  
-      if (!codSelected) {
-        const cardName = document.getElementById('cardName');
-        const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
-        const cardExpVal = document.getElementById('cardExp').value;
-        const cardCvvVal = document.getElementById('cardCvv').value;
-  
-        if (!cardName.value.trim() || cardNumberVal.length < 13 || cardCvvVal.length < 3 || cardExpVal.length < 4) {
-          if(!cardName.value.trim()) cardName.classList.add('is-invalid'); else cardName.classList.remove('is-invalid');
-          if(cardNumberVal.length < 13) document.getElementById('cardNumber').classList.add('is-invalid'); else document.getElementById('cardNumber').classList.remove('is-invalid');
-          if(cardCvvVal.length < 3) document.getElementById('cardCvv').classList.add('is-invalid'); else document.getElementById('cardCvv').classList.remove('is-invalid');
-          if(cardExpVal.length < 4) document.getElementById('cardExp').classList.add('is-invalid'); else document.getElementById('cardExp').classList.remove('is-invalid');
-          return;
-        }
-      }
-  
-      const btn = document.getElementById('placeOrderBtn');
-      btn.disabled = true;
-      const orig = btn.innerHTML;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
-  
-      setTimeout(()=> {
-        step1.classList.add('d-none');
-        step2.classList.add('d-none');
-        step3.classList.add('d-none');
-        orderSuccess.classList.remove('d-none');
-        document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
-        window.scrollTo({top:0,behavior:'smooth'});
-      }, 1200);
-    });
-  
-    // Blur validations
-    fullname.addEventListener('blur', ()=> { if(!validateNameField()) fullname.classList.add('is-invalid'); else fullname.classList.remove('is-invalid'); });
-    phone.addEventListener('blur', ()=> { if(!validatePhoneField()) phone.classList.add('is-invalid'); else phone.classList.remove('is-invalid'); });
-    addressLine.addEventListener('blur', ()=> { if(!addressLine.value.trim()) addressLine.classList.add('is-invalid'); else addressLine.classList.remove('is-invalid'); });
-    city.addEventListener('blur', ()=> { if(!validateCityField()) city.classList.add('is-invalid'); else city.classList.remove('is-invalid'); });
-    state.addEventListener('blur', ()=> { if(!validateStateField()) state.classList.add('is-invalid'); else state.classList.remove('is-invalid'); });
-    postal.addEventListener('blur', ()=> { if(!postal.value.trim()) postal.classList.add('is-invalid'); else postal.classList.remove('is-invalid'); });
-  
-  </script>
-  
+document.getElementById('year').textContent = new Date().getFullYear();
 
+const step1 = document.getElementById('step-1'),
+      step2 = document.getElementById('step-2'),
+      step3 = document.getElementById('step-3'),
+      orderSuccess = document.getElementById('orderSuccess');
+
+document.getElementById('continueToAddress').addEventListener('click', () => {
+  step1.classList.add('d-none');
+  step2.classList.remove('d-none');
+  setStepperActive(2);
+});
+
+document.getElementById('backToCart').addEventListener('click', (e) => {
+  e.preventDefault();
+  step2.classList.add('d-none');
+  step1.classList.remove('d-none');
+  setStepperActive(1);
+});
+
+document.getElementById('continueToPayment').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (validateAddress()) {
+    step2.classList.add('d-none');
+    step3.classList.remove('d-none');
+    setStepperActive(3);
+  }
+});
+
+document.getElementById('backToAddress').addEventListener('click', (e) => {
+  e.preventDefault();
+  step3.classList.add('d-none');
+  step2.classList.remove('d-none');
+  setStepperActive(2);
+});
+
+/* ✅ Updated stepper (keeps all previous steps filled blue) */
+function setStepperActive(stepNo) {
+  const steps = document.querySelectorAll('.step');
+  steps.forEach(step => {
+    const stepNum = Number(step.getAttribute('data-step'));
+    const numDiv = step.querySelector('.num');
+
+    if (stepNum <= stepNo) {
+      // Current and completed steps stay filled
+      numDiv.style.backgroundColor = '#0d6efd';
+      numDiv.style.color = '#fff';
+      step.style.color = '#0d6efd';
+      step.classList.add('active');
+    } else {
+      // Future steps normal
+      numDiv.style.backgroundColor = '#e9eefc';
+      numDiv.style.color = '#0d6efd';
+      step.classList.remove('active');
+    }
+  });
+}
+
+const fullname = document.getElementById('fullname');
+const phone = document.getElementById('phone');
+const addressLine = document.getElementById('addressLine');
+const city = document.getElementById('city');
+const state = document.getElementById('state');
+const postal = document.getElementById('postal');
+
+function validateNameField() {
+  const val = fullname.value.trim();
+  return /^[A-Za-z\s]+$/.test(val) && val.length >= 2;
+}
+
+function validateCityField() {
+  const val = city.value.trim();
+  return /^[A-Za-z\s]+$/.test(val) && val.length >= 2;
+}
+
+function validateStateField() {
+  const val = state.value.trim();
+  return /^[A-Za-z\s]+$/.test(val) && val.length >= 2;
+}
+
+function validatePhoneField() {
+  const val = phone.value.trim();
+  return /^[0-9]{11}$/.test(val);
+}
+
+function validatePostalField() {
+  const val = postal.value.trim();
+  return /^[0-9]+$/.test(val);
+}
+
+function validateAddress() {
+  let ok = true;
+  if (!validateNameField()) { showError(fullname); ok = false; } else clearError(fullname);
+  if (!validatePhoneField()) { showError(phone); ok = false; } else clearError(phone);
+  if (!addressLine.value.trim()) { showError(addressLine); ok = false; } else clearError(addressLine);
+  if (!validateCityField()) { showError(city); ok = false; } else clearError(city);
+  if (!validateStateField()) { showError(state); ok = false; } else clearError(state);
+  if (!validatePostalField()) { showError(postal); ok = false; } else clearError(postal);
+  return ok;
+}
+
+function showError(input) {
+  input.classList.add('is-invalid');
+  input.style.borderColor = '#dc3545';
+  input.style.boxShadow = '0 0 0 0.25rem rgba(220,53,69,.25)';
+}
+
+function clearError(input) {
+  input.classList.remove('is-invalid');
+  input.style.borderColor = '';
+  input.style.boxShadow = 'none';
+}
+
+[fullname, city, state].forEach(field => {
+  field.addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '');
+  });
+});
+
+phone.addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 11);
+});
+
+postal.addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+/* ✅ STRONGEST NO-AUTOFILL SETTINGS */
+window.addEventListener('load', () => {
+  document.querySelectorAll('form').forEach(form => {
+    form.setAttribute('autocomplete', 'off');
+  });
+
+  document.querySelectorAll('input').forEach(input => {
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('autocapitalize', 'off');
+    input.setAttribute('spellcheck', 'false');
+    input.setAttribute('inputmode', 'text');
+
+    // disable Chrome autofill popup visually
+    input.setAttribute('data-form-type', 'other');
+    input.setAttribute('aria-autocomplete', 'none');
+    input.setAttribute('role', 'presentation');
+    input.addEventListener('focus', () => clearError(input));
+  });
+});
+
+const methodCard = document.getElementById('methodCard');
+const methodCOD = document.getElementById('methodCOD');
+const cardGroups = document.querySelectorAll('.card-group');
+
+function toggleCardFields(){
+  const cod = methodCOD.checked;
+  cardGroups.forEach(g => {
+    g.style.display = cod ? 'none' : '';
+    g.querySelectorAll('input').forEach(inp => {
+      if (cod) inp.removeAttribute('required'); 
+      else inp.setAttribute('required','');
+    });
+  });
+}
+
+document.querySelectorAll('input[name="paymentMethod"]').forEach(r=> 
+  r.addEventListener('change', toggleCardFields)
+);
+toggleCardFields();
+
+const cardNumber = document.getElementById('cardNumber');
+const cardExp = document.getElementById('cardExp');
+
+if (cardNumber) {
+  cardNumber.addEventListener('input', e=>{
+    let v = e.target.value.replace(/\D/g,'').slice(0,16);
+    v = v.match(/.{1,4}/g)?.join(' ') || v;
+    e.target.value = v;
+  });
+}
+
+if (cardExp) {
+  cardExp.addEventListener('input', e=>{
+    let v = e.target.value.replace(/\D/g,'').slice(0,4);
+    if (v.length>2) v = v.slice(0,2) + '/' + v.slice(2);
+    e.target.value = v;
+  });
+}
+
+document.getElementById('paymentForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const codSelected = methodCOD.checked;
+
+  if (!validateAddress()) {
+    step3.classList.add('d-none');
+    step2.classList.remove('d-none');
+    setStepperActive(2);
+    return;
+  }
+
+  if (!codSelected) {
+    const cardName = document.getElementById('cardName');
+    const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
+    const cardExpVal = document.getElementById('cardExp').value;
+    const cardCvvVal = document.getElementById('cardCvv').value;
+
+    if (!cardName.value.trim() || cardNumberVal.length < 13 || cardCvvVal.length < 3 || cardExpVal.length < 4) {
+      if(!cardName.value.trim()) showError(cardName); else clearError(cardName);
+      if(cardNumberVal.length < 13) showError(document.getElementById('cardNumber')); else clearError(document.getElementById('cardNumber'));
+      if(cardCvvVal.length < 3) showError(document.getElementById('cardCvv')); else clearError(document.getElementById('cardCvv'));
+      if(cardExpVal.length < 4) showError(document.getElementById('cardExp')); else clearError(document.getElementById('cardExp'));
+      return;
+    }
+  }
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true;
+  const orig = btn.innerHTML;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
+
+  setTimeout(()=> {
+    step1.classList.add('d-none');
+    step2.classList.add('d-none');
+    step3.classList.add('d-none');
+    orderSuccess.classList.remove('d-none');
+    document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }, 1200);
+});
+
+// 🧠 Chrome autofill full suppression (final working trick)
+window.addEventListener("DOMContentLoaded", () => {
+  const sensitiveInputs = document.querySelectorAll(
+    '#fullname, #phone, #addressLine, #city, #state, #postal'
+  );
+
+  // Insert hidden dummy fields before real inputs
+  sensitiveInputs.forEach(input => {
+    const dummy = document.createElement('input');
+    dummy.type = 'text';
+    dummy.style.display = 'none';
+    dummy.autocomplete = 'off';
+    dummy.name = Math.random().toString(36).substring(2,10); // random name
+    input.parentNode.insertBefore(dummy, input);
+  });
+
+  // Randomize real input names too
+  sensitiveInputs.forEach(input => {
+    input.name = 'field_' + Math.random().toString(36).substring(2,10);
+    input.setAttribute('autocomplete', 'new-' + input.name);
+  });
+});
+</script>
  
-    
 </body>
 </html>
