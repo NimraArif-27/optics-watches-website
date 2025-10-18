@@ -239,6 +239,9 @@
         </div>
     </nav>
 
+    <!-- Error message area -->
+    <div id="stockError"></div>
+
     <!-- Bootstrap Offcanvas for Cart -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" style="width:400px;">
         <div class="offcanvas-header">
@@ -390,7 +393,7 @@
     return `
       <div class="col-6 col-md-3">
         <a href="products.html?id=${product._id}" class="text-decoration-none">
-          <div class="card product-card shadow-sm h-100">
+          <div class="card product-card shadow-sm h-100" data-stock="${product.stock}">
             <div class="position-relative">
               <img src="${product.mainImage}" class="card-img-top" alt="${product.name}">
               <div class="product-overlay d-flex justify-content-center align-items-center">

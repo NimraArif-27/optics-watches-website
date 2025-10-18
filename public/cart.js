@@ -35,7 +35,7 @@
         <div class="d-flex align-items-center">
           <button class="btn btn-sm btn-outline-secondary me-1" onclick="updateCartQty(${index}, -1)">−</button>
           <span class="mx-1">${item.qty}</span>
-          <button class="btn btn-sm btn-outline-secondary ms-1" onclick="updateCartQty(${index}, 1)">+</button>
+          <button class="btn btn-sm btn-outline-secondary ms-1" onclick="updateCartQty(${index}, 1)" ${item.stock && item.qty >= item.stock ? "disabled" : ""}>+</button>
           <button class="btn btn-sm btn-outline-danger ms-3" onclick="removeFromCart(${index})">
           <i class="fas fa-trash"></i>
         </button>
@@ -52,10 +52,33 @@
 
   // --- UPDATE QUANTITY ---
   function updateCartQty(index, change) {
-    cart[index].qty += change;
-    if (cart[index].qty <= 0) cart.splice(index, 1);
-    renderCart();
+  const item = cart[index];
+  if (!item) return;
+
+  // Prevent exceeding stock
+  if (change > 0 && item.stock && item.qty >= item.stock) {
+    const stockError = document.getElementById("stockError");
+    if (stockError) {
+      stockError.textContent = `Only ${item.stock} item(s) are available in stock.`;
+      stockError.style.background = "red";
+      stockError.style.color = "white";
+      stockError.style.textAlign = "center";
+      stockError.style.fontWeight = "bold";
+      stockError.style.padding = "8px 12px";
+    }
+    return; // stop quantity increase
   }
+
+  // Normal quantity change
+  item.qty += change;
+
+  // Remove if qty <= 0
+  if (item.qty <= 0) cart.splice(index, 1);
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
+
 
   // --- REMOVE ITEM ---
   function removeFromCart(index) {
@@ -82,6 +105,17 @@ function addToCart() {
     stockError.style.textAlign = "center";
     stockError.style.fontWeight = "bold";
     stockError.style.padding = "8px 12px";
+    stockError.style.position = "fixed";   // stay in viewport
+    stockError.style.top = "60px";            // stick to top
+    stockError.style.left = "0";
+    stockError.style.width = "100%";       // full width
+    stockError.style.zIndex = "9999";
+
+    // Auto-hide after duration
+    setTimeout(() => {
+      stockError.textContent = "";
+      stockError.removeAttribute("style");
+     }, 3000);
   }
 
   // Helper: clear error and its styles completely
@@ -118,13 +152,13 @@ function addToCart() {
   if (existing) {
     const newQty = existing.qty + qty;
     if (typeof currentStock !== "undefined" && newQty > currentStock) {
-      showStockError(`You already have ${existing.qty} in cart. Because only ${currentStock} available.`);
+      showStockError(`You already have ${existing.qty} in cart. Only ${currentStock} available.`);
       return;
     }
     existing.qty = newQty;
   } else {
     // --- Add new item ---
-    const cartItem = { name, price, qty };
+    const cartItem = { name, price, qty, stock: currentStock };
     if (power) cartItem.power = power;
     cart.push(cartItem);
   }
@@ -141,37 +175,54 @@ function addToCart() {
 
 
 
-
-
   // --- INITIAL RENDER ---
   document.addEventListener("DOMContentLoaded", renderCart);
 
-  // --- ADD TO CART FROM HOVER ICON --- //
+//   // --- ADD TO CART FROM HOVER ICON --- //
 // document.addEventListener("click", function (e) {
-//   if (
-//     (e.target.closest(".cart-icon") && e.target.closest(".product-overlay"))
-//   ) {
-//     e.preventDefault();
-//     e.stopPropagation();
+//   const icon = e.target.closest(".cart-icon");
+//   if (!icon) return;
 
-//     const card = e.target.closest(".card");
-//     const name = card.querySelector(".card-title").innerText.trim();
-//     const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
-//     const price = parseInt(priceText) || 0;
+//   const card = e.target.closest(".card");
+//   if (!card) return;
 
-//     const existing = cart.find(item => item.name === name);
-//     if (existing) {
-//       existing.qty += 1;
-//     } else {
-//       cart.push({ name, price, qty: 1 });
-//     }
+//   e.preventDefault();
+//   e.stopPropagation();
 
-//     renderCart();
+//   const name = card.querySelector(".card-title").innerText.trim();
+//   const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
+//   const price = parseInt(priceText) || 0;
+//   const qty = 1;
 
-//     const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
-//     cartSidebar.show();
+//   let power = null;
+
+//   // If the card is inside Power Lenses section, set default Plano power
+//   if (card.closest("#powerlenses-section")) {
+//     power = { right: "Plano (0.00)", left: "Plano (0.00)" };
 //   }
+
+//   // Check if same product (and same power if any) exists
+//   const existing = cart.find(item => {
+//     if (item.name !== name) return false;
+//     if (!power) return !item.power; // normal product without power
+//     return item.power && item.power.right === power.right && item.power.left === power.left;
+//   });
+
+//   if (existing) {
+//     existing.qty += qty;
+//   } else {
+//     const cartItem = { name, price, qty, stock: currentStock};
+//     if (power) cartItem.power = power;
+//     cart.push(cartItem);
+//   }
+
+//   renderCart();
+
+//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//   cartSidebar.show();
 // });
+
+// --- ADD TO CART FROM HOVER ICON --- //
 document.addEventListener("click", function (e) {
   const icon = e.target.closest(".cart-icon");
   if (!icon) return;
@@ -187,33 +238,70 @@ document.addEventListener("click", function (e) {
   const price = parseInt(priceText) || 0;
   const qty = 1;
 
-  let power = null;
+  // Stock from card dataset or fallback to currentStock
+  let stock = parseInt(card.dataset.stock) || (typeof currentStock !== "undefined" ? currentStock : 0);
 
-  // If the card is inside Power Lenses section, set default Plano power
+  // Lens power if applicable
+  let power = null;
   if (card.closest("#powerlenses-section")) {
     power = { right: "Plano (0.00)", left: "Plano (0.00)" };
   }
 
-  // Check if same product (and same power if any) exists
+  // Reference the stock error div
+  const stockError = document.getElementById("stockError");
+
+  function showStockError(msg) {
+    if (!stockError) return;
+    stockError.textContent = msg;
+    stockError.style.cssText = `
+      background: red;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      padding: 8px 12px;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+    `;
+    setTimeout(() => {
+      stockError.textContent = "";
+      stockError.removeAttribute("style");
+    }, 3000);
+  }
+
+  // --- Check if product already in cart ---
   const existing = cart.find(item => {
     if (item.name !== name) return false;
-    if (!power) return !item.power; // normal product without power
+    if (!power) return !item.power; // normal product
     return item.power && item.power.right === power.right && item.power.left === power.left;
   });
 
   if (existing) {
+    if (existing.qty + qty > stock) {
+      showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
+      return;
+    }
     existing.qty += qty;
   } else {
-    const cartItem = { name, price, qty };
+    if (qty > stock) {
+      showStockError(`Only ${stock} item(s) are available in stock.`);
+      return;
+    }
+    const cartItem = { name, price, qty, stock };
     if (power) cartItem.power = power;
     cart.push(cartItem);
   }
 
+  localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
 
+  // Show cart sidebar
   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
   cartSidebar.show();
 });
+
 
 
 
