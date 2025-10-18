@@ -60,7 +60,7 @@
     const stockError = document.getElementById("stockError");
     if (stockError) {
       stockError.textContent = `Only ${item.stock} item(s) are available in stock.`;
-      stockError.style.background = "red";
+      stockError.style.background = "black";
       stockError.style.color = "white";
       stockError.style.textAlign = "center";
       stockError.style.fontWeight = "bold";
@@ -100,7 +100,7 @@ function addToCart() {
   function showStockError(msg) {
     if (!stockError) return;
     stockError.textContent = msg;
-    stockError.style.background = "red";
+    stockError.style.background = "black";
     stockError.style.color = "white";
     stockError.style.textAlign = "center";
     stockError.style.fontWeight = "bold";
@@ -254,7 +254,7 @@ document.addEventListener("click", function (e) {
     if (!stockError) return;
     stockError.textContent = msg;
     stockError.style.cssText = `
-      background: red;
+      background: black;
       color: white;
       text-align: center;
       font-weight: bold;
