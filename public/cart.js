@@ -14,6 +14,10 @@
       cartList.innerHTML = `<li class="list-group-item text-center text-muted">Your cart is empty</li>`;
       cartTotal.textContent = "Rs 0";
       cartCount.textContent = "0";
+
+      // Clear localStorage when cart is empty
+      localStorage.removeItem("cart");
+
       return;
     }
 
@@ -59,7 +63,6 @@
     renderCart();
   }
 
-  // --- ADD TO CART FUNCTION ---
   // --- ADD TO CART FUNCTION ---
 function addToCart() {
   const name = document.getElementById("productName").innerText.trim();
