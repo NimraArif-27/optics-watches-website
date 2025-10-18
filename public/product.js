@@ -1,3 +1,5 @@
+let currentStock = 0;
+
 (async function () {
   // --- Helpers ---
   function formatCategory(category) {
@@ -33,6 +35,29 @@
     safeSetText("productName", product.name || "Unnamed product");
     safeSetText("productCategory", formatCategory(product.category || ""));
     safeSetText("productPrice", product.price !== undefined ? "Rs. " + product.price : "");
+
+    // --- STOCK STATUS ---
+    currentStock = product.stock ?? 0;
+    const stockInfo = document.createElement("p");
+    stockInfo.id = "stockInfo";
+    stockInfo.className = "fw-bold mt-2";
+
+    if (currentStock <= 0) {
+      stockInfo.textContent = "Out of Stock";
+      stockInfo.style.color = "red";
+      document.querySelector(".btn-primary").disabled = true; // Add to Cart
+      document.querySelector(".btn-dark").disabled = true; // Buy Now
+    } else if (currentStock < 5) {
+      stockInfo.textContent = `Only ${currentStock} left in stock!`;
+      stockInfo.style.color = "#d17b00";
+    } else {
+      stockInfo.textContent = "In Stock";
+      stockInfo.style.color = "green";
+    }
+
+    const detailsCol = document.querySelector(".col-md-6:nth-child(2)");
+    if (detailsCol) detailsCol.insertBefore(stockInfo, detailsCol.querySelector(".d-flex"));
+
 
     let descText = product.description || "";
 
@@ -95,12 +120,72 @@
   };
 
   window.updateQty = function (change) {
-    const qtyInput = document.getElementById("quantity");
-    if (!qtyInput) return;
-    let value = parseInt(qtyInput.value || "0", 10) + change;
-    if (isNaN(value) || value < 1) value = 1;
-    qtyInput.value = value;
-  };
+  const qtyInput = document.getElementById("quantity");
+  const warning = document.getElementById("qtyWarning") || document.createElement("p");
+  warning.id = "qtyWarning";
+  warning.style.color = "red";
+  warning.style.fontSize = "0.9rem";
+
+  if (!qtyInput) return;
+  let value = parseInt(qtyInput.value || "0", 10) + change;
+  if (isNaN(value) || value < 1) value = 1;
+
+  qtyInput.value = value;
+
+  if (currentStock > 0 && value > currentStock) {
+    warning.textContent = `Only ${currentStock} items available.`;
+    qtyInput.parentNode.appendChild(warning);
+    document.querySelector(".btn-primary").disabled = true; // disable Add to Cart
+  } else {
+    warning.textContent = "";
+    document.querySelector(".btn-primary").disabled = false;
+  }
+};
+
+// --- STOCK VALIDATION ---
+function validateStock() {
+  const qtyInput = document.getElementById("quantity");
+  const addBtn = document.querySelector(".btn-primary");
+  const buyBtn = document.querySelector(".btn-dark");
+  let qty = parseInt(qtyInput.value);
+
+  // Remove old warning if any
+  let warning = document.getElementById("stockWarning");
+  if (warning) warning.remove();
+
+  // Check stock limit
+  if (qty > currentStock) {
+    const warn = document.createElement("p");
+    warn.id = "stockWarning";
+    warn.textContent = `Only ${currentStock} item(s) available in stock.`;
+    warn.style.color = "red";
+    warn.style.marginTop = "5px";
+    qtyInput.insertAdjacentElement("afterend", warn);
+
+    // Disable add/buy buttons
+    addBtn.disabled = true;
+    buyBtn.disabled = true;
+    return false;
+  } else {
+    // Enable buttons again
+    addBtn.disabled = false;
+    buyBtn.disabled = false;
+    return true;
+  }
+}
+
+// Modify your existing updateQty function slightly:
+function updateQty(change) {
+  const qtyInput = document.getElementById("quantity");
+  let current = parseInt(qtyInput.value);
+  current = isNaN(current) ? 1 : current + change;
+  if (current < 1) current = 1;
+  qtyInput.value = current;
+
+  // ✅ Validate stock after every change
+  validateStock();
+}
+
 
   window.addToCart = function () { alert("Added to cart!"); };
   window.buyNow = function () { alert("Proceeding to checkout!"); };
@@ -283,4 +368,3 @@
     loadAnyProductDetails();
   }
 })();
-

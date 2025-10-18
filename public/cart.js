@@ -60,45 +60,84 @@
   }
 
   // --- ADD TO CART FUNCTION ---
-  function addToCart() {
+  // --- ADD TO CART FUNCTION ---
+function addToCart() {
   const name = document.getElementById("productName").innerText.trim();
   const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
   const price = parseInt(priceText) || 0;
   const qty = parseInt(document.getElementById("quantity").value) || 1;
 
+  // Reference the stock error div
+  const stockError = document.getElementById("stockError");
+
+  // Helper: show styled error message
+  function showStockError(msg) {
+    if (!stockError) return;
+    stockError.textContent = msg;
+    stockError.style.background = "red";
+    stockError.style.color = "white";
+    stockError.style.textAlign = "center";
+    stockError.style.fontWeight = "bold";
+    stockError.style.padding = "8px 12px";
+  }
+
+  // Helper: clear error and its styles completely
+  function clearStockError() {
+    if (!stockError) return;
+    stockError.textContent = "";
+    stockError.removeAttribute("style");
+  }
+
+  clearStockError(); // always reset first
+
+  // --- Capture stock info from products.js global ---
+  if (typeof currentStock !== "undefined" && qty > currentStock) {
+    showStockError(`Only ${currentStock} item(s) are available in stock.`);
+    return;
+  }
+
   // Capture lens power if available
   const rightPowerEl = document.getElementById("rightEyePower");
   const leftPowerEl = document.getElementById("leftEyePower");
-
   let power = null;
   if (rightPowerEl && leftPowerEl) {
-    power = {
-      right: rightPowerEl.value,
-      left: leftPowerEl.value
-    };
+    power = { right: rightPowerEl.value, left: leftPowerEl.value };
   }
 
-  // Check if same product + power exists in cart
+  // --- Check if same product + power exists ---
   const existing = cart.find(item => {
     if (item.name !== name) return false;
     if (!power) return !item.power; // normal product
     return item.power && item.power.right === power.right && item.power.left === power.left;
   });
 
+  // --- If already in cart, update qty but not beyond stock ---
   if (existing) {
-    existing.qty += qty;
+    const newQty = existing.qty + qty;
+    if (typeof currentStock !== "undefined" && newQty > currentStock) {
+      showStockError(`You already have ${existing.qty} in cart. Because only ${currentStock} available.`);
+      return;
+    }
+    existing.qty = newQty;
   } else {
+    // --- Add new item ---
     const cartItem = { name, price, qty };
-    if (power) cartItem.power = power; // store lens power
+    if (power) cartItem.power = power;
     cart.push(cartItem);
   }
 
+  // --- Save + Render ---
+  localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
+  clearStockError(); // ✅ hide error fully after successful add
 
-  // Open cart sidebar automatically
+  // --- Show Cart Sidebar (Bootstrap Offcanvas) ---
   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
   cartSidebar.show();
 }
+
+
+
 
 
   // --- INITIAL RENDER ---
