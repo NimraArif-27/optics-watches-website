@@ -480,25 +480,101 @@ async function addToCart() {
 }
 
 // --- ADD TO CART FROM HOVER ICON ---
+// document.addEventListener("click", function (e) {
+//   const icon = e.target.closest(".cart-icon");
+//   if (!icon) return;
+
+//   e.stopPropagation();  // stop the card click from triggering
+//   e.preventDefault();   // just in case
+
+//   const card = icon.closest(".card");
+//   if (!card) return;
+
+//   const name = card.querySelector(".card-title").innerText.trim();
+//   const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
+//   const price = parseInt(priceText) || 0;
+//   const qty = 1;
+
+//   let stock = parseInt(card.dataset.stock) || (typeof currentStock !== "undefined" ? currentStock : 0);
+
+//   // Check if already in cart
+//   const existing = cart.find(item => item.name === name);
+//   if (existing) {
+//     if (existing.qty + qty > stock) {
+//       showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
+//       return;
+//     }
+//     existing.qty += qty;
+//   } else {
+//     if (qty > stock) {
+//       showStockError(`Only ${stock} item(s) are available in stock.`);
+//       return;
+//     }
+//     cart.push({ name, price, qty, stock });
+//   }
+
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   renderCart();
+
+//   // Show cart sidebar
+//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//   cartSidebar.show();
+// });
+// --- ADD TO CART FROM HOVER ICON ---
 document.addEventListener("click", function (e) {
   const icon = e.target.closest(".cart-icon");
   if (!icon) return;
 
-  e.stopPropagation();  // stop the card click from triggering
-  e.preventDefault();   // just in case
-
-  const card = icon.closest(".card");
+  const card = e.target.closest(".card");
   if (!card) return;
+
+  e.preventDefault();
+  e.stopPropagation();
 
   const name = card.querySelector(".card-title").innerText.trim();
   const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
   const price = parseInt(priceText) || 0;
   const qty = 1;
 
+  // Stock from card dataset or fallback
   let stock = parseInt(card.dataset.stock) || (typeof currentStock !== "undefined" ? currentStock : 0);
 
-  // Check if already in cart
-  const existing = cart.find(item => item.name === name);
+  // Check if this is a power lens
+  let power = null;
+  if (card.closest("#powerlenses-section")) {
+    power = { right: "Plano (0.00)", left: "Plano (0.00)" }; // default plano
+  }
+
+  const stockError = document.getElementById("stockError");
+
+  function showStockError(msg) {
+    if (!stockError) return;
+    stockError.textContent = msg;
+    stockError.style.cssText = `
+      background: black;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      padding: 8px 12px;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+    `;
+    setTimeout(() => {
+      stockError.textContent = "";
+      stockError.removeAttribute("style");
+    }, 3000);
+  }
+
+  // --- Check if product already in cart ---
+  const existing = cart.find(item => {
+    if (item.name !== name) return false;
+    if (!power) return !item.power; // normal product
+    return item.power && item.power.right === power.right && item.power.left === power.left;
+  });
+
   if (existing) {
     if (existing.qty + qty > stock) {
       showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
@@ -510,7 +586,9 @@ document.addEventListener("click", function (e) {
       showStockError(`Only ${stock} item(s) are available in stock.`);
       return;
     }
-    cart.push({ name, price, qty, stock });
+    const cartItem = { name, price, qty, stock };
+    if (power) cartItem.power = power; // add plano
+    cart.push(cartItem);
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -520,6 +598,7 @@ document.addEventListener("click", function (e) {
   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
   cartSidebar.show();
 });
+
 
 // --- helper for stock error ---
 function showStockError(msg) {
