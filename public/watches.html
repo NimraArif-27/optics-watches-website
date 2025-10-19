@@ -429,7 +429,8 @@
             <h4 id="quickViewName" class="fw-bold mb-2"></h4>
             <p id="quickViewPrice" class="text-muted fs-5 mb-2"></p>
             <p id="quickViewDescription" class="text-secondary small mb-2 d-none"></p>
-            <p id="quickViewAgeGroup" class="text-primary fw-semibold mb-0 d-none"></p>
+            <p id="quickViewAgeGroup" class="text-primary fw-semibold mb-2 d-none"></p>
+            <p id="quickViewStock" class="fw-bold mb-2"></p>
           </div>
 
         </div>
@@ -500,6 +501,33 @@ document.addEventListener("click", async (e) => {
           ageEl.classList.remove("d-none");
         } else {
           ageEl.classList.add("d-none");
+        }
+
+        // After setting the product text info
+        const stockEl = document.getElementById("quickViewStock");
+
+        if (typeof product.stock !== "undefined") {
+          if (product.stock > 0) {
+            if (product.stock < 5) {
+              stockEl.textContent = `Only ${product.stock} left in stock!`;
+              stockEl.style.color = "#d17b00"; // warning color
+              stockEl.classList.remove("text-success", "text-danger");
+            } else {
+              stockEl.textContent = "In Stock";
+              stockEl.style.color = ""; // default
+              stockEl.classList.add("text-success");
+              stockEl.classList.remove("text-danger");
+            }
+          } else {
+            stockEl.textContent = "Out of Stock";
+            stockEl.classList.remove("text-success");
+            stockEl.classList.add("text-danger");
+            stockEl.style.color = ""; // reset any inline color
+          }
+        } else {
+          stockEl.textContent = "";
+          stockEl.style.color = "";
+          stockEl.classList.remove("text-success", "text-danger");
         }
 
         // Main Image
