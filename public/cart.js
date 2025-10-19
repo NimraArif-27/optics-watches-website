@@ -178,49 +178,6 @@ function addToCart() {
   // --- INITIAL RENDER ---
   document.addEventListener("DOMContentLoaded", renderCart);
 
-//   // --- ADD TO CART FROM HOVER ICON --- //
-// document.addEventListener("click", function (e) {
-//   const icon = e.target.closest(".cart-icon");
-//   if (!icon) return;
-
-//   const card = e.target.closest(".card");
-//   if (!card) return;
-
-//   e.preventDefault();
-//   e.stopPropagation();
-
-//   const name = card.querySelector(".card-title").innerText.trim();
-//   const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
-//   const price = parseInt(priceText) || 0;
-//   const qty = 1;
-
-//   let power = null;
-
-//   // If the card is inside Power Lenses section, set default Plano power
-//   if (card.closest("#powerlenses-section")) {
-//     power = { right: "Plano (0.00)", left: "Plano (0.00)" };
-//   }
-
-//   // Check if same product (and same power if any) exists
-//   const existing = cart.find(item => {
-//     if (item.name !== name) return false;
-//     if (!power) return !item.power; // normal product without power
-//     return item.power && item.power.right === power.right && item.power.left === power.left;
-//   });
-
-//   if (existing) {
-//     existing.qty += qty;
-//   } else {
-//     const cartItem = { name, price, qty, stock: currentStock};
-//     if (power) cartItem.power = power;
-//     cart.push(cartItem);
-//   }
-
-//   renderCart();
-
-//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
-//   cartSidebar.show();
-// });
 
 // --- ADD TO CART FROM HOVER ICON --- //
 document.addEventListener("click", function (e) {
@@ -319,3 +276,4 @@ document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
     window.location.href = 'checkout.html';
   });
 });
+
