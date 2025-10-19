@@ -159,8 +159,8 @@ function addToCart() {
   } else {
     // --- Add new item ---
     const cartItem = { name, price, qty, stock: currentStock };
-    if (power) cartItem.power = power;
-    cart.push(cartItem);
+      if (power) cartItem.power = power;
+      cart.push(cartItem);
   }
 
   // --- Save + Render ---
