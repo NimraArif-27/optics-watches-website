@@ -480,47 +480,6 @@ async function addToCart() {
 }
 
 // --- ADD TO CART FROM HOVER ICON ---
-// document.addEventListener("click", function (e) {
-//   const icon = e.target.closest(".cart-icon");
-//   if (!icon) return;
-
-//   e.stopPropagation();  // stop the card click from triggering
-//   e.preventDefault();   // just in case
-
-//   const card = icon.closest(".card");
-//   if (!card) return;
-
-//   const name = card.querySelector(".card-title").innerText.trim();
-//   const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
-//   const price = parseInt(priceText) || 0;
-//   const qty = 1;
-
-//   let stock = parseInt(card.dataset.stock) || (typeof currentStock !== "undefined" ? currentStock : 0);
-
-//   // Check if already in cart
-//   const existing = cart.find(item => item.name === name);
-//   if (existing) {
-//     if (existing.qty + qty > stock) {
-//       showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
-//       return;
-//     }
-//     existing.qty += qty;
-//   } else {
-//     if (qty > stock) {
-//       showStockError(`Only ${stock} item(s) are available in stock.`);
-//       return;
-//     }
-//     cart.push({ name, price, qty, stock });
-//   }
-
-//   localStorage.setItem("cart", JSON.stringify(cart));
-//   renderCart();
-
-//   // Show cart sidebar
-//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
-//   cartSidebar.show();
-// });
-// --- ADD TO CART FROM HOVER ICON ---
 document.addEventListener("click", function (e) {
   const icon = e.target.closest(".cart-icon");
   if (!icon) return;
