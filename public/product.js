@@ -32,6 +32,7 @@ let currentStock = 0;
     }
 
     // Basic details
+    safeSetText("productId", product._id);
     safeSetText("productName", product.name || "Unnamed product");
     safeSetText("productCategory", formatCategory(product.category || ""));
     safeSetText("productPrice", product.price !== undefined ? "Rs. " + product.price : "");
