@@ -607,7 +607,7 @@ function showSidebarError(msg) {
   let existingError = document.querySelector("#cartSidebar .cart-stock-error");
   if (!existingError) {
     const errorDiv = document.createElement("div");
-    errorDiv.className = "cart-stock-error mt-2 p-2 text-danger fw-bold text-center";
+    errorDiv.className = "cart-stock-error mt-2 p-2 text-primary fw-bold text-center";
     document.querySelector("#cartSidebar .offcanvas-body").prepend(errorDiv);
     existingError = errorDiv;
   }
