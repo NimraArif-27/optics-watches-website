@@ -269,6 +269,300 @@
 //     }
 //   });
 
+
+// //Powerlenses shared stock is not handled here
+// // --- GLOBAL CART HANDLER ---
+// let cart = JSON.parse(localStorage.getItem("cart")) || [];
+// const cartList = document.getElementById("cart-items");
+// const cartTotal = document.getElementById("cart-total");
+// const cartCount = document.getElementById("cart-count");
+
+// // --- Backend stock map ---
+// let backendStock = new Map();
+
+// async function fetchBackendStock() {
+//   try {
+//     const res = await fetch("/api/products/stock");
+//     const data = await res.json();
+//     if (!data.success) return;
+
+//     backendStock.clear();
+//     data.products.forEach(p => {
+//       backendStock.set(p._id, p.stock); // changed: use id as key
+//     });
+
+//     // Update stock in cart
+//     cart.forEach(item => {
+//       if (backendStock.has(item.id)) {
+//         item.stock = backendStock.get(item.id);
+//       }
+//     });
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     renderCart();
+//   } catch (err) {
+//     console.error("Failed to fetch backend stock:", err);
+//   }
+// }
+
+// // --- RENDER CART ---
+// function renderCart() {
+//   cartList.innerHTML = "";
+//   let total = 0;
+
+//   if (cart.length === 0) {
+//     cartList.innerHTML = `<li class="list-group-item text-center text-muted">Your cart is empty</li>`;
+//     cartTotal.textContent = "Rs 0";
+//     cartCount.textContent = "0";
+//     localStorage.removeItem("cart");
+//     return;
+//   }
+
+//   cart.forEach((item, index) => {
+//     total += item.price * item.qty;
+//     const li = document.createElement("li");
+//     li.className = "list-group-item d-flex justify-content-between align-items-center";
+//     li.innerHTML = `
+//       <div>
+//         <strong>${item.name}</strong><br>
+//         Rs. <span>${item.price}</span>
+//         ${item.power ? `<br><small>Power: R ${item.power.right}, L ${item.power.left}</small>` : ""}
+//       </div>
+//       <div class="d-flex align-items-center">
+//         <button class="btn btn-sm btn-outline-secondary me-1" onclick="updateCartQty(${index}, -1)">−</button>
+//         <span class="mx-1">${item.qty}</span>
+//         <button class="btn btn-sm btn-outline-secondary ms-1" onclick="updateCartQty(${index}, 1)" ${item.stock && item.qty >= item.stock ? "disabled" : ""}>+</button>
+//         <button class="btn btn-sm btn-outline-danger ms-3" onclick="removeFromCart(${index})">
+//           <i class="fas fa-trash"></i>
+//         </button>
+//       </div>
+//     `;
+//     cartList.appendChild(li);
+//   });
+
+//   cartTotal.textContent = "Rs " + total;
+//   cartCount.textContent = cart.length;
+//   localStorage.setItem("cart", JSON.stringify(cart));
+// }
+
+// // --- UPDATE QUANTITY ---
+// async function updateCartQty(index, change) {
+//   await fetchBackendStock(); // always get latest stock
+//   const item = cart[index];
+//   if (!item) return;
+
+//   if (change > 0 && item.stock && item.qty >= item.stock) {
+//     const stockError = document.getElementById("stockError");
+//     if (stockError) {
+//       stockError.textContent = `Only ${item.stock} item(s) are available in stock.`;
+//       stockError.style.background = "black";
+//       stockError.style.color = "white";
+//       stockError.style.textAlign = "center";
+//       stockError.style.fontWeight = "bold";
+//       stockError.style.padding = "8px 12px";
+//     }
+//     return;
+//   }
+
+//   item.qty += change;
+//   if (item.qty <= 0) cart.splice(index, 1);
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   renderCart();
+// }
+
+// // --- REMOVE ITEM ---
+// function removeFromCart(index) {
+//   cart.splice(index, 1);
+//   renderCart();
+// }
+
+// // --- SHOW STOCK ERROR ---
+// function showStockError(msg) {
+//   const stockError = document.getElementById("stockError");
+//   if (!stockError) return;
+//   stockError.textContent = msg;
+//   stockError.style.cssText = `
+//     background: black;
+//     color: white;
+//     text-align: center;
+//     font-weight: bold;
+//     padding: 8px 12px;
+//     position: fixed;
+//     top: 60px;
+//     left: 0;
+//     width: 100%;
+//     z-index: 9999;
+//   `;
+//   setTimeout(() => {
+//     stockError.textContent = "";
+//     stockError.removeAttribute("style");
+//   }, 3000);
+// }
+
+// // --- ADD TO CART FUNCTION ---
+// async function addToCart() {
+//   await fetchBackendStock(); // ensure latest stock
+
+//   const id = document.getElementById("productId")?.innerText?.trim(); // added id capture
+//   const name = document.getElementById("productName").innerText.trim();
+//   const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
+//   const price = parseInt(priceText) || 0;
+//   const qty = parseInt(document.getElementById("quantity").value) || 1;
+
+//   const rightPowerEl = document.getElementById("rightEyePower");
+//   const leftPowerEl = document.getElementById("leftEyePower");
+//   let power = null;
+//   if (rightPowerEl && leftPowerEl) {
+//     power = { right: rightPowerEl.value, left: leftPowerEl.value };
+//   }
+
+//   const stock = backendStock.get(id) || 0;
+
+//   const existing = cart.find(item => {
+//     if (item.id !== id) return false;
+//     if (!power) return !item.power;
+//     return item.power && item.power.right === power.right && item.power.left === power.left;
+//   });
+
+//   if (existing) {
+//     const newQty = existing.qty + qty;
+//     if (newQty > stock) {
+//       showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
+//       return;
+//     }
+//     existing.qty = newQty;
+//   } else {
+//     if (qty > stock) {
+//       showStockError(`Only ${stock} item(s) are available in stock.`);
+//       return;
+//     }
+//     const cartItem = { id, name, price, qty, stock };
+//     if (power) cartItem.power = power;
+//     cart.push(cartItem);
+//   }
+
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   renderCart();
+
+//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//   cartSidebar.show();
+// }
+
+// // --- ADD TO CART FROM HOVER ICON ---
+// document.addEventListener("click", function (e) {
+//   const icon = e.target.closest(".cart-icon");
+//   if (!icon) return;
+
+//   const card = e.target.closest(".card");
+//   if (!card) return;
+
+//   e.preventDefault();
+//   e.stopPropagation();
+
+//   const id = card.dataset.id; // added id read from card
+//   const name = card.querySelector(".card-title").innerText.trim();
+//   const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
+//   const price = parseInt(priceText) || 0;
+//   const qty = 1;
+
+//   let stock = parseInt(card.dataset.stock) || (typeof currentStock !== "undefined" ? currentStock : 0);
+
+//   let power = null;
+//   if (card.closest("#powerlenses-section")) {
+//     power = { right: "Plano (0.00)", left: "Plano (0.00)" };
+//   }
+
+//   const stockError = document.getElementById("stockError");
+
+//   function showStockError(msg) {
+//     if (!stockError) return;
+//     stockError.textContent = msg;
+//     stockError.style.cssText = `
+//       background: black;
+//       color: white;
+//       text-align: center;
+//       font-weight: bold;
+//       padding: 8px 12px;
+//       position: fixed;
+//       top: 60px;
+//       left: 0;
+//       width: 100%;
+//       z-index: 9999;
+//     `;
+//     setTimeout(() => {
+//       stockError.textContent = "";
+//       stockError.removeAttribute("style");
+//     }, 3000);
+//   }
+
+//   const existing = cart.find(item => {
+//     if (item.id !== id) return false;
+//     if (!power) return !item.power;
+//     return item.power && item.power.right === power.right && item.power.left === power.left;
+//   });
+
+//   if (existing) {
+//     if (existing.qty + qty > stock) {
+//       showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
+//       return;
+//     }
+//     existing.qty += qty;
+//   } else {
+//     if (qty > stock) {
+//       showStockError(`Only ${stock} item(s) are available in stock.`);
+//       return;
+//     }
+//     const cartItem = { id, name, price, qty, stock };
+//     if (power) cartItem.power = power;
+//     cart.push(cartItem);
+//   }
+
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   renderCart();
+
+//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//   cartSidebar.show();
+// });
+
+// // --- helper for stock error ---
+// function showStockError(msg) {
+//   const stockError = document.getElementById("stockError");
+//   if (!stockError) return;
+//   stockError.textContent = msg;
+//   stockError.style.cssText = `
+//     background: black;
+//     color: white;
+//     text-align: center;
+//     font-weight: bold;
+//     padding: 8px 12px;
+//     position: fixed;
+//     top: 60px;
+//     left: 0;
+//     width: 100%;
+//     z-index: 9999;
+//   `;
+//   setTimeout(() => {
+//     stockError.textContent = "";
+//     stockError.removeAttribute("style");
+//   }, 3000);
+// }
+
+// // --- INITIAL RENDER ---
+// document.addEventListener("DOMContentLoaded", renderCart);
+// fetchBackendStock(); // fetch stock on page load
+
+// // --- CHECKOUT BUTTON ---
+// document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
+//   btn.addEventListener('click', () => {
+//     window.location.href = 'checkout.html';
+//   });
+// });
+
+// // --- Force refresh on page back ---
+// window.addEventListener("pageshow", function (event) {
+//   if (event.persisted) window.location.reload();
+// });
+
+
 // --- GLOBAL CART HANDLER ---
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 const cartList = document.getElementById("cart-items");
@@ -277,6 +571,7 @@ const cartCount = document.getElementById("cart-count");
 
 // --- Backend stock map ---
 let backendStock = new Map();
+let sharedStockMap = new Map(); // for shared-stock power lenses
 
 async function fetchBackendStock() {
   try {
@@ -285,21 +580,63 @@ async function fetchBackendStock() {
     if (!data.success) return;
 
     backendStock.clear();
+    sharedStockMap.clear();
+
     data.products.forEach(p => {
-      backendStock.set(p._id, p.stock); // changed: use id as key
+      backendStock.set(p._id, p.stock);
+
+      // shared-stock logic
+      if (p.baseProductId) {
+        if (!sharedStockMap.has(p.baseProductId)) sharedStockMap.set(p.baseProductId, 0);
+        sharedStockMap.set(p.baseProductId, sharedStockMap.get(p.baseProductId) + p.stock);
+      }
     });
 
-    // Update stock in cart
     cart.forEach(item => {
-      if (backendStock.has(item.id)) {
-        item.stock = backendStock.get(item.id);
-      }
+      if (backendStock.has(item.id)) item.stock = backendStock.get(item.id);
     });
     localStorage.setItem("cart", JSON.stringify(cart));
     renderCart();
   } catch (err) {
     console.error("Failed to fetch backend stock:", err);
   }
+}
+
+// --- Sidebar error for shared-stock power lenses ---
+function showSidebarError(msg) {
+  let existingError = document.querySelector("#cartSidebar .cart-stock-error");
+  if (!existingError) {
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "cart-stock-error mt-2 p-2 text-danger fw-bold text-center";
+    document.querySelector("#cartSidebar .offcanvas-body").prepend(errorDiv);
+    existingError = errorDiv;
+  }
+  existingError.textContent = msg;
+  existingError.style.display = "block";
+  setTimeout(() => existingError.remove(), 3000);
+}
+
+// --- SHOW STOCK ERROR (top bar) ---
+function showStockError(msg) {
+  const stockError = document.getElementById("stockError");
+  if (!stockError) return;
+  stockError.textContent = msg;
+  stockError.style.cssText = `
+    background: black;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 8px 12px;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+  `;
+  setTimeout(() => {
+    stockError.textContent = "";
+    stockError.removeAttribute("style");
+  }, 3000);
 }
 
 // --- RENDER CART ---
@@ -344,19 +681,20 @@ function renderCart() {
 
 // --- UPDATE QUANTITY ---
 async function updateCartQty(index, change) {
-  await fetchBackendStock(); // always get latest stock
+  await fetchBackendStock();
   const item = cart[index];
   if (!item) return;
 
-  if (change > 0 && item.stock && item.qty >= item.stock) {
-    const stockError = document.getElementById("stockError");
-    if (stockError) {
-      stockError.textContent = `Only ${item.stock} item(s) are available in stock.`;
-      stockError.style.background = "black";
-      stockError.style.color = "white";
-      stockError.style.textAlign = "center";
-      stockError.style.fontWeight = "bold";
-      stockError.style.padding = "8px 12px";
+  const sameProductTotal = cart
+    .filter(i => i.id === item.id)
+    .reduce((sum, i) => sum + i.qty, 0);
+
+  // shared stock check
+  if (change > 0 && sameProductTotal >= item.stock) {
+    if (item.power) {
+      showSidebarError(`Stock complete for ${item.name}. Only ${item.stock} available in total.`);
+    } else {
+      showStockError(`Only ${item.stock} item(s) are available in stock.`);
     }
     return;
   }
@@ -373,34 +711,70 @@ function removeFromCart(index) {
   renderCart();
 }
 
-// --- SHOW STOCK ERROR ---
-function showStockError(msg) {
-  const stockError = document.getElementById("stockError");
-  if (!stockError) return;
-  stockError.textContent = msg;
-  stockError.style.cssText = `
-    background: black;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    padding: 8px 12px;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    z-index: 9999;
-  `;
-  setTimeout(() => {
-    stockError.textContent = "";
-    stockError.removeAttribute("style");
-  }, 3000);
+// --- Helper: get correct available stock (shared or individual) ---
+function getAvailableStock(productId, baseProductId) {
+  if (baseProductId && sharedStockMap.has(baseProductId)) {
+    return sharedStockMap.get(baseProductId);
+  }
+  return backendStock.get(productId) || 0;
 }
 
 // --- ADD TO CART FUNCTION ---
-async function addToCart() {
-  await fetchBackendStock(); // ensure latest stock
+// async function addToCart() {
+//   await fetchBackendStock();
 
-  const id = document.getElementById("productId")?.innerText?.trim(); // added id capture
+//   const id = document.getElementById("productId")?.innerText?.trim();
+//   const name = document.getElementById("productName").innerText.trim();
+//   const price = parseInt(document.getElementById("productPrice").innerText.replace("Rs.", "").trim()) || 0;
+//   const qty = parseInt(document.getElementById("quantity").value) || 1;
+//   const baseProductId = document.getElementById("baseProductId")?.innerText?.trim() || null;
+
+//   const rightPowerEl = document.getElementById("rightEyePower");
+//   const leftPowerEl = document.getElementById("leftEyePower");
+//   let power = null;
+//   if (rightPowerEl && leftPowerEl) {
+//     power = { right: rightPowerEl.value, left: leftPowerEl.value };
+//   }
+
+//   const stock = getAvailableStock(id, baseProductId);
+
+//   const existing = cart.find(item => {
+//     if (item.id !== id) return false;
+//     if (!power) return !item.power;
+//     return item.power && item.power.right === power.right && item.power.left === power.left;
+//   });
+
+//   const totalQtyOfSameProduct = cart.filter(i => i.id === id).reduce((sum, i) => sum + i.qty, 0);
+
+//   if (existing && existing.qty >= stock) {
+//     showStockError(`You already have ${existing.qty} in cart. Only ${stock} available in stock.`);
+//     return;
+//   }
+
+//   if (totalQtyOfSameProduct + qty > stock) {
+//     showStockError(`Only ${stock} item(s) are available in stock.`);
+//     return;
+//   }
+
+//   if (existing) {
+//     existing.qty += qty;
+//   } else {
+//     const cartItem = { id, name, price, qty, stock };
+//     if (baseProductId) cartItem.baseProductId = baseProductId;
+//     if (power) cartItem.power = power;
+//     cart.push(cartItem);
+//   }
+
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   renderCart();
+
+//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//   cartSidebar.show();
+// }
+async function addToCart() {
+  await fetchBackendStock();
+
+  const id = document.getElementById("productId")?.innerText?.trim();
   const name = document.getElementById("productName").innerText.trim();
   const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
   const price = parseInt(priceText) || 0;
@@ -415,27 +789,42 @@ async function addToCart() {
 
   const stock = backendStock.get(id) || 0;
 
-  const existing = cart.find(item => {
-    if (item.id !== id) return false;
+  // --- Find all same-id items (shared stock)
+  const sameProductItems = cart.filter(i => i.id === id);
+  const totalQtyOfSameProduct = sameProductItems.reduce((sum, i) => sum + i.qty, 0);
+
+  // --- Find if same power already exists
+  const existing = sameProductItems.find(item => {
     if (!power) return !item.power;
     return item.power && item.power.right === power.right && item.power.left === power.left;
   });
 
-  if (existing) {
-    const newQty = existing.qty + qty;
-    if (newQty > stock) {
-      showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
-      return;
-    }
-    existing.qty = newQty;
-  } else {
-    if (qty > stock) {
+  const combinedQtyAfterAdd = totalQtyOfSameProduct + qty;
+
+  // ✅ Case 1: Already full stock in cart
+  if (totalQtyOfSameProduct >= stock) {
+    showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+    return;
+  }
+
+  // ✅ Case 2: Adding exceeds stock
+  if (combinedQtyAfterAdd > stock) {
+    // 👉 If nothing in cart yet (fresh add attempt)
+    if (totalQtyOfSameProduct === 0) {
       showStockError(`Only ${stock} item(s) are available in stock.`);
-      return;
+    } else {
+      showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
     }
-    const cartItem = { id, name, price, qty, stock };
-    if (power) cartItem.power = power;
-    cart.push(cartItem);
+    return;
+  }
+
+  // ✅ Add or update item
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    const newItem = { id, name, price, qty, stock };
+    if (power) newItem.power = power;
+    cart.push(newItem);
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -445,7 +834,58 @@ async function addToCart() {
   cartSidebar.show();
 }
 
+
 // --- ADD TO CART FROM HOVER ICON ---
+// document.addEventListener("click", function (e) {
+//   const icon = e.target.closest(".cart-icon");
+//   if (!icon) return;
+
+//   const card = e.target.closest(".card");
+//   if (!card) return;
+
+//   e.preventDefault();
+//   e.stopPropagation();
+
+//   const id = card.dataset.id;
+//   const baseProductId = card.dataset.baseProductId || null;
+//   const name = card.querySelector(".card-title").innerText.trim();
+//   const price = parseInt(card.querySelector(".price").innerText.replace("Rs.", "").trim()) || 0;
+//   const qty = 1;
+
+//   let power = null;
+//   if (card.closest("#powerlenses-section")) {
+//     power = { right: "Plano (0.00)", left: "Plano (0.00)" };
+//   }
+
+//   const stock = getAvailableStock(id, baseProductId);
+//   const totalQtyOfSameProduct = cart.filter(i => i.id === id).reduce((sum, i) => sum + i.qty, 0);
+//   const existing = cart.find(item => item.id === id);
+
+//   if (existing && existing.qty >= stock) {
+//     showStockError(`You already have ${existing.qty} in cart. Only ${stock} available in stock.`);
+//     return;
+//   }
+
+//   if (totalQtyOfSameProduct + qty > stock) {
+//     showStockError(`Only ${stock} item(s) are available in stock.`);
+//     return;
+//   }
+
+//   if (existing) {
+//     existing.qty += qty;
+//   } else {
+//     const cartItem = { id, name, price, qty, stock };
+//     if (baseProductId) cartItem.baseProductId = baseProductId;
+//     if (power) cartItem.power = power;
+//     cart.push(cartItem);
+//   }
+
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   renderCart();
+
+//   const cartSidebar = new bootstrap.Offcanvas(document.getElementById("cartSidebar"));
+//   cartSidebar.show();
+// });
 document.addEventListener("click", function (e) {
   const icon = e.target.closest(".cart-icon");
   if (!icon) return;
@@ -456,60 +896,54 @@ document.addEventListener("click", function (e) {
   e.preventDefault();
   e.stopPropagation();
 
-  const id = card.dataset.id; // added id read from card
+  const id = card.dataset.id;
+  const baseProductId = card.dataset.baseProductId || null;
   const name = card.querySelector(".card-title").innerText.trim();
-  const priceText = card.querySelector(".price").innerText.replace("Rs.", "").trim();
-  const price = parseInt(priceText) || 0;
+  const price = parseInt(card.querySelector(".price").innerText.replace("Rs.", "").trim()) || 0;
   const qty = 1;
 
-  let stock = parseInt(card.dataset.stock) || (typeof currentStock !== "undefined" ? currentStock : 0);
-
+  // --- Power lenses handle ---
   let power = null;
   if (card.closest("#powerlenses-section")) {
     power = { right: "Plano (0.00)", left: "Plano (0.00)" };
   }
 
-  const stockError = document.getElementById("stockError");
+  const stock = getAvailableStock(id, baseProductId);
 
-  function showStockError(msg) {
-    if (!stockError) return;
-    stockError.textContent = msg;
-    stockError.style.cssText = `
-      background: black;
-      color: white;
-      text-align: center;
-      font-weight: bold;
-      padding: 8px 12px;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      width: 100%;
-      z-index: 9999;
-    `;
-    setTimeout(() => {
-      stockError.textContent = "";
-      stockError.removeAttribute("style");
-    }, 3000);
-  }
+  // --- Combine all same ID items (shared stock) ---
+  const sameProductItems = cart.filter(i => i.id === id);
+  const totalQtyOfSameProduct = sameProductItems.reduce((sum, i) => sum + i.qty, 0);
 
-  const existing = cart.find(item => {
-    if (item.id !== id) return false;
+  // --- Find if same power variant already exists ---
+  const existing = sameProductItems.find(item => {
     if (!power) return !item.power;
     return item.power && item.power.right === power.right && item.power.left === power.left;
   });
 
-  if (existing) {
-    if (existing.qty + qty > stock) {
-      showStockError(`You already have ${existing.qty} in cart. Only ${stock} available.`);
-      return;
+  const combinedQtyAfterAdd = totalQtyOfSameProduct + qty;
+
+  // ✅ Case 1: Already full stock in cart
+  if (totalQtyOfSameProduct >= stock) {
+    showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+    return;
+  }
+
+  // ✅ Case 2: Adding exceeds stock
+  if (combinedQtyAfterAdd > stock) {
+    if (totalQtyOfSameProduct === 0) {
+      showStockError(`Only ${stock} item(s) are available in stock.`);
+    } else {
+      showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
     }
+    return;
+  }
+
+  // ✅ Add or update item
+  if (existing) {
     existing.qty += qty;
   } else {
-    if (qty > stock) {
-      showStockError(`Only ${stock} item(s) are available in stock.`);
-      return;
-    }
     const cartItem = { id, name, price, qty, stock };
+    if (baseProductId) cartItem.baseProductId = baseProductId;
     if (power) cartItem.power = power;
     cart.push(cartItem);
   }
@@ -521,32 +955,10 @@ document.addEventListener("click", function (e) {
   cartSidebar.show();
 });
 
-// --- helper for stock error ---
-function showStockError(msg) {
-  const stockError = document.getElementById("stockError");
-  if (!stockError) return;
-  stockError.textContent = msg;
-  stockError.style.cssText = `
-    background: black;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    padding: 8px 12px;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    z-index: 9999;
-  `;
-  setTimeout(() => {
-    stockError.textContent = "";
-    stockError.removeAttribute("style");
-  }, 3000);
-}
 
 // --- INITIAL RENDER ---
 document.addEventListener("DOMContentLoaded", renderCart);
-fetchBackendStock(); // fetch stock on page load
+fetchBackendStock();
 
 // --- CHECKOUT BUTTON ---
 document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
