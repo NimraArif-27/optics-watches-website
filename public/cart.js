@@ -962,10 +962,38 @@ fetchBackendStock();
 
 // --- CHECKOUT BUTTON ---
 document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (!cart.length) {
+      showSidebarError("Your cart is empty.");
+      return;
+    }
+
+    // --- Validate stock for each product before checkout ---
+    for (const item of cart) {
+      // Group items by baseProductId (for power lenses) or by id (normal)
+      const sameItems = cart.filter(i =>
+        (i.baseProductId && item.baseProductId && i.baseProductId === item.baseProductId) ||
+        i.id === item.id
+      );
+
+      const totalQty = sameItems.reduce((sum, i) => sum + i.qty, 0);
+      const stock = item.stock ?? getAvailableStock(item.id, item.baseProductId);
+
+      if (totalQty > stock) {
+        showSidebarError(
+          `You have ${totalQty} of "${item.name}" in your cart, but only ${stock} item(s) are available in stock.`
+        );
+        return; // stop checkout
+      }
+    }
+
+    // ✅ If everything is valid, proceed
     window.location.href = 'checkout.html';
   });
 });
+
 
 // --- Force refresh on page back ---
 window.addEventListener("pageshow", function (event) {
