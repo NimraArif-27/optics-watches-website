@@ -249,3 +249,96 @@ window.addEventListener("DOMContentLoaded", () => {
     input.setAttribute('autocomplete', 'new-' + input.name);
   });
 });
+
+//Order Summary Calculation
+async function updateCheckoutSummary(cartTotal) {
+  try {
+    const res = await fetch("/api/site-settings"); // fetch from your route
+    const data = await res.json();
+
+    if (!data.success) return;
+
+    const delivery = data.settings.deliveryCharges || 0;   // use deliveryCharges
+    const taxPercentage = data.settings.tax || 0;          // use tax
+
+    const taxAmount = (cartTotal * taxPercentage) / 100;
+    const total = cartTotal + delivery + taxAmount;
+
+    document.getElementById("subtotal").textContent = "Rs " + cartTotal.toLocaleString();
+    document.getElementById("delivery").textContent = "Rs " + delivery.toLocaleString();
+    document.getElementById("tax").textContent = "Rs " + taxAmount.toLocaleString();
+    document.getElementById("total").textContent = "Rs " + total.toLocaleString();
+  } catch (err) {
+    console.error("Failed to fetch site settings:", err);
+  }
+}
+
+
+//Show Cart Items in Checkout Page
+document.addEventListener("DOMContentLoaded", async () => {
+  const checkoutList = document.getElementById("checkout-list");
+  const totalDisplay = document.getElementById("cart-total");
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (cart.length === 0) {
+    checkoutList.innerHTML = `
+      <div class="p-3 text-center text-muted">
+        Your cart is empty<br>
+        <a href="index.html" class="btn btn-primary mt-3">Continue Shopping</a>
+      </div>`;
+    totalDisplay.textContent = "Rs 0";
+    return;
+  }
+
+  let total = 0;
+  let renderedHTML = "";
+
+  // ✅ Fetch missing product details
+  for (let item of cart) {
+    try {
+      const res = await fetch(`/api/products/${item.id}`);
+      const data = await res.json();
+      const product = data.product || {};
+
+      const qty = item.qty || 1;
+      const price = product.price || item.price || 0;
+      const subtotal = qty * price;
+      total += subtotal;
+
+      renderedHTML += `
+<div class="list-group-item d-flex justify-content-between align-items-center p-3">
+  <div class="d-flex align-items-center">
+    ${product.mainImage ? `<img src="${product.mainImage}" alt="${product.name}" style="width:60px; height:60px; object-fit:cover; margin-right:15px;">` : ""}
+    <div>
+      <div style="font-weight:600">${product.name || item.name}</div>
+
+      <!-- Brand & Color for all lenses -->
+      ${(product.brand || item.brand) ? `<div class="muted-small">Brand: ${product.brand || item.brand}</div>` : ""}
+      ${(product.color || item.color) ? `<div class="muted-small">Color: ${product.color || item.color}</div>` : ""}
+
+      <!-- Power (if exists in cart) -->
+      ${item.power ? `
+        <div class="muted-small">Right Eye: ${item.power.right}</div>
+        <div class="muted-small">Left Eye: ${item.power.left}</div>
+      ` : ""}
+
+      ${product.ageGroup ? `<div class="muted-small">Age Group: ${product.ageGroup}</div>` : ""}
+      <div class="muted-small mt-2">Qty: <span>${qty}</span></div>
+    </div>
+  </div>
+  <div class="text-end">
+    <div class="fw-bold">Rs ${subtotal.toLocaleString()}</div>
+    <div class="muted-small">Rs ${price.toLocaleString()} each</div>
+  </div>
+</div>`;
+    } catch (err) {
+      console.error("Error fetching product details:", err);
+    }
+  }
+
+  checkoutList.innerHTML = renderedHTML;
+  totalDisplay.textContent = "Rs " + total.toLocaleString();
+
+  updateCheckoutSummary(total);
+});

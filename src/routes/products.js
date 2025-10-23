@@ -24,4 +24,28 @@ router.get("/stock", async (req, res) => {
   }
 });
 
+// ✅ GET /api/products/:id → fetch product details by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Try to find the product in all collections
+    const product =
+      (await Eyeglass.findById(id)) ||
+      (await Sunglass.findById(id)) ||
+      (await Lens.findById(id)) ||
+      (await Watch.findById(id));
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    res.json({ success: true, product });
+  } catch (err) {
+    console.error("Error fetching product:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
 module.exports = router;
