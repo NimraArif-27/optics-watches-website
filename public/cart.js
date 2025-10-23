@@ -995,6 +995,42 @@ document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
 });
 
 
+// ✅ BUY NOW BUTTON HANDLER
+async function buyNow() {
+  await fetchBackendStock();
+
+  const id = document.getElementById("productId")?.innerText?.trim();
+  const name = document.getElementById("productName")?.innerText.trim();
+  const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
+  const price = parseInt(priceText) || 0;
+  const qty = parseInt(document.getElementById("quantity").value) || 1;
+
+  const rightPowerEl = document.getElementById("rightEyePower");
+  const leftPowerEl = document.getElementById("leftEyePower");
+  let power = null;
+  if (rightPowerEl && leftPowerEl) {
+    power = { right: rightPowerEl.value, left: leftPowerEl.value };
+  }
+
+  const stock = backendStock.get(id) || 0;
+
+  if (qty > stock) {
+    showStockError(`Only ${stock} item(s) are available in stock.`);
+    return;
+  }
+
+  // --- Build the Buy Now cart item ---
+  const buyNowItem = { id, name, price, qty, stock };
+  if (power) buyNowItem.power = power;
+
+  // --- Replace cart with just this item ---
+  localStorage.setItem("cart", JSON.stringify([buyNowItem]));
+  renderCart();
+
+  // --- Redirect to checkout  ---
+  window.location.href = "checkout.html";
+}
+
 // --- Force refresh on page back ---
 window.addEventListener("pageshow", function (event) {
   if (event.persisted) window.location.reload();
