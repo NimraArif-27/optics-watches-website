@@ -961,18 +961,50 @@ document.addEventListener("DOMContentLoaded", renderCart);
 fetchBackendStock();
 
 // --- CHECKOUT BUTTON ---
+// document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
+//   btn.addEventListener('click', (e) => {
+//     e.preventDefault();
+
+//     if (!cart.length) {
+//       showSidebarError("Your cart is empty.");
+//       return;
+//     }
+
+//     // --- Validate stock for each product before checkout ---
+//     for (const item of cart) {
+//       // Group items by baseProductId (for power lenses) or by id (normal)
+//       const sameItems = cart.filter(i =>
+//         (i.baseProductId && item.baseProductId && i.baseProductId === item.baseProductId) ||
+//         i.id === item.id
+//       );
+
+//       const totalQty = sameItems.reduce((sum, i) => sum + i.qty, 0);
+//       const stock = item.stock ?? getAvailableStock(item.id, item.baseProductId);
+
+//       if (totalQty > stock) {
+//         showSidebarError(
+//           `You have ${totalQty} of "${item.name}" in your cart, but only ${stock} item(s) are available in stock.`
+//         );
+//         return; // stop checkout
+//       }
+//     }
+
+//     // ✅ If everything is valid, proceed
+//     window.location.href = 'checkout.html';
+//   });
+// });
 document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.preventDefault();
 
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (!cart.length) {
       showSidebarError("Your cart is empty.");
       return;
     }
 
-    // --- Validate stock for each product before checkout ---
+    // Validate stock for each product
     for (const item of cart) {
-      // Group items by baseProductId (for power lenses) or by id (normal)
       const sameItems = cart.filter(i =>
         (i.baseProductId && item.baseProductId && i.baseProductId === item.baseProductId) ||
         i.id === item.id
@@ -989,10 +1021,12 @@ document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
       }
     }
 
-    // ✅ If everything is valid, proceed
+    // ✅ Set flag for normal checkout
+    localStorage.setItem("fromBuyNow", "false");
     window.location.href = 'checkout.html';
   });
 });
+
 
 
 // ✅ BUY NOW BUTTON HANDLER
@@ -1001,33 +1035,40 @@ document.querySelectorAll('button.btn-primary.w-100.mt-3').forEach(btn => {
 
 //   const id = document.getElementById("productId")?.innerText?.trim();
 //   const name = document.getElementById("productName")?.innerText.trim();
-//   const priceText = document.getElementById("productPrice").innerText.replace("Rs.", "").trim();
+//   const priceText = document.getElementById("productPrice")?.innerText.replace("Rs.", "").trim();
 //   const price = parseInt(priceText) || 0;
-//   const qty = parseInt(document.getElementById("quantity").value) || 1;
+//   const qty = parseInt(document.getElementById("quantity")?.value) || 1;
+
+//   const brand = document.getElementById("productBrand")?.innerText?.trim() || null;
+//   const color = document.getElementById("productColor")?.innerText?.trim() || null;
+//   const ageGroup = document.getElementById("productAgeGroup")?.innerText?.trim() || null;
 
 //   const rightPowerEl = document.getElementById("rightEyePower");
 //   const leftPowerEl = document.getElementById("leftEyePower");
 //   let power = null;
 //   if (rightPowerEl && leftPowerEl) {
-//     power = { right: rightPowerEl.value, left: leftPowerEl.value };
+//     power = {
+//       right: rightPowerEl.value || null,
+//       left: leftPowerEl.value || null,
+//     };
 //   }
 
 //   const stock = backendStock.get(id) || 0;
-
 //   if (qty > stock) {
 //     showStockError(`Only ${stock} item(s) are available in stock.`);
 //     return;
 //   }
 
-//   // --- Build the Buy Now cart item ---
 //   const buyNowItem = { id, name, price, qty, stock };
+//   if (brand) buyNowItem.brand = brand;
+//   if (color) buyNowItem.color = color;
+//   if (ageGroup) buyNowItem.ageGroup = ageGroup;
 //   if (power) buyNowItem.power = power;
 
-//   // --- Replace cart with just this item ---
-//   localStorage.setItem("cart", JSON.stringify([buyNowItem]));
-//   renderCart();
+//   // ✅ changed line — store in separate key (not in "cart")
+//   localStorage.setItem("buyNowItem", JSON.stringify(buyNowItem));
 
-//   // --- Redirect to checkout  ---
+//   // redirect to checkout
 //   window.location.href = "checkout.html";
 // }
 async function buyNow() {
@@ -1065,12 +1106,13 @@ async function buyNow() {
   if (ageGroup) buyNowItem.ageGroup = ageGroup;
   if (power) buyNowItem.power = power;
 
-  // ✅ changed line — store in separate key (not in "cart")
+  // ✅ Store BuyItNow item and set flag
   localStorage.setItem("buyNowItem", JSON.stringify(buyNowItem));
+  localStorage.setItem("fromBuyNow", "true");
 
-  // redirect to checkout
   window.location.href = "checkout.html";
 }
+
 
 
 
