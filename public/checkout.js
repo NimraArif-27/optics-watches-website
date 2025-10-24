@@ -186,10 +186,53 @@ if (cardExp) {
   });
 }
 
-document.getElementById('paymentForm').addEventListener('submit', function(e){
+// document.getElementById('paymentForm').addEventListener('submit', function(e){
+//   e.preventDefault();
+//   const codSelected = methodCOD.checked;
+
+//   if (!validateAddress()) {
+//     step3.classList.add('d-none');
+//     step2.classList.remove('d-none');
+//     setStepperActive(2);
+//     return;
+//   }
+
+//   if (!codSelected) {
+//     const cardName = document.getElementById('cardName');
+//     const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
+//     const cardExpVal = document.getElementById('cardExp').value;
+//     const cardCvvVal = document.getElementById('cardCvv').value;
+
+//     if (!cardName.value.trim() || cardNumberVal.length < 13 || cardCvvVal.length < 3 || cardExpVal.length < 4) {
+//       if(!cardName.value.trim()) showError(cardName); else clearError(cardName);
+//       if(cardNumberVal.length < 13) showError(document.getElementById('cardNumber')); else clearError(document.getElementById('cardNumber'));
+//       if(cardCvvVal.length < 3) showError(document.getElementById('cardCvv')); else clearError(document.getElementById('cardCvv'));
+//       if(cardExpVal.length < 4) showError(document.getElementById('cardExp')); else clearError(document.getElementById('cardExp'));
+//       return;
+//     }
+//   }
+
+//   const btn = document.getElementById('placeOrderBtn');
+//   btn.disabled = true;
+//   const orig = btn.innerHTML;
+//   btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
+
+//   setTimeout(()=> {
+//     step1.classList.add('d-none');
+//     step2.classList.add('d-none');
+//     step3.classList.add('d-none');
+//     orderSuccess.classList.remove('d-none');
+//     document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
+//     window.scrollTo({top:0,behavior:'smooth'});
+//   }, 1200);
+// });
+
+document.getElementById('paymentForm').addEventListener('submit', async function(e){
   e.preventDefault();
+  
   const codSelected = methodCOD.checked;
 
+  // --- Validate Address ---
   if (!validateAddress()) {
     step3.classList.add('d-none');
     step2.classList.remove('d-none');
@@ -197,6 +240,7 @@ document.getElementById('paymentForm').addEventListener('submit', function(e){
     return;
   }
 
+  // --- Validate Card if not COD ---
   if (!codSelected) {
     const cardName = document.getElementById('cardName');
     const cardNumberVal = document.getElementById('cardNumber').value.replace(/\s/g,'');
@@ -213,19 +257,97 @@ document.getElementById('paymentForm').addEventListener('submit', function(e){
   }
 
   const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = true;
   const orig = btn.innerHTML;
+  btn.disabled = true;
   btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`;
 
-  setTimeout(()=> {
-    step1.classList.add('d-none');
-    step2.classList.add('d-none');
-    step3.classList.add('d-none');
-    orderSuccess.classList.remove('d-none');
-    document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
-    window.scrollTo({top:0,behavior:'smooth'});
-  }, 1200);
+  try {
+    // --- Gather cart / buy-now items ---
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const buyNowItem = JSON.parse(localStorage.getItem("buyNowItem"));
+    const fromBuyNow = localStorage.getItem("fromBuyNow") === "true";
+    let orderItems = [];
+
+    if (fromBuyNow && buyNowItem) {
+      orderItems = [buyNowItem];
+    } else {
+      orderItems = cart;
+    }
+
+    if (orderItems.length === 0) {
+      alert("Your cart is empty.");
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      return;
+    }
+
+    const items = orderItems.map(item => ({
+       productId: item._id || item.id,
+      name: item.name,
+      price: item.price,
+      qty: item.qty || 1,
+      power: item.power || { right: "", left: "" },
+      brand: item.brand || "",
+      color: item.color || "",
+      ageGroup: item.ageGroup || "",
+      category: item.category || "",
+      subtotal: (item.price || 0) * (item.qty || 1)
+    }));
+
+    const totalAmount = parseFloat(document.getElementById("total").textContent.replace(/[^0-9.]/g,""));
+
+
+    const orderData = {
+      items,
+      totalAmount,
+      deliveryAddress: {
+        fullname: fullname.value.trim(),
+        phone: phone.value.trim(),
+        addressLine: addressLine.value.trim(),
+        city: city.value.trim(),
+        state: state.value.trim(),
+        postal: postal.value.trim()
+      },
+      paymentMethod: codSelected ? "COD" : "CARD"
+    };
+
+    // --- Send order to backend ---
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      // --- Success UI ---
+      step1.classList.add('d-none');
+      step2.classList.add('d-none');
+      step3.classList.add('d-none');
+      orderSuccess.classList.remove('d-none');
+      document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
+      window.scrollTo({top:0,behavior:'smooth'});
+
+      // --- Clear cart ---
+      localStorage.removeItem("cart");
+      localStorage.removeItem("buyNowItem");
+      localStorage.setItem("fromBuyNow", "false");
+
+    } else {
+      alert(data.error || "Failed to place order.");
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+
+  } catch (err) {
+    console.error("Order failed:", err);
+    alert("Something went wrong, try again.");
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
 });
+
 
 // Chrome autofill full suppression (final working trick)
 window.addEventListener("DOMContentLoaded", () => {
