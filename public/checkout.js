@@ -279,7 +279,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   const checkoutList = document.getElementById("checkout-list");
   const totalDisplay = document.getElementById("cart-total");
 
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  // let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = [];
+
+  const buyNowItem = JSON.parse(localStorage.getItem("buyNowItem"));
+  if (buyNowItem) {
+    cart = [buyNowItem]; // use only this one product
+    localStorage.removeItem("buyNowItem"); // clear temporary key
+  } else {
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
+  }
+
 
   if (cart.length === 0) {
     checkoutList.innerHTML = `
