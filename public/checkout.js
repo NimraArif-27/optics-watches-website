@@ -319,36 +319,44 @@ document.getElementById('paymentForm').addEventListener('submit', async function
     });
 
     const data = await res.json();
-
+ 
     if (res.ok) {
-      // Simulate short processing delay (2 seconds)
       setTimeout(() => {
-        // --- Success UI ---
         step1.classList.add('d-none');
         step2.classList.add('d-none');
         step3.classList.add('d-none');
         orderSuccess.classList.remove('d-none');
-        document.getElementById('orderId').textContent = 'KOPT-' + Math.floor(Math.random()*900000 + 100000);
+        document.getElementById('orderId').textContent =
+          'KOPT-' + Math.floor(Math.random() * 900000 + 100000);
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // --- Clear cart (localStorage + UI) ---
-        localStorage.removeItem("cart");
-        localStorage.removeItem("buyNowItem");
-        localStorage.setItem("fromBuyNow", "false");
+        const fromBuyNow = localStorage.getItem("fromBuyNow") === "true";
 
-        // If your cart items appear in checkout/cart UI, clear them too:
-        const cartList = document.getElementById("cart-items");
-        const cartCount = document.getElementById("cart-count");
-        const cartTotal = document.getElementById("cart-total");
+        if (fromBuyNow) {
+          // ✅ Buy Now order: clear only BuyNow item and UI, not cart
+          localStorage.removeItem("buyNowItem");
+          localStorage.setItem("fromBuyNow", "false");
 
-        if (cartList) cartList.innerHTML = "<p>Your cart is empty.</p>";
-        if (cartCount) cartCount.textContent = "0";
-        if (cartTotal) cartTotal.textContent = "Rs. 0";
+          // remove only buyNow section if exists
+          const buyNowSection = document.getElementById("buyNowSummary");
+          if (buyNowSection) buyNowSection.innerHTML = "<p>Order placed successfully!</p>";
+        } else {
+          // ✅ Cart checkout: clear full cart
+          localStorage.removeItem("cart");
 
-        // Reset button
+          const cartList = document.getElementById("cart-items");
+          const cartCount = document.getElementById("cart-count");
+          const cartTotal = document.getElementById("cart-total");
+
+          if (cartList) cartList.innerHTML = "<p>Your cart is empty.</p>";
+          if (cartCount) cartCount.textContent = "0";
+          if (cartTotal) cartTotal.textContent = "Rs. 0";
+        }
+
+        // reset button
         btn.disabled = false;
         btn.innerHTML = orig;
-      }, 2000); // 2 seconds delay before showing success
+      }, 2000);
     } else {
       alert(data.error || "Failed to place order.");
       btn.disabled = false;
