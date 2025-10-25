@@ -3549,6 +3549,20 @@
         </div>
       </div>
     </section>
+    <!-- View Order Modal -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title">Order Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="viewOrderModalBody">
+        <!-- Details will be injected dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
     <!-- Orders Management JS-->
     <script>
 document.addEventListener("DOMContentLoaded", fetchOrders);
@@ -3559,34 +3573,26 @@ async function fetchOrders() {
     const orders = await res.json();
     console.log("Fetched orders:", orders);
 
-    if (!Array.isArray(orders) || orders.length === 0) {
-      console.warn("No orders found");
-      return;
-    }
+    if (!Array.isArray(orders) || orders.length === 0) return;
 
-    // Get table bodies
     const pendingTable = document.getElementById("pendingOrdersTable");
     const acceptedTable = document.getElementById("acceptedOrdersTable");
     const rejectedTable = document.getElementById("rejectedOrdersTable");
 
-    // Clear old rows
     pendingTable.innerHTML = "";
     acceptedTable.innerHTML = "";
     rejectedTable.innerHTML = "";
 
-    // Separate orders by status
     const pendingOrders = orders.filter(o => o.orderStatus === "pending");
     const acceptedOrders = orders.filter(o => o.orderStatus === "accepted");
     const rejectedOrders = orders.filter(o => o.orderStatus === "rejected");
 
-    // Function to render table rows
     const renderOrders = (orderList, table, status) => {
       orderList.forEach((order, index) => {
-        const orderNumber = `${String(index + 1).padStart(2, "0")}`; 
+        const orderNumber = `#${String(index + 1).padStart(2, "0")}`;
         const customer = order.deliveryAddress?.fullname || "Unknown";
         const date = new Date(order.orderDate).toLocaleDateString();
 
-        // ✅ Format total with commas and 2 decimal places
         const total = "Rs. " + Number(order.totalAmount).toLocaleString("en-PK", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
@@ -3634,12 +3640,10 @@ async function fetchOrders() {
       });
     };
 
-    // Render all 3 tables
     renderOrders(pendingOrders, pendingTable, "pending");
     renderOrders(acceptedOrders, acceptedTable, "accepted");
     renderOrders(rejectedOrders, rejectedTable, "rejected");
 
-    // Update counts
     document.getElementById("pendingCount").textContent = `${pendingOrders.length} Pending`;
     document.getElementById("acceptedCount").textContent = `${acceptedOrders.length} Accepted`;
     document.getElementById("rejectedCount").textContent = `${rejectedOrders.length} Rejected`;
@@ -3648,6 +3652,69 @@ async function fetchOrders() {
     console.error("Error fetching orders:", err);
   }
 }
+
+// ✅ View button click → show modal
+document.addEventListener("click", async function (e) {
+  const btn = e.target.closest(".view-btn");
+  if (btn) {
+    const orderId = btn.dataset.id;
+    try {
+      const res = await fetch(`/api/orders/${orderId}`);
+      const order = await res.json();
+
+      if (!order) return;
+
+      const productsHTML = order.items.map(item => `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.category || "-"}</td>
+          <td>${item.qty}</td>
+          <td>${item.brand || "-"}</td>
+          <td>${item.color || "-"}</td>
+          <td>${item.power?.right || "-"} / ${item.power?.left || "-"}</td>
+          <td>Rs. ${Number(item.price).toLocaleString("en-PK")}</td>
+        </tr>
+      `).join("");
+
+      const modalHTML = `
+        <h5 class="mb-3 fw-bold" style="color: #b8860b;">Product Information</h5>
+        <table class="table table-bordered text-center">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th><th>Category</th><th>Qty</th><th>Brand</th>
+              <th>Color</th><th>Power (R/L)</th><th>Price</th>
+            </tr>
+          </thead>
+          <tbody>${productsHTML}</tbody>
+        </table>
+
+        <hr>
+        <h5 class="mb-3 fw-bold" style="color: #b8860b;">Customer Information</h5>
+        <p><strong>Name:</strong> ${order.deliveryAddress?.fullname || "N/A"}</p>
+        <p><strong>Phone:</strong> ${order.deliveryAddress?.phone || "N/A"}</p>
+        <p><strong>Address:</strong> ${order.deliveryAddress?.addressLine || "N/A"}, 
+          ${order.deliveryAddress?.city || ""}, ${order.deliveryAddress?.state || ""}, ${order.deliveryAddress?.postal || ""}</p>
+
+        <hr>
+        <h5 class="mb-3 fw-bold" style="color: #b8860b;">Order Summary</h5>
+        <p><strong>Order ID:</strong> ${order._id}</p>
+        <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleString()}</p>
+        <p><strong>Status:</strong> ${order.orderStatus}</p>
+        <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+        <p><strong>Total Amount:</strong> Rs. ${Number(order.totalAmount).toLocaleString("en-PK", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}</p>
+      `;
+
+      document.getElementById("viewOrderModalBody").innerHTML = modalHTML;
+      const modal = new bootstrap.Modal(document.getElementById("viewOrderModal"));
+      modal.show();
+    } catch (error) {
+      console.error("Error loading order details:", error);
+    }
+  }
+});
 
 // ✅ Handle "Complete" button click (frontend only)
 document.addEventListener("click", function (e) {
@@ -3660,6 +3727,7 @@ document.addEventListener("click", function (e) {
   }
 });
 </script>
+
 
 
 

@@ -93,6 +93,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/orders/:id", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching order" });
+  }
+});
+
+
 // UPDATE ORDER STATUS
 router.put("/:id", async (req, res) => {
   try {
