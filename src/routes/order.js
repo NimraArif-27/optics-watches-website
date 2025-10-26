@@ -120,6 +120,55 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// UPDATE ORDER STATUS WITH STOCK CHECK
+router.put("/:id/accept", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    const items = order.items;
+
+    // Check stock for each item
+    for (let item of items) {
+      let product =
+        (await Eyeglass.findById(item.productId)) ||
+        (await Sunglass.findById(item.productId)) ||
+        (await Lens.findById(item.productId)) ||
+        (await Watch.findById(item.productId));
+
+      if (!product) return res.status(404).json({ message: `Product not found: ${item.name}` });
+
+      if (product.stock < item.qty) {
+        return res.status(400).json({
+          message: `Not enough stock for ${item.name}. Available: ${product.stock}, Ordered: ${item.qty}`
+        });
+      }
+    }
+
+    // Deduct stock
+    for (let item of items) {
+      let product =
+        (await Eyeglass.findById(item.productId)) ||
+        (await Sunglass.findById(item.productId)) ||
+        (await Lens.findById(item.productId)) ||
+        (await Watch.findById(item.productId));
+
+      product.stock -= item.qty;
+      await product.save();
+    }
+
+    // Update order status
+    order.orderStatus = "accepted";
+    await order.save();
+
+    res.status(200).json({ message: "Order accepted", order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+
 // DELETE ORDER
 router.delete("/:id", async (req, res) => {
   try {
