@@ -168,6 +168,22 @@ router.put("/:id/accept", async (req, res) => {
   }
 });
 
+// PUT /api/orders/:id/reject
+router.put("/:id/reject", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.orderStatus = "rejected";
+    await order.save();
+
+    res.json({ message: "Order rejected successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 // DELETE ORDER
 router.delete("/:id", async (req, res) => {

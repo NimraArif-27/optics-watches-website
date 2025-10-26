@@ -3580,217 +3580,8 @@
           </div>
         </div>
       </div>
-    </div>
-    
+    </div> 
     <!-- Orders Management JS-->
-    <!-- <script>
-document.addEventListener("DOMContentLoaded", fetchOrders);
-
-async function fetchOrders() {
-  try {
-    const res = await fetch("/api/orders");
-    const orders = await res.json();
-    console.log("Fetched orders:", orders);
-
-    if (!Array.isArray(orders) || orders.length === 0) return;
-
-    const pendingTable = document.getElementById("pendingOrdersTable");
-    const acceptedTable = document.getElementById("acceptedOrdersTable");
-    const rejectedTable = document.getElementById("rejectedOrdersTable");
-
-    pendingTable.innerHTML = "";
-    acceptedTable.innerHTML = "";
-    rejectedTable.innerHTML = "";
-
-    const pendingOrders = orders.filter(o => o.orderStatus === "pending");
-    const acceptedOrders = orders.filter(o => o.orderStatus === "accepted");
-    const rejectedOrders = orders.filter(o => o.orderStatus === "rejected");
-
-    const renderOrders = (orderList, table, status) => {
-      orderList.forEach((order, index) => {
-        const orderNumber = `${String(index + 1).padStart(2, "0")}`;
-        const customer = order.deliveryAddress?.fullname || "Unknown";
-        const date = new Date(order.orderDate).toLocaleDateString();
-
-        const total = "Rs. " + Number(order.totalAmount).toLocaleString("en-PK", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${orderNumber}</td>
-          <td>${customer}</td>
-          <td>${date}</td>
-          <td>${total}</td>
-          <td>
-            <span class="badge border ${
-              status === "pending"
-                ? "border-warning text-warning"
-                : status === "accepted"
-                ? "border-success text-success"
-                : "border-primary text-primary"
-            }">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-          </td>
-          <td>
-            <div class="btn-group me-2">
-              <button class="btn btn-warning btn-sm me-1 view-btn" data-id="${order._id}">
-                <i class="fas fa-eye"></i> View
-              </button>
-              <button class="btn btn-danger btn-sm delete-order-btn" data-id="${order._id}">
-                <i class="fas fa-trash"></i> Delete
-              </button>
-            </div>
-            ${
-              status === "pending"
-                ? `
-                  <div class="btn-group">
-                    <button class="btn btn-success btn-sm px-3 me-1 accept-btn" data-id="${order._id}">Accept</button>
-                    <button class="btn btn-info btn-sm px-3 reject-btn" data-id="${order._id}">Reject</button>
-                  </div>
-                `
-                : status === "accepted"
-                ? `<button class="btn btn-info btn-sm complete-btn"><i class="fas fa-truck"></i> Complete</button>`
-                : ""
-            }
-          </td>
-        `;
-        table.appendChild(row);
-      });
-    };
-
-    renderOrders(pendingOrders, pendingTable, "pending");
-    renderOrders(acceptedOrders, acceptedTable, "accepted");
-    renderOrders(rejectedOrders, rejectedTable, "rejected");
-
-    document.getElementById("pendingCount").textContent = `${pendingOrders.length} Pending`;
-    document.getElementById("acceptedCount").textContent = `${acceptedOrders.length} Accepted`;
-    document.getElementById("rejectedCount").textContent = `${rejectedOrders.length} Rejected`;
-
-  } catch (err) {
-    console.error("Error fetching orders:", err);
-  }
-}
-
-// ✅ View button click → show modal
-document.addEventListener("click", async function (e) {
-  const btn = e.target.closest(".view-btn");
-  if (btn) {
-    const orderId = btn.dataset.id;
-    try {
-      const res = await fetch(`/api/orders/${orderId}`);
-      const order = await res.json();
-
-      if (!order) return;
-
-      const productsHTML = order.items.map(item => `
-        <tr>
-          <td>${item.name}</td>
-          <td>${item.category || "-"}</td>
-          <td>${item.qty}</td>
-          <td>${item.ageGroup || "-"}</td>
-          <td>${item.brand || "-"}</td>
-          <td>${item.color || "-"}</td>
-          <td>${item.power?.right || "-"} / ${item.power?.left || "-"}</td>
-          <td>Rs. ${Number(item.price).toLocaleString("en-PK")}</td>
-        </tr>
-      `).join("");
-
-      const modalHTML = `
-        <h5 class="mb-3 fw-bold" style="color: #b8860b;">Product Information</h5>
-        <table class="table table-bordered text-center">
-          <thead class="table-light">
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Qty</th>
-              <th>Age Group</th>
-              <th>Brand</th>
-              <th>Color</th>
-              <th>Power (R/L)</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>${productsHTML}</tbody>
-        </table>
-
-        <hr>
-        <h5 class="mb-3 fw-bold" style="color: #b8860b;">Customer Information</h5>
-        <p><strong>Name:</strong> ${order.deliveryAddress?.fullname || "N/A"}</p>
-        <p><strong>Phone:</strong> ${order.deliveryAddress?.phone || "N/A"}</p>
-        <p><strong>Address:</strong> ${order.deliveryAddress?.addressLine || "N/A"}, 
-          ${order.deliveryAddress?.city || ""}, ${order.deliveryAddress?.state || ""}, ${order.deliveryAddress?.postal || ""}</p>
-
-        <hr>
-        <h5 class="mb-3 fw-bold" style="color: #b8860b;">Order Summary</h5>
-        <p><strong>Order ID:</strong> ${order._id}</p>
-        <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleString()}</p>
-        <p><strong>Status:</strong> ${order.orderStatus}</p>
-        <p><strong>Payment:</strong> ${order.paymentMethod}</p>
-        <p><strong>Total Amount:</strong> Rs. ${Number(order.totalAmount).toLocaleString("en-PK", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })}</p>
-      `;
-
-      document.getElementById("viewOrderModalBody").innerHTML = modalHTML;
-      const modal = new bootstrap.Modal(document.getElementById("viewOrderModal"));
-      modal.show();
-    } catch (error) {
-      console.error("Error loading order details:", error);
-    }
-  }
-});
-
-let orderIdToDelete = null;
-
-// Open modal and store ID
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest(".delete-order-btn");
-  if (!btn) return;
-
-  orderIdToDelete = btn.dataset.id;
-  const deleteModal = new bootstrap.Modal(document.getElementById("deleteOrderModal"));
-  deleteModal.show();
-});
-
-// Delete order and refresh tables dynamically
-document.getElementById("confirmDeleteOrderBtn").addEventListener("click", async function () {
-  if (!orderIdToDelete) return;
-
-  try {
-    const res = await fetch(`/api/orders/${orderIdToDelete}`, { method: "DELETE" });
-
-    if (res.ok) {
-      // Hide modal
-      const deleteModalEl = document.getElementById("deleteOrderModal");
-      bootstrap.Modal.getInstance(deleteModalEl).hide();
-
-      // Re-fetch and re-render tables
-      await fetchOrders();
-
-      orderIdToDelete = null;
-    } else {
-      console.error("Failed to delete order from DB");
-    }
-  } catch (err) {
-    console.error("Error deleting order:", err);
-  }
-});
-
-
-
-// ✅ Handle "Complete" button click (frontend only)
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest(".complete-btn");
-  if (btn) {
-    btn.innerHTML = '<i class="fas fa-check-circle"></i> Dispatched';
-    btn.classList.remove("btn-info");
-    btn.classList.add("btn-success");
-    btn.disabled = true;
-  }
-});
-</script> -->
 <script>
 document.addEventListener("DOMContentLoaded", fetchOrders);
 
@@ -3981,7 +3772,7 @@ document.getElementById("confirmDeleteOrderBtn").addEventListener("click", async
   }
 });
 
-// ✅ Accept button → check stock then accept
+// Accept button → check stock then accept
 let orderToAccept = null;
 
 // Step 1: Show confirmation modal when "Accept" clicked
@@ -4067,6 +3858,89 @@ document.addEventListener("click", function (e) {
     }
   });
 });
+
+// Reject button
+let orderToReject = null;
+
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest(".reject-btn");
+  if (!btn) return;
+
+  orderToReject = btn.dataset.id;
+
+  // Create Reject Confirmation Modal
+  const modalHTML = `
+    <div class="modal fade" id="rejectConfirmModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">Confirm Reject</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">Are you sure you want to reject this order?</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="rejectConfirmOkBtn" class="btn btn-info">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Remove old modal if exists
+  const existing = document.getElementById("rejectConfirmModal");
+  if (existing) existing.remove();
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  const modalEl = document.getElementById("rejectConfirmModal");
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+
+  // Handle Confirm Reject
+  document.getElementById("rejectConfirmOkBtn").addEventListener("click", async function () {
+    modal.hide(); // hide confirmation modal
+
+    try {
+      // Call backend route to reject the order
+      const res = await fetch(`/api/orders/${orderToReject}/reject`, { method: "PUT" });
+      const data = await res.json();
+
+      // Optional: show result modal
+      const resultModalHTML = `
+        <div class="modal fade" id="rejectResultModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header ${res.ok ? "bg-info" : "bg-danger"} text-white">
+                <h5 class="modal-title">${res.ok ? "Success" : "Error"}</h5>
+              </div>
+              <div class="modal-body text-center" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                ${res.ok ? "Order rejected successfully!" : data.message || "Failed to reject order!"}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      const oldModal = document.getElementById("rejectResultModal");
+      if (oldModal) oldModal.remove();
+      document.body.insertAdjacentHTML("beforeend", resultModalHTML);
+      const resultModalEl = document.getElementById("rejectResultModal");
+      const resultModal = new bootstrap.Modal(resultModalEl);
+      resultModal.show();
+
+      setTimeout(() => resultModal.hide(), 2500);
+
+      if (res.ok) {
+        await fetchOrders(); // refresh tables to move order to Rejected
+      }
+
+      orderToReject = null;
+    } catch (err) {
+      console.error("Error rejecting order:", err);
+      alert("Something went wrong!");
+    }
+  });
+});
+
 
 
 // ✅ Complete button click (frontend only)
