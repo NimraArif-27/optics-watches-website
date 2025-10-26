@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema({
       brand: String,
       color: String,
       ageGroup: String,
-      category: String,        // ✅ Add category here
+      category: String,        
       subtotal: Number
     }
   ],
@@ -30,7 +30,8 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: { type: String, default: "COD" },
   orderStatus: { type: String, enum: ["pending", "accepted", "rejected"], default: "pending" },
-  orderDate: { type: Date, default: Date.now }
+  orderDate: { type: Date, default: Date.now },
+  isDispatched: { type: Boolean, default: false } 
 });
 
 module.exports = mongoose.model("Order", orderSchema);

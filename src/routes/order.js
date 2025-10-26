@@ -184,6 +184,20 @@ router.put("/:id/reject", async (req, res) => {
   }
 });
 
+router.put("/:id/dispatch", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.isDispatched = true;
+    await order.save();
+
+    res.json({ message: "Order dispatched successfully", order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // DELETE ORDER
 router.delete("/:id", async (req, res) => {
