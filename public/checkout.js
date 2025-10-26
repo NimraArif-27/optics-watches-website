@@ -326,8 +326,8 @@ document.getElementById('paymentForm').addEventListener('submit', async function
         step2.classList.add('d-none');
         step3.classList.add('d-none');
         orderSuccess.classList.remove('d-none');
-        document.getElementById('orderId').textContent =
-          'KOPT-' + Math.floor(Math.random() * 900000 + 100000);
+        // document.getElementById('orderId').textContent =
+        //   'KOPT-' + Math.floor(Math.random() * 900000 + 100000);
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         const fromBuyNow = localStorage.getItem("fromBuyNow") === "true";
