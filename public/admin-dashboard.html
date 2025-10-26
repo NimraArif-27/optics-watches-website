@@ -4028,35 +4028,33 @@ document.addEventListener("click", function (e) {
       const data = await res.json();
 
       // Show result modal
-const resultModalHTML = `
-  <div class="modal fade" id="acceptResultModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header ${res.ok ? "bg-success" : "bg-danger"} text-white">
-          <h5 class="modal-title">${res.ok ? "Success" : "Error"}</h5>
+      const resultModalHTML = `
+        <div class="modal fade" id="acceptResultModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header ${res.ok ? "bg-success" : "bg-danger"} text-white">
+                <h5 class="modal-title">${res.ok ? "Success" : "Error"}</h5>
+              </div>
+              <div class="modal-body text-center" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                ${res.ok ? "Order accepted successfully!" : data.message || "Insufficient stock!"}
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="modal-body text-center" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
-          ${res.ok ? "Order accepted successfully!" : data.message || "Insufficient stock!"}
-        </div>
-      </div>
-    </div>
-  </div>
-`;
+      `;
 
+      const oldModal = document.getElementById("acceptResultModal");
+      if (oldModal) oldModal.remove();
+      document.body.insertAdjacentHTML("beforeend", resultModalHTML);
 
-const oldModal = document.getElementById("acceptResultModal");
-if (oldModal) oldModal.remove();
-document.body.insertAdjacentHTML("beforeend", resultModalHTML);
+      const resultModalEl = document.getElementById("acceptResultModal");
+      const resultModal = new bootstrap.Modal(resultModalEl);
+      resultModal.show();
 
-const resultModalEl = document.getElementById("acceptResultModal");
-const resultModal = new bootstrap.Modal(resultModalEl);
-resultModal.show();
-
-// Auto-close after 2.5 seconds
-setTimeout(() => {
-  resultModal.hide();
-}, 2500);
-
+      // Auto-close after 2.5 seconds
+      setTimeout(() => {
+        resultModal.hide();
+      }, 2500);
 
       if (res.ok) {
         await fetchOrders(); // refresh tables if accepted
