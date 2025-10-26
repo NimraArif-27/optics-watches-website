@@ -209,33 +209,33 @@
     <!-- Dashboard Overview -->
     <section id="dashboard-overview" class="content-section active">
       <h2>Dashboard Overview</h2>
-      <!-- Example Cards -->
+      <!-- Summary Cards -->
       <div class="row">
         <div class="col-md-4 mb-4">
           <div class="summary-card bg-primary">
             <div class="card-body">
               <h5 class="card-title">Total Orders</h5>
-              <p class="card-text">1,234</p>
+              <p class="card-text" id="totalOrders">0</p>
             </div>
             <div class="icon-background"><i class="fas fa-shopping-cart"></i></div>
           </div>
         </div>
         <div class="col-md-4 mb-4">
-          <div class="summary-card bg-success">
+          <div class="summary-card bg-warning">
             <div class="card-body">
-              <h5 class="card-title">New Customers</h5>
-              <p class="card-text">56</p>
+              <h5 class="card-title">Pending Orders</h5>
+              <p class="card-text" id="pendingOrdersCount">0</p>
             </div>
-            <div class="icon-background"><i class="fas fa-user-plus"></i></div>
+            <div class="icon-background"><i class="fas fa-envelope"></i></div>
           </div>
         </div>
         <div class="col-md-4 mb-4">
-          <div class="summary-card bg-warning">
+          <div class="summary-card bg-success">
             <div class="card-body">
-              <h5 class="card-title">Pending Messages</h5>
-              <p class="card-text">12</p>
+              <h5 class="card-title">Customer Reviews</h5>
+              <p class="card-text" id="customerReviewsCount">0</p>
             </div>
-            <div class="icon-background"><i class="fas fa-envelope"></i></div>
+            <div class="icon-background"><i class="fas fa-user-plus"></i></div>
           </div>
         </div>
       </div>
@@ -4249,101 +4249,134 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Dashboard Overview JS -->
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
-    const sections = document.querySelectorAll('.content-section');
+document.addEventListener('DOMContentLoaded', function () {
+  const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
+  const sections = document.querySelectorAll('.content-section');
 
-    function showSection(id) {
-      sections.forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      // Initialize charts only when the dashboard-overview section is active
-      if (id === 'dashboard-overview') {
-        initializeCharts();
-      }
+  function showSection(id) {
+    sections.forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    if (id === 'dashboard-overview') {
+      loadDashboardData();
     }
+  }
 
-    sidebarLinks.forEach(link => {
-      link.addEventListener('click', e => {
-        // Only prevent default and show section if it's not a collapse toggle
-        if (!link.dataset.bsToggle) {
-          e.preventDefault();
-          // Remove active class from all sidebar links
-          sidebarLinks.forEach(l => l.classList.remove('active'));
-          // Add active class to the clicked link
-          link.classList.add('active');
-          showSection(link.dataset.section);
-        }
-      });
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      if (!link.dataset.bsToggle) {
+        e.preventDefault();
+        sidebarLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        showSection(link.dataset.section);
+      }
     });
-
-    // Function to initialize Chart.js charts
-    function initializeCharts() {
-      // Monthly Orders Bar Chart
-      const monthlyOrdersCtx = document.getElementById('monthlyOrdersChart');
-      if (monthlyOrdersCtx) { // Check if canvas exists before initializing
-        new Chart(monthlyOrdersCtx, {
-          type: 'bar',
-          data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-            datasets: [{
-              label: 'Orders',
-              data: [65, 59, 80, 81, 56, 55, 40],
-              backgroundColor: 'rgba(0, 123, 255, 0.5)',
-              borderColor: 'rgba(0, 123, 255, 1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
-
-      // Sales by Category Pie Chart
-      const salesByCategoryCtx = document.getElementById('salesByCategoryChart');
-      if (salesByCategoryCtx) {
-        new Chart(salesByCategoryCtx, {
-          type: 'pie', // Changed to pie chart
-          data: {
-            labels: ['Eyeglasses', 'Sunglasses', 'Watches', 'Lenses'], // Product Categories
-            datasets: [{
-              label: 'Sales Amount ($)',
-              data: [15000, 12000, 8000, 5000], // Example sales data for each category
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.7)', // Red
-                'rgba(54, 162, 235, 0.7)', // Blue
-                'rgba(255, 206, 86, 0.7)', // Yellow
-                'rgba(75, 192, 192, 0.7)'  // Green
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            // Scales are not applicable to pie charts, so they are removed or commented out
-          }
-        });
-      }
-    }
-
-    // Handle initial active section and initialize charts for it
-    showSection('dashboard-overview');
   });
+
+  showSection('dashboard-overview');
+
+  async function loadDashboardData() {
+    try {
+      const ordersRes = await fetch("/api/orders");
+      const orders = await ordersRes.json();
+
+      const reviewsRes = await fetch("/api/reviews");
+      const reviews = await reviewsRes.json();
+
+      document.getElementById("totalOrders").textContent = orders.length;
+      document.getElementById("pendingOrdersCount").textContent = orders.filter(o => o.orderStatus === "pending").length;
+      document.getElementById("customerReviewsCount").textContent = reviews.length;
+
+      renderMonthlyOrdersChart(orders);
+      renderSalesByCategoryChart(orders);
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+    }
+  }
+
+  function renderMonthlyOrdersChart(orders) {
+    const ctx = document.getElementById("monthlyOrdersChart").getContext("2d");
+    const monthlyCounts = Array(12).fill(0);
+
+    orders
+      .filter(o => o.orderStatus === "accepted") // Only accepted orders
+      .forEach(o => {
+        const month = new Date(o.orderDate).getMonth();
+        monthlyCounts[month]++;
+      });
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+        datasets: [{
+          label: "Orders",
+          data: monthlyCounts,
+          backgroundColor: "rgba(0, 123, 255, 0.5)",
+          borderColor: "rgba(0, 123, 255, 1)",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 10 }
+          }
+        }
+      }
+    });
+  }
+
+  function renderSalesByCategoryChart(orders) {
+    const ctx = document.getElementById("salesByCategoryChart").getContext("2d");
+    const categoryTotals = { Eyeglasses: 0, Sunglasses: 0, Watches: 0, Lenses: 0 };
+
+    orders
+      .filter(order => order.orderStatus === "accepted") // Only accepted orders
+      .forEach(order => {
+        order.items.forEach(item => {
+          if (["metalFrames", "regularGlasses", "brandedFrames", "kidsEyeglasses"].includes(item.category)) {
+            categoryTotals.Eyeglasses += item.subtotal;
+          } else if (["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"].includes(item.category)) {
+            categoryTotals.Sunglasses += item.subtotal;
+          } else if (["gentsWatches", "ladiesWatches", "premiumWatches", "kidsWatches"].includes(item.category)) {
+            categoryTotals.Watches += item.subtotal;
+          } else if (["PowerLenses", "ColoredLenses"].includes(item.category)) {
+            categoryTotals.Lenses += item.subtotal;
+          }
+        });
+      });
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ["Eyeglasses", "Sunglasses", "Watches", "Lenses"], // Order as requested
+        datasets: [{
+          data: [
+            categoryTotals.Eyeglasses,
+            categoryTotals.Sunglasses,
+            categoryTotals.Watches,
+            categoryTotals.Lenses
+          ],
+          backgroundColor: [
+            'rgba(0, 123, 255, 0.7)',    // Eyeglasses
+            'rgba(255, 193, 7, 0.7)',    // Sunglasses
+            'rgba(220, 53, 69, 0.7)',    // Watches
+            'rgba(40, 167, 69, 0.7)'     // Lenses
+          ]
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+});
 </script>
+
 
 
 <!-- Review Managements JS-->
