@@ -801,22 +801,44 @@ async function addToCart() {
 
   const combinedQtyAfterAdd = totalQtyOfSameProduct + qty;
 
-  // ✅ Case 1: Already full stock in cart
-  if (totalQtyOfSameProduct >= stock) {
-    showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
-    return;
-  }
+  // // ✅ Case 1: Already full stock in cart
+  // if (totalQtyOfSameProduct >= stock) {
+  //   showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+  //   return;
+  // }
 
-  // ✅ Case 2: Adding exceeds stock
-  if (combinedQtyAfterAdd > stock) {
-    // 👉 If nothing in cart yet (fresh add attempt)
-    if (totalQtyOfSameProduct === 0) {
-      showStockError(`Only ${stock} item(s) are available in stock.`);
-    } else {
-      showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
-    }
-    return;
+  // // ✅ Case 2: Adding exceeds stock
+  // if (combinedQtyAfterAdd > stock) {
+  //   // 👉 If nothing in cart yet (fresh add attempt)
+  //   if (totalQtyOfSameProduct === 0) {
+  //     showStockError(`Only ${stock} item(s) are available in stock.`);
+  //   } else {
+  //     showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+  //   }
+  //   return;
+  // }
+  // ✅ Check for 0 stock first
+if (stock === 0) {
+  showStockError("This product is out of stock.");
+  return;
+}
+
+// ✅ Already full stock in cart
+if (totalQtyOfSameProduct >= stock) {
+  showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+  return;
+}
+
+// ✅ Adding exceeds stock
+if (combinedQtyAfterAdd > stock) {
+  if (totalQtyOfSameProduct === 0) {
+    showStockError(`Only ${stock} item(s) are available in stock.`);
+  } else {
+    showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
   }
+  return;
+}
+
 
   // ✅ Add or update item
   if (existing) {
@@ -922,21 +944,43 @@ document.addEventListener("click", function (e) {
 
   const combinedQtyAfterAdd = totalQtyOfSameProduct + qty;
 
-  // ✅ Case 1: Already full stock in cart
-  if (totalQtyOfSameProduct >= stock) {
-    showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
-    return;
-  }
+  // // ✅ Case 1: Already full stock in cart
+  // if (totalQtyOfSameProduct >= stock) {
+  //   showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+  //   return;
+  // }
 
-  // ✅ Case 2: Adding exceeds stock
-  if (combinedQtyAfterAdd > stock) {
-    if (totalQtyOfSameProduct === 0) {
-      showStockError(`Only ${stock} item(s) are available in stock.`);
-    } else {
-      showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
-    }
-    return;
+  // // ✅ Case 2: Adding exceeds stock
+  // if (combinedQtyAfterAdd > stock) {
+  //   if (totalQtyOfSameProduct === 0) {
+  //     showStockError(`Only ${stock} item(s) are available in stock.`);
+  //   } else {
+  //     showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+  //   }
+  //   return;
+  // }
+  // ✅ Check for 0 stock first
+if (stock === 0) {
+  showStockError("This product is out of stock.");
+  return;
+}
+
+// ✅ Already full stock in cart
+if (totalQtyOfSameProduct >= stock) {
+  showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
+  return;
+}
+
+// ✅ Adding exceeds stock
+if (combinedQtyAfterAdd > stock) {
+  if (totalQtyOfSameProduct === 0) {
+    showStockError(`Only ${stock} item(s) are available in stock.`);
+  } else {
+    showStockError(`You already have ${totalQtyOfSameProduct} in cart. Only ${stock} available in stock.`);
   }
+  return;
+}
+
 
   // ✅ Add or update item
   if (existing) {
