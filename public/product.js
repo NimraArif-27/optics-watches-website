@@ -110,6 +110,16 @@ let currentStock = 0;
         
       }
     }
+
+    // Write a Review Button
+    const reviewBtn = document.getElementById("writeReviewBtn");
+    if (reviewBtn) {
+      reviewBtn.onclick = function() {
+        // Redirect to review page with dynamic product id
+        window.open(`review.html?id=${product._id}#showReview`, "_blank");
+      }
+    }
+
   }
 
   // Shared functions used by markup

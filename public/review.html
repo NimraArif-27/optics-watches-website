@@ -158,11 +158,22 @@
       <div class="row g-4 mb-5" id="reviewsContainer"></div>
 
       <!-- Review Form Centered -->
-      <div class="d-flex justify-content-center mb-5">
+      <div id="reviewFormContainer" class="d-flex justify-content-center mb-5 d-none">
         <div class="card p-4 review-form">
           <h4 class="mb-3 text-center">Add Your Review</h4>
 
           <form id="reviewForm" novalidate>
+            <div class="row mb-3">
+    <div class="col-md-6">
+      <label class="form-label">Product Name</label>
+      <input type="text" class="form-control" id="productName" readonly>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Category</label>
+      <input type="text" class="form-control" id="productCategory" readonly>
+    </div>
+  </div>
+
             <div class="mb-3">
               <label for="name" class="form-label">Your Name</label>
               <input type="text" id="name" name="name"  class="form-control" required autocomplete="off">
@@ -190,6 +201,13 @@
               <textarea id="feedback" name="feedback" class="form-control" rows="3" required></textarea>
             </div>
 
+            <!-- Image Upload -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Upload Images (optional, max 3)</label>
+      <input type="file" id="reviewImages" class="form-control" accept="image/*" multiple>
+      <div class="text-danger small d-none" id="imageError"></div>
+    </div>
+
             <div class="text-start">
               <button type="submit" class="btn btn-primary">Submit Review</button>
             </div>
@@ -212,7 +230,7 @@
   <script src="cart.js"></script>
 
 <!-- Reviews Validation and Backend JS -->
-<script>
+<!-- <script>
   const form = document.getElementById("reviewForm");
   const container = document.getElementById("reviewsContainer");
   const successMessage = document.getElementById("successMessage"); // ✅ from HTML
@@ -371,7 +389,472 @@
 
   // Initial load
   loadReviews();
+</script> -->
+<!-- <script>
+  const form = document.getElementById("reviewForm");
+  const container = document.getElementById("reviewsContainer");
+  const successMessage = document.getElementById("successMessage"); // ✅ from HTML
+
+  // ===============================
+  // Validation Helpers
+  // ===============================
+  function showError(input, message) {
+    let error = input.parentElement.querySelector(".error");
+    if (!error) {
+      error = document.createElement("small");
+      error.className = "error text-danger d-block mt-1";
+      input.parentElement.appendChild(error);
+    }
+    error.textContent = message;
+  }
+
+  function removeError(input) {
+    const error = input.parentElement.querySelector(".error");
+    if (error) error.remove();
+  }
+
+  function validateField(input) {
+    const value = input.value.trim();
+    const id = input.id;
+
+    if (id === "name") {
+      if (value === "") {
+        showError(input, "Name is required.");
+        return false;
+      }
+      if (!/^[A-Za-z\s]+$/.test(value)) {
+        showError(input, "Name can only contain alphabets.");
+        return false;
+      }
+    }
+
+    if (id === "email") {
+      if (value === "") {
+        showError(input, "Email is required.");
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        showError(input, "Enter a valid email address.");
+        return false;
+      }
+    }
+
+    if (id === "rating") {
+      if (value === "") {
+        showError(input, "Rating is required.");
+        return false;
+      }
+      if (value < 1 || value > 5) {
+        showError(input, "Please select a rating between 1 and 5.");
+        return false;
+      }
+    }
+
+    if (id === "feedback") {
+      if (value === "") {
+        showError(input, "Feedback is required.");
+        return false;
+      }
+    }
+
+    removeError(input);
+    return true;
+  }
+
+  document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select")
+  .forEach(input => {
+    input.dataset.touched = "false"; // <-- add this line
+    input.addEventListener("blur", () => {
+      input.dataset.touched = "true"; // <-- mark as touched on blur
+      validateField(input);
+    });
+    input.addEventListener("input", () => removeError(input));
+    input.addEventListener("focus", () => removeError(input));
+  });
+
+  // ===============================
+  // Stars Renderer
+  // ===============================
+  function renderStars(rating) {
+    return "★".repeat(rating) + "☆".repeat(5 - rating);
+  }
+
+  // ===============================
+  // Load reviews from backend
+  // ===============================
+  async function loadReviews() {
+    const res = await fetch("/api/reviews");
+    const reviews = await res.json();
+    container.innerHTML = "";
+
+    reviews.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "col-md-4";
+      card.innerHTML = `
+        <div class="card p-3 shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">${r.name}</h6>
+            <span class="text-warning">${renderStars(r.rating)}</span>
+          </div>
+          <p class="mb-1"><small class="text-muted">${r.email}</small></p>
+          <p class="mb-0">${r.feedback}</p>
+          <small class="text-muted d-block mt-2">${new Date(r.createdAt).toLocaleDateString()}</small>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // ===============================
+  // Submit handler (validation + backend save)
+  // ===============================
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const inputs = document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select");
+    let allValid = true;
+
+    inputs.forEach(input => {
+      if (!validateField(input)) {
+        allValid = false;
+      }
+    });
+
+    if (!allValid) {
+      return; // ❌ keep user data intact
+    }
+
+    const review = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      rating: parseInt(document.getElementById("rating").value),
+      feedback: document.getElementById("feedback").value.trim()
+    };
+
+    await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(review)
+    });
+
+    form.reset(); // ✅ only reset on success
+    loadReviews();
+
+    // ✅ Success message
+    successMessage.classList.remove("d-none");
+    setTimeout(() => {
+      successMessage.classList.add("d-none");
+    }, 3000);
+  });
+
+  // Initial load
+  loadReviews();
+
+  // ===============================
+  // ✅ NEW: Show form automatically if URL contains #showReview
+  // ===============================
+  document.addEventListener("DOMContentLoaded", () => {
+    const reviewFormContainer = document.getElementById("reviewFormContainer");
+    if (window.location.hash === "#showReview" && reviewFormContainer) {
+      reviewFormContainer.classList.remove("d-none");
+      setTimeout(() => {
+        reviewFormContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+        const nameInput = reviewFormContainer.querySelector("input, textarea");
+        if (nameInput) nameInput.focus();
+      }, 300);
+    }
+  });
+</script> -->
+<script>
+  const form = document.getElementById("reviewForm");
+  const container = document.getElementById("reviewsContainer");
+  const successMessage = document.getElementById("successMessage");
+
+  // ===============================
+  // 🆕 Product Fetching (auto-fill)
+  // ===============================
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get("id");
+  let currentProduct = null; // store product for reuse
+
+  // ✅ Utility: format category like "gentsWatches" → "Gents Watches"
+  function formatCategoryName(str) {
+    if (!str) return "";
+    return str
+      .replace(/([a-z])([A-Z])/g, "$1 $2") // add space before capitals
+      .replace(/^./, c => c.toUpperCase()); // capitalize first letter
+  }
+
+  async function fetchProductDetails() {
+    if (!productId) return;
+    try {
+      const res = await fetch(`/api/products/${productId}`);
+      const data = await res.json();
+      if (data.success && data.product) {
+        currentProduct = data.product;
+        document.getElementById("productName").value = currentProduct.name || "";
+        document.getElementById("productCategory").value = formatCategoryName(currentProduct.category || "");
+      }
+    } catch (err) {
+      console.error("Error fetching product details:", err);
+    }
+  }
+
+  // ===============================
+  // ✅ When "Write a Review" is clicked
+  // ===============================
+  function goToReviewForm() {
+    const reviewFormContainer = document.getElementById("reviewFormContainer");
+    if (reviewFormContainer) {
+      reviewFormContainer.classList.remove("d-none");
+
+      // 🆕 auto-fill product details if available
+      if (currentProduct) {
+        document.getElementById("productName").value = currentProduct.name || "";
+        document.getElementById("productCategory").value = formatCategoryName(currentProduct.category || "");
+      }
+
+      // ✅ Fix #1: scroll with offset (for fixed navbar)
+      setTimeout(() => {
+        const yOffset = -100; // adjust depending on navbar height
+        const y = reviewFormContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+
+        // ✅ Fix #2: don’t focus readonly fields — focus first editable field
+        const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
+        if (firstEditable) firstEditable.focus();
+      }, 100);
+    }
+  }
+
+  // ===============================
+  // Validation Helpers (UNCHANGED)
+  // ===============================
+  function showError(input, message) {
+    let error = input.parentElement.querySelector(".error");
+    if (!error) {
+      error = document.createElement("small");
+      error.className = "error text-danger d-block mt-1";
+      input.parentElement.appendChild(error);
+    }
+    error.textContent = message;
+  }
+
+  function removeError(input) {
+    const error = input.parentElement.querySelector(".error");
+    if (error) error.remove();
+  }
+
+  function validateField(input) {
+    const value = input.value.trim();
+    const id = input.id;
+
+    if (id === "name") {
+      if (value === "") {
+        showError(input, "Name is required.");
+        return false;
+      }
+      if (!/^[A-Za-z\s]+$/.test(value)) {
+        showError(input, "Name can only contain alphabets.");
+        return false;
+      }
+    }
+
+    if (id === "email") {
+      if (value === "") {
+        showError(input, "Email is required.");
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        showError(input, "Enter a valid email address.");
+        return false;
+      }
+    }
+
+    if (id === "rating") {
+      if (value === "") {
+        showError(input, "Rating is required.");
+        return false;
+      }
+      if (value < 1 || value > 5) {
+        showError(input, "Please select a rating between 1 and 5.");
+        return false;
+      }
+    }
+
+    if (id === "feedback") {
+      if (value === "") {
+        showError(input, "Feedback is required.");
+        return false;
+      }
+    }
+
+    removeError(input);
+    return true;
+  }
+
+  document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select")
+    .forEach(input => {
+      input.dataset.touched = "false";
+      input.addEventListener("blur", () => {
+        input.dataset.touched = "true";
+        validateField(input);
+      });
+      input.addEventListener("input", () => removeError(input));
+      input.addEventListener("focus", () => removeError(input));
+    });
+
+  // ===============================
+  // Stars Renderer (UNCHANGED)
+  // ===============================
+  function renderStars(rating) {
+    return "★".repeat(rating) + "☆".repeat(5 - rating);
+  }
+
+  // ===============================
+  // Load reviews from backend (UNCHANGED)
+  // ===============================
+  async function loadReviews() {
+    const res = await fetch("/api/reviews");
+    const reviews = await res.json();
+    container.innerHTML = "";
+
+    reviews.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "col-md-4";
+      card.innerHTML = `
+        <div class="card p-3 shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">${r.name}</h6>
+            <span class="text-warning">${renderStars(r.rating)}</span>
+          </div>
+          <p class="mb-1"><small class="text-muted">${r.email}</small></p>
+          <p class="mb-0">${r.feedback}</p>
+          <small class="text-muted d-block mt-2">${new Date(r.createdAt).toLocaleDateString()}</small>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // ===============================
+  // 🆕 Image Upload Preview
+  // ===============================
+  const reviewImages = document.getElementById("reviewImages");
+  const previewContainer = document.getElementById("previewContainer");
+
+  reviewImages.addEventListener("change", () => {
+    previewContainer.innerHTML = "";
+    const files = Array.from(reviewImages.files).slice(0, 3); // limit to 3 images
+
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.className = "me-2 mb-2 rounded border";
+        img.style.width = "80px";
+        img.style.height = "80px";
+        img.style.objectFit = "cover";
+        previewContainer.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (reviewImages.files.length > 3) {
+      showError(reviewImages, "You can upload a maximum of 3 images.");
+      reviewImages.value = "";
+    }
+  });
+
+  // ===============================
+  // Submit handler (UNCHANGED)
+  // ===============================
+  form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  // Validate all inputs
+  const inputs = document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select");
+  let allValid = true;
+  inputs.forEach(input => {
+    if (!validateField(input)) allValid = false;
+  });
+  if (!allValid) return; // stop submission if invalid
+
+  // Preserve product name & category
+  const productName = document.getElementById("productName").value;
+  const productCategory = document.getElementById("productCategory").value;
+
+  // Prepare FormData
+  const formData = new FormData();
+  formData.append("name", document.getElementById("name").value.trim());
+  formData.append("email", document.getElementById("email").value.trim());
+  formData.append("rating", document.getElementById("rating").value);
+  formData.append("feedback", document.getElementById("feedback").value.trim());
+  formData.append("productName", productName);
+  formData.append("productCategory", productCategory);
+
+  Array.from(reviewImages.files).slice(0, 3).forEach(file => {
+    formData.append("images", file);
+  });
+
+  try {
+    // Submit to backend
+    const res = await fetch("/api/reviews", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("Failed to submit review");
+
+    // Reset form except readonly fields
+    form.reset();
+    document.getElementById("productName").value = productName;
+    document.getElementById("productCategory").value = productCategory;
+
+    if (previewContainer) previewContainer.innerHTML = "";
+
+    // Reload reviews
+    loadReviews();
+
+    // Show success message
+    successMessage.classList.remove("d-none");
+    setTimeout(() => successMessage.classList.add("d-none"), 3000);
+
+  } catch (err) {
+    console.error("Error submitting review:", err);
+    alert("There was a problem submitting your review. Please try again.");
+  }
+});
+
+
+  // Initial loads
+  document.addEventListener("DOMContentLoaded", async () => {
+    await fetchProductDetails(); // ensure product is loaded first
+    loadReviews();
+  });
+
+  // ===============================
+  // ✅ Auto-show form when URL has #showReview
+  // ===============================
+  document.addEventListener("DOMContentLoaded", () => {
+    const reviewFormContainer = document.getElementById("reviewFormContainer");
+    if (window.location.hash === "#showReview" && reviewFormContainer) {
+      reviewFormContainer.classList.remove("d-none");
+
+      setTimeout(() => {
+        // scroll to the very top of the form
+        const y = reviewFormContainer.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }, 300);
+    }
+});
+
+
 </script>
+
+
+
 
 
 </body>
