@@ -125,7 +125,7 @@
 
 
     <!-- ✅ Success Message (Hidden by default) -->
-    <div id="successMessage" class="text-center text-white py-2 d-none" style="background-color: blue; position: fixed; top: 56px; left: 0; right: 0; z-index: 1050;">
+    <div id="successMessage" class="text-center text-white py-2 d-none" style="background-color: black; position: fixed; top: 56px; left: 0; right: 0; z-index: 1050;">
       <i class="bi bi-check-circle-fill me-2"></i>Your review has been submitted successfully!
     </div>
 
@@ -157,6 +157,7 @@
       <!-- Reviews Display Section -->
       <div class="row g-4 mb-5" id="reviewsContainer"></div>
 
+      <div id="reviewFormSpacer" style="height: 120px;"></div>
       <!-- Review Form Centered -->
       <div id="reviewFormContainer" class="d-flex justify-content-center mb-5 d-none">
         <div class="card p-4 review-form">
@@ -838,17 +839,24 @@
   // ✅ Auto-show form when URL has #showReview
   // ===============================
   document.addEventListener("DOMContentLoaded", () => {
-    const reviewFormContainer = document.getElementById("reviewFormContainer");
-    if (window.location.hash === "#showReview" && reviewFormContainer) {
-      reviewFormContainer.classList.remove("d-none");
+  const reviewFormContainer = document.getElementById("reviewFormContainer");
+  const spacer = document.getElementById("reviewFormSpacer"); // the new spacer div
 
-      setTimeout(() => {
-        // scroll to the very top of the form
-        const y = reviewFormContainer.getBoundingClientRect().top + window.pageYOffset;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }, 300);
-    }
+  if (window.location.hash === "#showReview" && reviewFormContainer && spacer) {
+    reviewFormContainer.classList.remove("d-none");
+
+    setTimeout(() => {
+      // scroll to the spacer instead of the form
+      const y = spacer.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+
+      // focus first editable field
+      const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
+      if (firstEditable) firstEditable.focus();
+    }, 300); // slight delay to ensure DOM is rendered
+  }
 });
+
 
 
 </script>
