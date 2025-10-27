@@ -3559,6 +3559,31 @@
           </table>
         </div>
       </div>
+      <!-- History Orders -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Orders History</span>
+          <small id="historyCount">0 Orders</small>
+        </div>
+        <div class="card-body">
+          <table class="table table-hover align-middle text-center">
+            <thead class="table-light">
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyOrdersTable">
+              <!-- Filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </section>
     <!-- View Order Modal -->
     <div class="modal fade" id="viewOrderModal" tabindex="-1">
@@ -3672,11 +3697,68 @@
           };
 
           renderOrders(pendingOrders, pendingTable, "pending");
-          renderOrders(acceptedOrders, acceptedTable, "accepted");
+          const now = new Date();
+
+          // Current month accepted orders
+          const currentMonthAcceptedOrders = acceptedOrders.filter(order => {
+            const orderDate = new Date(order.orderDate);
+            return orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
+          });
+
+          // Previous months accepted orders → History
+          const historyOrders = acceptedOrders.filter(order => {
+            const orderDate = new Date(order.orderDate);
+            return orderDate.getMonth() !== now.getMonth() || orderDate.getFullYear() !== now.getFullYear();
+          });
+
+          // Render
+          renderOrders(currentMonthAcceptedOrders, acceptedTable, "accepted");
+          document.getElementById("acceptedCount").textContent = `${currentMonthAcceptedOrders.length} Accepted`;
+
+          // Render History
+          historyOrdersTable.innerHTML = "";
+          historyOrders.forEach((order, index) => {
+            const orderNumber = `${String(index + 1).padStart(2, "0")}`;
+            const customer = order.deliveryAddress?.fullname || "Unknown";
+            const date = new Date(order.orderDate).toLocaleDateString();
+            const total = "Rs. " + Number(order.totalAmount).toLocaleString("en-PK", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${orderNumber}</td>
+              <td>${customer}</td>
+              <td>${date}</td>
+              <td>${total}</td>
+              <td><span class="badge border border-success text-success">Accepted</span></td>
+              <td>
+                <div class="btn-group me-2">
+                  <button class="btn btn-warning btn-sm me-1 view-btn" data-id="${order._id}">
+                    <i class="fas fa-eye"></i> View
+                  </button>
+                  <button class="btn btn-danger btn-sm delete-order-btn" data-id="${order._id}">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </div>
+                ${
+                  order.isDispatched
+                    ? `<button class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i> Dispatched</button>`
+                    : `<button class="btn btn-info btn-sm complete-btn" data-id="${order._id}"><i class="fas fa-truck"></i> Complete</button>`
+                }
+              </td>
+            `;
+            historyOrdersTable.appendChild(row);
+          });
+
+          document.getElementById("historyCount").textContent = `${historyOrders.length} Orders`;
+
+          
           renderOrders(rejectedOrders, rejectedTable, "rejected");
 
           document.getElementById("pendingCount").textContent = `${pendingOrders.length} Pending`;
-          document.getElementById("acceptedCount").textContent = `${acceptedOrders.length} Accepted`;
+          document.getElementById("acceptedCount").textContent = `${currentMonthAcceptedOrders.length} Accepted`;
           document.getElementById("rejectedCount").textContent = `${rejectedOrders.length} Rejected`;
 
         } catch (err) {
