@@ -156,8 +156,22 @@
 
       <!-- Reviews Display Section -->
       <div class="row g-4 mb-5" id="reviewsContainer"></div>
+      <!-- Image Modal -->
+      <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-transparent border-0">
+            <div class="modal-header border-0">
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+              <img id="modalImage" src="" class="img-fluid rounded" alt="Large Preview">
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div id="reviewFormSpacer" style="height: 120px;"></div>
+
+      <section id="reviewSection">
       <!-- Review Form Centered -->
       <div id="reviewFormContainer" class="d-flex justify-content-center mb-5 d-none">
         <div class="card p-4 review-form">
@@ -215,6 +229,7 @@
           </form>
         </div>
       </div>
+      </section>
     </main>
 
 
@@ -615,13 +630,13 @@
         document.getElementById("productCategory").value = formatCategoryName(currentProduct.category || "");
       }
 
-      // ✅ Fix #1: scroll with offset (for fixed navbar)
+      // ✅ Scroll directly to form with offset (for fixed navbar)
       setTimeout(() => {
         const yOffset = -100; // adjust depending on navbar height
         const y = reviewFormContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
 
-        // ✅ Fix #2: don’t focus readonly fields — focus first editable field
+        // ✅ Focus first editable field
         const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
         if (firstEditable) firstEditable.focus();
       }, 100);
@@ -712,6 +727,21 @@
     return "★".repeat(rating) + "☆".repeat(5 - rating);
   }
 
+  // Function to attach click event to all review images
+  function enableImageModal() {
+    const images = document.querySelectorAll("#reviewsContainer img");
+    const modalImage = document.getElementById("modalImage");
+
+    images.forEach(img => {
+      img.style.cursor = "pointer"; // show pointer on hover
+      img.addEventListener("click", () => {
+        modalImage.src = img.src; // set modal image src
+        const modal = new bootstrap.Modal(document.getElementById("imageModal"));
+        modal.show();
+      });
+    });
+  }
+
   // ===============================
   // Load reviews from backend (UNCHANGED)
   // ===============================
@@ -722,20 +752,54 @@
 
     reviews.forEach(r => {
       const card = document.createElement("div");
-      card.className = "col-md-4";
+      card.className = "col-md-4 mb-3";
+
+      // Render images only if they exist
+      let imagesHTML = "";
+      if (r.images && r.images.length > 0) {
+        imagesHTML = `<div class="d-flex flex-wrap gap-2 mt-2">`;
+        r.images.forEach(img => {
+          imagesHTML += `<img src="${img}" alt="Review Image" class="rounded border" style="width:70px; height:70px; object-fit:cover;">`;
+        });
+        imagesHTML += `</div>`;
+      }
+
+      // Product display
+      const productDisplay = r.productName
+        ? `${r.productName}${r.productCategory ? ` (${r.productCategory})` : ""}`
+        : "-";
+
       card.innerHTML = `
-        <div class="card p-3 shadow-sm">
-          <div class="d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">${r.name}</h6>
-            <span class="text-warning">${renderStars(r.rating)}</span>
+        <div class="card p-3 shadow-sm d-flex flex-column h-100">
+          <!-- Header -->
+          <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <h6 class="mb-0">${r.name}</h6>
+              <span class="text-warning">${renderStars(r.rating)}</span>
+            </div>
+            <p class="mb-1"><small class="text-muted">${r.email}</small></p>
           </div>
-          <p class="mb-1"><small class="text-muted">${r.email}</small></p>
-          <p class="mb-0">${r.feedback}</p>
+
+          <!-- Product -->
+          <div class="mb-2">
+            <p class="mb-0"><strong>Product:</strong> ${productDisplay}</p>
+          </div>
+
+          <!-- Feedback -->
+          <div class="mb-2">
+            <p class="mb-0">${r.feedback}</p>
+          </div>
+
+          <!-- Images (conditionally rendered) -->
+          ${imagesHTML ? `<div class="mt-auto">${imagesHTML}</div>` : ""}
+
+          <!-- Date -->
           <small class="text-muted d-block mt-2">${new Date(r.createdAt).toLocaleDateString()}</small>
         </div>
       `;
       container.appendChild(card);
     });
+    enableImageModal();
   }
 
   // ===============================
@@ -772,62 +836,60 @@
   // Submit handler (UNCHANGED)
   // ===============================
   form.addEventListener("submit", async function (e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Validate all inputs
-  const inputs = document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select");
-  let allValid = true;
-  inputs.forEach(input => {
-    if (!validateField(input)) allValid = false;
-  });
-  if (!allValid) return; // stop submission if invalid
+    // Validate all inputs
+    const inputs = document.querySelectorAll("#reviewForm input, #reviewForm textarea, #reviewForm select");
+    let allValid = true;
+    inputs.forEach(input => {
+      if (!validateField(input)) allValid = false;
+    });
+    if (!allValid) return; // stop submission if invalid
 
-  // Preserve product name & category
-  const productName = document.getElementById("productName").value;
-  const productCategory = document.getElementById("productCategory").value;
+    // Preserve product name & category
+    const productName = document.getElementById("productName").value;
+    const productCategory = document.getElementById("productCategory").value;
 
-  // Prepare FormData
-  const formData = new FormData();
-  formData.append("name", document.getElementById("name").value.trim());
-  formData.append("email", document.getElementById("email").value.trim());
-  formData.append("rating", document.getElementById("rating").value);
-  formData.append("feedback", document.getElementById("feedback").value.trim());
-  formData.append("productName", productName);
-  formData.append("productCategory", productCategory);
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append("name", document.getElementById("name").value.trim());
+    formData.append("email", document.getElementById("email").value.trim());
+    formData.append("rating", document.getElementById("rating").value);
+    formData.append("feedback", document.getElementById("feedback").value.trim());
+    formData.append("productName", productName);
+    formData.append("productCategory", productCategory);
 
-  Array.from(reviewImages.files).slice(0, 3).forEach(file => {
-    formData.append("images", file);
-  });
-
-  try {
-    // Submit to backend
-    const res = await fetch("/api/reviews", {
-      method: "POST",
-      body: formData
+    Array.from(reviewImages.files).slice(0, 3).forEach(file => {
+      formData.append("images", file);
     });
 
-    if (!res.ok) throw new Error("Failed to submit review");
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        body: formData
+      });
 
-    // Reset form except readonly fields
-    form.reset();
-    document.getElementById("productName").value = productName;
-    document.getElementById("productCategory").value = productCategory;
+      if (!res.ok) throw new Error("Failed to submit review");
 
-    if (previewContainer) previewContainer.innerHTML = "";
+      // Reset form except readonly fields
+      form.reset();
+      document.getElementById("productName").value = productName;
+      document.getElementById("productCategory").value = productCategory;
 
-    // Reload reviews
-    loadReviews();
+      if (previewContainer) previewContainer.innerHTML = "";
 
-    // Show success message
-    successMessage.classList.remove("d-none");
-    setTimeout(() => successMessage.classList.add("d-none"), 3000);
+      // Reload reviews
+      loadReviews();
 
-  } catch (err) {
-    console.error("Error submitting review:", err);
-    alert("There was a problem submitting your review. Please try again.");
-  }
-});
+      // Show success message
+      successMessage.classList.remove("d-none");
+      setTimeout(() => successMessage.classList.add("d-none"), 3000);
 
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      alert("There was a problem submitting your review. Please try again.");
+    }
+  });
 
   // Initial loads
   document.addEventListener("DOMContentLoaded", async () => {
@@ -839,30 +901,22 @@
   // ✅ Auto-show form when URL has #showReview
   // ===============================
   document.addEventListener("DOMContentLoaded", () => {
-  const reviewFormContainer = document.getElementById("reviewFormContainer");
-  const spacer = document.getElementById("reviewFormSpacer"); // the new spacer div
+    const reviewFormContainer = document.getElementById("reviewFormContainer");
 
-  if (window.location.hash === "#showReview" && reviewFormContainer && spacer) {
-    reviewFormContainer.classList.remove("d-none");
+    if (window.location.hash === "#showReview" && reviewFormContainer) {
+      reviewFormContainer.classList.remove("d-none");
 
-    setTimeout(() => {
-      // scroll to the spacer instead of the form
-      const y = spacer.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      setTimeout(() => {
+        const yOffset = -100; // navbar offset
+        const y = reviewFormContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
 
-      // focus first editable field
-      const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
-      if (firstEditable) firstEditable.focus();
-    }, 300); // slight delay to ensure DOM is rendered
-  }
-});
-
-
-
+        const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
+        if (firstEditable) firstEditable.focus();
+      }, 300); // slight delay to ensure DOM is rendered
+    }
+  });
 </script>
-
-
-
 
 
 </body>
