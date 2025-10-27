@@ -8,6 +8,7 @@ const reviewSchema = new mongoose.Schema({
   rating: { type: Number, min: 1, max: 5, required: true },
   feedback: { type: String, required: true },
   images: { type: [String], default: [] }, // array of image URLs or filenames
+  published: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 

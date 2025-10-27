@@ -620,28 +620,28 @@
   // ✅ When "Write a Review" is clicked
   // ===============================
   function goToReviewForm() {
-    const reviewFormContainer = document.getElementById("reviewFormContainer");
-    if (reviewFormContainer) {
-      reviewFormContainer.classList.remove("d-none");
+  const reviewFormContainer = document.getElementById("reviewFormContainer");
+  if (!reviewFormContainer) return;
 
-      // 🆕 auto-fill product details if available
-      if (currentProduct) {
-        document.getElementById("productName").value = currentProduct.name || "";
-        document.getElementById("productCategory").value = formatCategoryName(currentProduct.category || "");
-      }
+  // Show form
+  reviewFormContainer.classList.remove("d-none");
 
-      // ✅ Scroll directly to form with offset (for fixed navbar)
-      setTimeout(() => {
-        const yOffset = -100; // adjust depending on navbar height
-        const y = reviewFormContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: y, behavior: "smooth" });
-
-        // ✅ Focus first editable field
-        const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
-        if (firstEditable) firstEditable.focus();
-      }, 100);
-    }
+  // Auto-fill product details if available
+  if (currentProduct) {
+    document.getElementById("productName").value = currentProduct.name || "";
+    document.getElementById("productCategory").value = formatCategoryName(currentProduct.category || "");
   }
+
+  // Scroll directly to section
+  requestAnimationFrame(() => {
+    reviewFormContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Focus first editable field
+    const firstEditable = reviewFormContainer.querySelector("input:not([readonly]), textarea, select");
+    if (firstEditable) firstEditable.focus();
+  });
+}
+
 
   // ===============================
   // Validation Helpers (UNCHANGED)
@@ -746,61 +746,55 @@
   // Load reviews from backend (UNCHANGED)
   // ===============================
   async function loadReviews() {
-    const res = await fetch("/api/reviews");
-    const reviews = await res.json();
-    container.innerHTML = "";
+  const res = await fetch("/api/reviews");
+  const reviews = await res.json();
+  container.innerHTML = "";
 
-    reviews.forEach(r => {
-      const card = document.createElement("div");
-      card.className = "col-md-4 mb-3";
+  // ✅ Only show published reviews
+  const publishedReviews = reviews.filter(r => r.published === true);
 
-      // Render images only if they exist
-      let imagesHTML = "";
-      if (r.images && r.images.length > 0) {
-        imagesHTML = `<div class="d-flex flex-wrap gap-2 mt-2">`;
-        r.images.forEach(img => {
-          imagesHTML += `<img src="${img}" alt="Review Image" class="rounded border" style="width:70px; height:70px; object-fit:cover;">`;
-        });
-        imagesHTML += `</div>`;
-      }
+  publishedReviews.forEach(r => {
+    const card = document.createElement("div");
+    card.className = "col-md-4 mb-3";
 
-      // Product display
-      const productDisplay = r.productName
-        ? `${r.productName}${r.productCategory ? ` (${r.productCategory})` : ""}`
-        : "-";
+    let imagesHTML = "";
+    if (r.images && r.images.length > 0) {
+      imagesHTML = `<div class="d-flex flex-wrap gap-2 mt-2">`;
+      r.images.forEach(img => {
+        imagesHTML += `<img src="${img}" alt="Review Image" class="rounded border" style="width:70px; height:70px; object-fit:cover;">`;
+      });
+      imagesHTML += `</div>`;
+    }
 
-      card.innerHTML = `
-        <div class="card p-3 shadow-sm d-flex flex-column h-100">
-          <!-- Header -->
-          <div class="mb-2">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <h6 class="mb-0">${r.name}</h6>
-              <span class="text-warning">${renderStars(r.rating)}</span>
-            </div>
-            <p class="mb-1"><small class="text-muted">${r.email}</small></p>
+    const productDisplay = r.productName
+      ? `${r.productName}${r.productCategory ? ` (${r.productCategory})` : ""}`
+      : "-";
+
+    card.innerHTML = `
+      <div class="card p-3 shadow-sm d-flex flex-column h-100">
+        <div class="mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <h6 class="mb-0">${r.name}</h6>
+            <span class="text-warning">${renderStars(r.rating)}</span>
           </div>
-
-          <!-- Product -->
-          <div class="mb-2">
-            <p class="mb-0"><strong>Product:</strong> ${productDisplay}</p>
-          </div>
-
-          <!-- Feedback -->
-          <div class="mb-2">
-            <p class="mb-0">${r.feedback}</p>
-          </div>
-
-          <!-- Images (conditionally rendered) -->
-          ${imagesHTML ? `<div class="mt-auto">${imagesHTML}</div>` : ""}
-
-          <!-- Date -->
-          <small class="text-muted d-block mt-2">${new Date(r.createdAt).toLocaleDateString()}</small>
+          <p class="mb-1"><small class="text-muted">${r.email}</small></p>
         </div>
-      `;
-      container.appendChild(card);
-    });
-    enableImageModal();
-  }
+        <div class="mb-2">
+          <p class="mb-0"><strong>Product:</strong> ${productDisplay}</p>
+        </div>
+        <div class="mb-2">
+          <p class="mb-0">${r.feedback}</p>
+        </div>
+        ${imagesHTML ? `<div class="mt-auto">${imagesHTML}</div>` : ""}
+        <small class="text-muted d-block mt-2">${new Date(r.createdAt).toLocaleDateString()}</small>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  enableImageModal();
+}
+
 
   // ===============================
   // 🆕 Image Upload Preview

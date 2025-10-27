@@ -60,6 +60,24 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// PUT: Publish a review (toggle isPublished)
+// Publish/unpublish a review
+router.put("/publish/:id", async (req, res) => {
+  try {
+    const review = await Review.findByIdAndUpdate(
+      req.params.id,
+      { published: true },
+      { new: true }
+    );
+    if (!review) return res.status(404).json({ error: "Review not found" });
+    res.json(review);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to publish review" });
+  }
+});
+
+
+
 // DELETE review by ID
 router.delete("/:id", async (req, res) => {
   try {

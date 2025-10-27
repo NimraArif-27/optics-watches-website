@@ -244,7 +244,13 @@
       <div class="row">
         <div class="col-md-6 mb-4">
           <div class="card">
-            <div class="card-header">Monthly Orders</div>
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>Monthly Orders</span>
+              <select id="yearSelect" class="form-select form-select-sm w-auto">
+                <!-- Options will be populated dynamically -->
+              </select>
+
+            </div>
             <div class="card-body">
               <div class="chart-container">
                 <canvas id="monthlyOrdersChart"></canvas>
@@ -254,7 +260,12 @@
         </div>
         <div class="col-md-6 mb-4">
           <div class="card">
-            <div class="card-header">Sales by Category</div>
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>Sales by Category</span>
+              <select id="monthSelect" class="form-select form-select-sm w-auto">
+                <!-- Options will be populated dynamically -->
+              </select>
+            </div>
             <div class="card-body">
               <div class="chart-container">
                 <canvas id="salesByCategoryChart"></canvas>
@@ -3650,7 +3661,7 @@
                       `
                       : status === "accepted"
                         ? order.isDispatched
-                          ? `<button class="btn btn-success btn-sm" disabled><i class="fas fa-check-circle"></i> Dispatched</button>`
+                          ? `<button class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i> Dispatched</button>`
                           : `<button class="btn btn-info btn-sm complete-btn" data-id="${order._id}"><i class="fas fa-truck"></i> Complete</button>`
                         : ""
                   }
@@ -3959,7 +3970,7 @@
             btn.innerHTML = '<i class="fas fa-check-circle"></i> Dispatched';
             btn.classList.remove("btn-info");
             btn.classList.add("btn-success");
-            btn.disabled = true;
+            // btn.disabled = true;
           } else {
             alert(data.message || "Failed to dispatch order");
           }
@@ -4016,7 +4027,6 @@
       </div>
 
       <!-- View Review Modal -->
-<!-- View Review Modal -->
 <div class="modal fade" id="reviewViewModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
@@ -4300,7 +4310,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Dashboard Overview JS -->
-<script>
+<!-- <script>
 document.addEventListener('DOMContentLoaded', function () {
   const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
   const sections = document.querySelectorAll('.content-section');
@@ -4425,7 +4435,184 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+</script> -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
+  const sections = document.querySelectorAll('.content-section');
+
+  function showSection(id) {
+    sections.forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    if (id === 'dashboard-overview') {
+      loadDashboardData();
+    }
+  }
+
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      if (!link.dataset.bsToggle) {
+        e.preventDefault();
+        sidebarLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        showSection(link.dataset.section);
+      }
+    });
+  });
+
+  showSection('dashboard-overview');
+
+  async function loadDashboardData() {
+    try {
+      const ordersRes = await fetch("/api/orders");
+      const orders = await ordersRes.json();
+
+      const reviewsRes = await fetch("/api/reviews");
+      const reviews = await reviewsRes.json();
+
+      document.getElementById("totalOrders").textContent = orders.length;
+      document.getElementById("pendingOrdersCount").textContent = orders.filter(o => o.orderStatus === "pending").length;
+      document.getElementById("customerReviewsCount").textContent = reviews.length;
+
+      window.ordersData = orders; // store globally
+
+      populateYearSelector(orders); // populate year dropdown
+      populateMonthSelector();      // populate month dropdown for pie chart
+
+      renderMonthlyOrdersChart(orders); // initial chart
+      renderSalesByCategoryChart(orders, new Date().getMonth()); // initial pie chart
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+    }
+  }
+
+  // Year dropdown functionality
+  function populateYearSelector(orders) {
+    const yearSelect = document.getElementById("yearSelect");
+    if (!yearSelect) return;
+
+    const currentYear = new Date().getFullYear();
+    const yearsFromOrders = [...new Set(orders.map(o => new Date(o.orderDate).getFullYear()))];
+    const years = Array.from(new Set([...yearsFromOrders, currentYear])).sort((a, b) => b - a);
+
+    yearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+    yearSelect.value = currentYear;
+
+    // On year change, update charts
+    yearSelect.addEventListener("change", () => {
+      renderMonthlyOrdersChart(window.ordersData);
+      renderSalesByCategoryChart(window.ordersData, document.getElementById("monthSelect").value);
+    });
+  }
+
+  // Month dropdown functionality for Sales by Category chart
+  function populateMonthSelector() {
+    const monthSelect = document.getElementById("monthSelect");
+    if (!monthSelect) return;
+
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    monthSelect.innerHTML = monthNames.map((name, index) => `<option value="${index}">${name}</option>`).join("");
+
+    // Default to current month
+    monthSelect.value = new Date().getMonth();
+
+    monthSelect.addEventListener("change", () => {
+      renderSalesByCategoryChart(window.ordersData, monthSelect.value);
+    });
+  }
+
+  function renderMonthlyOrdersChart(orders) {
+    const yearSelect = document.getElementById("yearSelect");
+    const selectedYear = yearSelect ? Number(yearSelect.value) : new Date().getFullYear();
+    const ctx = document.getElementById("monthlyOrdersChart").getContext("2d");
+    const monthlyCounts = Array(12).fill(0);
+
+    orders
+      .filter(o => o.orderStatus === "accepted" && new Date(o.orderDate).getFullYear() === selectedYear)
+      .forEach(o => {
+        const month = new Date(o.orderDate).getMonth();
+        monthlyCounts[month]++;
+      });
+
+    if (window.monthlyChart) {
+      window.monthlyChart.data.datasets[0].data = monthlyCounts;
+      window.monthlyChart.update();
+    } else {
+      window.monthlyChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+          datasets: [{
+            label: "Orders",
+            data: monthlyCounts,
+            backgroundColor: "rgba(0, 123, 255, 0.5)",
+            borderColor: "rgba(0, 123, 255, 1)",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 10 } } }
+        }
+      });
+    }
+  }
+
+  function renderSalesByCategoryChart(orders, month) {
+    const ctx = document.getElementById("salesByCategoryChart").getContext("2d");
+    const categoryTotals = { Eyeglasses: 0, Sunglasses: 0, Watches: 0, Lenses: 0 };
+
+    const yearSelect = document.getElementById("yearSelect");
+    const selectedYear = yearSelect ? Number(yearSelect.value) : new Date().getFullYear();
+
+    orders
+      .filter(order => order.orderStatus === "accepted")
+      .filter(order => new Date(order.orderDate).getFullYear() === selectedYear)
+      .filter(order => new Date(order.orderDate).getMonth() == month)
+      .forEach(order => {
+        order.items.forEach(item => {
+          if (["metalFrames", "regularGlasses", "brandedFrames", "kidsEyeglasses"].includes(item.category)) {
+            categoryTotals.Eyeglasses += item.subtotal;
+          } else if (["metalSunglasses", "regularSunglasses", "brandedSunglasses", "kidsSunglasses"].includes(item.category)) {
+            categoryTotals.Sunglasses += item.subtotal;
+          } else if (["gentsWatches", "ladiesWatches", "premiumWatches", "kidsWatches"].includes(item.category)) {
+            categoryTotals.Watches += item.subtotal;
+          } else if (["PowerLenses", "ColoredLenses"].includes(item.category)) {
+            categoryTotals.Lenses += item.subtotal;
+          }
+        });
+      });
+
+    // Destroy old chart if exists
+    if (window.salesChart) window.salesChart.destroy();
+
+    window.salesChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ["Eyeglasses", "Sunglasses", "Watches", "Lenses"],
+        datasets: [{
+          data: [
+            categoryTotals.Eyeglasses,
+            categoryTotals.Sunglasses,
+            categoryTotals.Watches,
+            categoryTotals.Lenses
+          ],
+          backgroundColor: [
+            'rgba(0, 123, 255, 0.7)',    
+            'rgba(255, 193, 7, 0.7)',    
+            'rgba(220, 53, 69, 0.7)',    
+            'rgba(40, 167, 69, 0.7)'     
+          ]
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+});
 </script>
+
 
 
 
@@ -4524,6 +4711,8 @@ async function loadReviews() {
       // Unique IDs for each row's view button
       const viewBtnId = `viewBtn-${review._id}`;
       const deleteBtnId = `deleteBtn-${review._id}`;
+      const publishBtnId = `publishBtn-${review._id}`;
+const isPublished = review.published;
 
       tr.innerHTML = `
         <td>${reviews.length - index}</td>
@@ -4533,12 +4722,20 @@ async function loadReviews() {
         <td class="comment-cell">${review.feedback}</td>
         <td>${new Date(review.createdAt).toLocaleDateString()}</td>
         <td class="text-center">
-          <button id="${viewBtnId}" class="btn btn-warning btn-sm">
+          <div class="btn-group me-2" role="group">
+          <button id="${viewBtnId}" class="btn btn-warning btn-sm me-1">
             <i class="fas fa-eye"></i> View
           </button>
           <button id="${deleteBtnId}" class="btn btn-danger btn-sm">
             <i class="fas fa-trash"></i> Delete
           </button>
+          </div>
+          <div class="btn-group">
+          <button id="${publishBtnId}" class="btn btn-sm ${isPublished ? 'btn-success' : 'btn-info'}"  style="width: 100px;">
+            <i class="fas ${isPublished ? 'fa-check' : 'fa-upload'}"></i>
+            ${isPublished ? 'Published' : 'Publish'}
+          </button>
+          </div>
         </td>
       `;
 
@@ -4596,6 +4793,22 @@ async function loadReviews() {
         reviewIdToDelete = review._id;
         deleteModal.show();
       });
+
+      const publishBtn = document.getElementById(`publishBtn-${review._id}`);
+publishBtn.addEventListener("click", async () => {
+  try {
+    const res = await fetch(`/api/reviews/publish/${review._id}`, { method: "PUT" });
+    if (!res.ok) throw new Error("Failed to publish review");
+
+    // Change button to green and update text/icon
+    publishBtn.classList.remove("btn-info");
+    publishBtn.classList.add("btn-success");
+    publishBtn.innerHTML = '<i class="fas fa-check"></i> Published';
+  } catch (err) {
+    console.error("Error publishing review:", err);
+    alert("Could not publish review. Try again.");
+  }
+});
     });
 
   } catch (error) {
