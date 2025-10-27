@@ -3982,12 +3982,11 @@
               <tr>
                 <th>ID</th>
                 <th>Customer</th>
-                <th>Email</th>
                 <th>Product</th>
                 <th>Rating</th>
                 <th>Comment</th>
                 <th>Date</th>
-                <th>Actions</th>
+                <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody id="reviewsTableBody">
@@ -4015,6 +4014,57 @@
           </div>
         </div>
       </div>
+
+      <!-- View Review Modal -->
+<!-- View Review Modal -->
+<div class="modal fade" id="reviewViewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Review Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row g-4">
+          <!-- Left Column: Customer & Product Info -->
+          <div class="col-lg-5">
+            <div class="p-3 border rounded  mb-3">
+              <h5 class="mb-3">Customer & Product Information</h5>
+              <p><strong>Name:</strong> <span id="viewCustomerName"></span></p>
+              <p><strong>Email:</strong> <span id="viewCustomerEmail"></span></p>
+
+              <p class="mt-3"><strong>Product Name:</strong> <span id="viewProductName"></span></p>
+              <p><strong>Category:</strong> <span id="viewProductCategory"></span></p>
+              <p><strong>Rating:</strong> <span id="viewProductRating"></span></p>
+              <p><strong>Date:</strong> <span id="viewReviewDate"></span></p>
+            </div>
+          </div>
+
+          <!-- Right Column: Comment & Images -->
+          <div class="col-lg-7">
+            <div class="p-3 border rounded mb-3">
+              <h5 class="mb-2">Comment</h5>
+              <p id="viewProductComment" class="p-2 bg-light rounded"></p>
+            </div>
+
+            <div id="imagesContainerWrapper" class="p-3 border rounded d-none">
+              <h5 class="mb-2">Images</h5>
+              <div id="viewProductImages" class="d-flex gap-2 flex-wrap">
+                <!-- Images will go here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer removed as per request -->
+    </div>
+  </div>
+</div>
+
+
+
     </section>
 
     <!-- ========================= CONTACT US PAGE ======================= -->
@@ -4380,7 +4430,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 <!-- Review Managements JS-->
-<script>
+<!-- <script>
 const reviewsTableBody = document.getElementById("reviewsTableBody");
 const deleteModal = new bootstrap.Modal(document.getElementById('reviewDeleteModal'));
 let reviewIdToDelete = null;
@@ -4402,12 +4452,14 @@ async function loadReviews() {
       tr.innerHTML = `
         <td>${reviews.length - index}</td>
         <td>${review.name}</td>
-        <td>${review.email}</td>
-        <td>${review.product || "-"}</td>
+        <td>${review.productName || "-"}</td>
         <td><span class="text-warning">${renderStars(review.rating)}</span></td>
         <td class="comment-cell">${review.feedback}</td>
         <td>${new Date(review.createdAt).toISOString().split("T")[0]}</td>
-        <td>
+        <td class="text-center">
+          <button class="btn btn-warning btn-sm view-btn" data-id="${review._id}">
+            <i class="fas fa-eye"></i> View
+          </button>
           <button class="btn btn-danger btn-sm delete-btn" data-id="${review._id}">
             <i class="fas fa-trash"></i> Delete
           </button>
@@ -4448,7 +4500,123 @@ document.getElementById("confirmReviewDeleteBtn").addEventListener("click", asyn
 
 // Call on page load
 loadReviews();
+</script> -->
+<script>
+const reviewsTableBody = document.getElementById("reviewsTableBody");
+const deleteModal = new bootstrap.Modal(document.getElementById('reviewDeleteModal'));
+const viewModal = new bootstrap.Modal(document.getElementById('reviewViewModal'));
+let reviewIdToDelete = null;
+
+function renderStars(rating) {
+  return "★".repeat(rating) + "☆".repeat(5 - rating);
+}
+
+async function loadReviews() {
+  try {
+    const response = await fetch("/api/reviews"); 
+    const reviews = await response.json();
+
+    reviewsTableBody.innerHTML = "";
+
+    reviews.forEach((review, index) => {
+      const tr = document.createElement("tr");
+
+      // Unique IDs for each row's view button
+      const viewBtnId = `viewBtn-${review._id}`;
+      const deleteBtnId = `deleteBtn-${review._id}`;
+
+      tr.innerHTML = `
+        <td>${reviews.length - index}</td>
+        <td>${review.name}</td>
+        <td>${review.productName || "-"}</td>
+        <td><span class="text-warning">${renderStars(review.rating)}</span></td>
+        <td class="comment-cell">${review.feedback}</td>
+        <td>${new Date(review.createdAt).toLocaleDateString()}</td>
+        <td class="text-center">
+          <button id="${viewBtnId}" class="btn btn-warning btn-sm">
+            <i class="fas fa-eye"></i> View
+          </button>
+          <button id="${deleteBtnId}" class="btn btn-danger btn-sm">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </td>
+      `;
+
+      // Handle long review toggle
+      const commentCell = tr.querySelector(".comment-cell");
+      commentCell.addEventListener("click", () => {
+        commentCell.classList.toggle("expanded");
+      });
+
+      reviewsTableBody.prepend(tr);
+
+      // Attach View button listener
+      document.getElementById(viewBtnId).addEventListener("click", async () => {
+        try {
+          const res = await fetch(`/api/reviews/${review._id}`);
+          const data = await res.json();
+
+          // Fill modal fields
+          document.getElementById("viewCustomerName").innerText = data.name;
+          document.getElementById("viewCustomerEmail").innerText = data.email;
+          document.getElementById("viewProductName").innerText = data.productName || "-";
+          document.getElementById("viewProductCategory").innerText = data.productCategory || "-";
+          document.getElementById("viewProductRating").innerHTML = renderStars(data.rating);
+          document.getElementById("viewProductComment").innerText = data.feedback;
+          document.getElementById("viewReviewDate").innerText = new Date(data.createdAt).toLocaleString();
+
+          // Images section handling
+          const imagesWrapper = document.getElementById("imagesContainerWrapper");
+          const imagesContainer = document.getElementById("viewProductImages");
+          imagesContainer.innerHTML = "";
+
+          if (data.images && data.images.length > 0) {
+            imagesWrapper.classList.remove("d-none");
+            data.images.forEach(url => {
+              const img = document.createElement("img");
+              img.src = url;
+              img.style.width = "120px";
+              img.style.height = "120px";
+              img.style.objectFit = "cover";
+              img.classList.add("rounded", "border");
+              imagesContainer.appendChild(img);
+            });
+          } else {
+            imagesWrapper.classList.add("d-none"); // hide section if no images
+          }
+
+          viewModal.show();
+        } catch (err) {
+          console.error("Error fetching review:", err);
+        }
+      });
+
+      // Attach Delete button listener
+      document.getElementById(deleteBtnId).addEventListener("click", () => {
+        reviewIdToDelete = review._id;
+        deleteModal.show();
+      });
+    });
+
+  } catch (error) {
+    console.error("Error loading reviews:", error);
+  }
+}
+
+// Confirm delete inside modal
+document.getElementById("confirmReviewDeleteBtn").addEventListener("click", async () => {
+  if (reviewIdToDelete) {
+    await fetch(`/api/reviews/${reviewIdToDelete}`, { method: "DELETE" });
+    reviewIdToDelete = null;
+    deleteModal.hide();
+    loadReviews(); // refresh table
+  }
+});
+
+// Load reviews on page load
+loadReviews();
 </script>
+
 
 <!-- JS for Contact Info-->
 <script>

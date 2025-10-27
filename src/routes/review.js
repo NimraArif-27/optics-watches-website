@@ -49,6 +49,17 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET single review by ID (needed for View button)
+router.get("/:id", async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
+    if (!review) return res.status(404).json({ error: "Review not found" });
+    res.json(review);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch review" });
+  }
+});
+
 // DELETE review by ID
 router.delete("/:id", async (req, res) => {
   try {
