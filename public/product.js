@@ -65,6 +65,9 @@ let currentStock = 0;
     // Add brand and color info (from DB)
     if (product.brand) descText += `\nBrand: ${product.brand}`;
     if (product.color) descText += `\nColor: ${product.color}`;
+    if (product.category === "PowerLenses" && product.lensType) {
+      descText += `\nLens Type: ${product.lensType}`;
+    }
 
 
 

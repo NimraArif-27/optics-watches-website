@@ -377,6 +377,7 @@
             <!-- New fields for lenses -->
             <p id="quickViewColor" class="text-info fw-semibold mb-2 d-none"></p>
             <p id="quickViewBrand" class="text-info fw-semibold mb-2 d-none"></p>
+            <p id="quickViewLensType" class="text-info fw-semibold mb-2 d-none"></p>
             <p id="quickViewStock" class="fw-bold mb-2"></p>
           </div>
 
@@ -464,6 +465,17 @@
       } else {
         brandEl.classList.add("d-none");
       }
+
+      // Lens Type (only for PowerLenses)
+      const lensTypeEl = document.getElementById("quickViewLensType");
+      if (product.category === "PowerLenses" && product.lensType) {
+        lensTypeEl.textContent = `Lens Type: ${product.lensType}`;
+        lensTypeEl.classList.remove("d-none");
+        lensTypeEl.classList.add("text-body");
+      } else {
+        lensTypeEl.classList.add("d-none");
+      }
+
 
       // After setting the product text info
         const stockEl = document.getElementById("quickViewStock");
