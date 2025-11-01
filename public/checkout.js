@@ -424,17 +424,15 @@ async function updateCheckoutSummary(cartTotal) {
 //   const checkoutList = document.getElementById("checkout-list");
 //   const totalDisplay = document.getElementById("cart-total");
 
-//   // let cart = JSON.parse(localStorage.getItem("cart")) || [];
-//   let cart = [];
-
+//   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 //   const buyNowItem = JSON.parse(localStorage.getItem("buyNowItem"));
-//   if (buyNowItem) {
-//     cart = [buyNowItem]; // use only this one product
-//     localStorage.removeItem("buyNowItem"); // clear temporary key
-//   } else {
-//     cart = JSON.parse(localStorage.getItem("cart")) || [];
-//   }
+//   const fromBuyNow = localStorage.getItem("fromBuyNow") === "true";
 
+//   // ✅ If BuyItNow, show only that product
+//   if (fromBuyNow && buyNowItem) {
+//     cart = [buyNowItem];
+//     // ⚠️ Don't remove from localStorage here, so refresh will still show it
+//   }
 
 //   if (cart.length === 0) {
 //     checkoutList.innerHTML = `
@@ -449,13 +447,11 @@ async function updateCheckoutSummary(cartTotal) {
 //   let total = 0;
 //   let renderedHTML = "";
 
-//   // ✅ Fetch missing product details
 //   for (let item of cart) {
 //     try {
 //       const res = await fetch(`/api/products/${item.id}`);
 //       const data = await res.json();
 //       const product = data.product || {};
-
 //       const qty = item.qty || 1;
 //       const price = product.price || item.price || 0;
 //       const subtotal = qty * price;
@@ -467,17 +463,9 @@ async function updateCheckoutSummary(cartTotal) {
 //     ${product.mainImage ? `<img src="${product.mainImage}" alt="${product.name}" style="width:60px; height:60px; object-fit:cover; margin-right:15px;">` : ""}
 //     <div>
 //       <div style="font-weight:600">${product.name || item.name}</div>
-
-//       <!-- Brand & Color for all lenses -->
 //       ${(product.brand || item.brand) ? `<div class="muted-small">Brand: ${product.brand || item.brand}</div>` : ""}
 //       ${(product.color || item.color) ? `<div class="muted-small">Color: ${product.color || item.color}</div>` : ""}
-
-//       <!-- Power (if exists in cart) -->
-//       ${item.power ? `
-//         <div class="muted-small">Right Eye: ${item.power.right}</div>
-//         <div class="muted-small">Left Eye: ${item.power.left}</div>
-//       ` : ""}
-
+//       ${item.power ? `<div class="muted-small">Right Eye: ${item.power.right}</div><div class="muted-small">Left Eye: ${item.power.left}</div>` : ""}
 //       ${product.ageGroup ? `<div class="muted-small">Age Group: ${product.ageGroup}</div>` : ""}
 //       <div class="muted-small mt-2">Qty: <span>${qty}</span></div>
 //     </div>
@@ -494,7 +482,6 @@ async function updateCheckoutSummary(cartTotal) {
 
 //   checkoutList.innerHTML = renderedHTML;
 //   totalDisplay.textContent = "Rs " + total.toLocaleString();
-
 //   updateCheckoutSummary(total);
 // });
 document.addEventListener("DOMContentLoaded", async () => {
@@ -530,7 +517,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await res.json();
       const product = data.product || {};
       const qty = item.qty || 1;
-      const price = product.price || item.price || 0;
+
+      // ✅ Prefer local cart price (Power Lens custom) over DB price
+      const price = item.price || product.price || 0;
       const subtotal = qty * price;
       total += subtotal;
 
@@ -561,4 +550,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   totalDisplay.textContent = "Rs " + total.toLocaleString();
   updateCheckoutSummary(total);
 });
+
 

@@ -84,33 +84,51 @@ let currentStock = 0;
       lensOptionsContainer.innerHTML = ""; // clear old
 
       if (product.category === "PowerLenses") {
-        const powers = ["Plano (0.00)"];
-        for (let p = -6; p <= 6; p += 0.25) {
-          if (p === 0) continue;
-          powers.push(p > 0 ? `+${p.toFixed(2)}` : p.toFixed(2));
-        }
+  const powers = ["Plano (0.00)"];
+  for (let p = -4; p <= 4; p += 0.25) {
+    if (p === 0) continue;
+    powers.push(p > 0 ? `+${p.toFixed(2)}` : p.toFixed(2));
+  }
 
-        lensOptionsContainer.innerHTML = `
-          <div class="mb-4">
-            <label class="text-primary form-label ">Select Power for Each Eye</label>
-            <div class="row">
-              <div class="col-md-6">
-                <label class="form-label text-muted">Right Eye</label>
-                <select id="rightEyePower" class="form-select text-muted">
-                  ${powers.map(p => `<option value="${p}">${p}</option>`).join("")}
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label text-muted">Left Eye</label>
-                <select id="leftEyePower" class="form-select text-muted">
-                  ${powers.map(p => `<option value="${p}">${p}</option>`).join("")}
-                </select>
-              </div>
-            </div>
-          </div>
-        `;
-      } else {
-        
+  lensOptionsContainer.innerHTML = `
+    <div class="mb-4">
+      <label class="text-primary form-label ">Select Power for Each Eye</label>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="form-label text-muted">Right Eye</label>
+          <select id="rightEyePower" class="form-select text-muted">
+            ${powers.map(p => `<option value="${p}">${p}</option>`).join("")}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-muted">Left Eye</label>
+          <select id="leftEyePower" class="form-select text-muted">
+            ${powers.map(p => `<option value="${p}">${p}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Price recalculation logic
+  const rightSelect = document.getElementById("rightEyePower");
+  const leftSelect = document.getElementById("leftEyePower");
+  const priceEl = document.getElementById("productPrice");
+
+  function updateDisplayedPrice() {
+    const rightPower = rightSelect.value;
+    const leftPower = leftSelect.value;
+    const rightPrice = calculatePowerPrice(product.price, rightPower);
+    const leftPrice = calculatePowerPrice(product.price, leftPower);
+    const avgPrice = Math.round((rightPrice + leftPrice) / 2); // average both eyes
+
+    priceEl.innerText = "Rs. " + avgPrice;
+  }
+
+  rightSelect.addEventListener("change", updateDisplayedPrice);
+  leftSelect.addEventListener("change", updateDisplayedPrice);
+}
+      else {
       }
     }
 
@@ -124,6 +142,27 @@ let currentStock = 0;
     }
 
   }
+
+  // Price calculation for power lenses
+  function calculatePowerPrice(basePrice, powerValue) {
+  const num = parseFloat(powerValue);
+  if (isNaN(num) || num === 0) return basePrice; // Plano = base price
+
+  const absPower = Math.abs(num);
+
+  // Define tiers exactly as your pattern
+  let tier = 0;
+  if (absPower >= 0.25 && absPower <= 0.75) tier = 1;
+  else if (absPower >= 1.00 && absPower <= 1.75) tier = 2;
+  else if (absPower >= 2.00 && absPower <= 2.75) tier = 3;
+  else if (absPower >= 3.00 && absPower <= 3.75) tier = 4;
+  else if (absPower >= 4.00) tier = 5;
+
+  const incrementPerTier = 100; // fixed difference per tier
+  return basePrice + tier * incrementPerTier;
+}
+
+
 
   // Shared functions used by markup
   window.changeImage = function (el) {
